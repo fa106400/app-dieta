@@ -64,7 +64,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
+  /*matcher: [
     // Run on everything in app, plus auth/public pages we care about
     '/((public|app).*)',
     '/',
@@ -77,7 +77,8 @@ export const config = {
     '/privacy',
     '/faq',
     '/api/healthz'
-  ]
+  ]*/
+ matcher: ['/:path*']
 }
 
 
