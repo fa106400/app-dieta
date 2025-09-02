@@ -33,6 +33,13 @@ export function useAuth(): UseAuthReturn {
       try {
         setLoading(true)
         
+        // Check if Supabase is configured
+        if (!supabase) {
+          setError(new Error('Supabase not configured') as AuthError)
+          setLoading(false)
+          return
+        }
+
         // Get initial session
         const { data: { session: initialSession } } = await supabase.auth.getSession()
         setSession(initialSession)

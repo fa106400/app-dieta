@@ -31,6 +31,8 @@ export interface PasswordUpdateData {
 export const auth = {
   // Sign up with email/password
   async signUp({ email, password, name }: SignUpData) {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -47,6 +49,8 @@ export const auth = {
 
   // Sign in with email/password
   async signIn({ email, password }: SignInData) {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -58,12 +62,16 @@ export const auth = {
 
   // Sign out
   async signOut() {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { error } = await supabase.auth.signOut()
     if (error) throw error
   },
 
   // Send password reset email
   async resetPassword({ email }: PasswordResetData) {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`
     })
@@ -73,6 +81,8 @@ export const auth = {
 
   // Update password (for reset password flow)
   async updatePassword({ password }: PasswordUpdateData) {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { error } = await supabase.auth.updateUser({
       password
     })
@@ -82,6 +92,8 @@ export const auth = {
 
   // Get current session
   async getSession() {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { data: { session }, error } = await supabase.auth.getSession()
     if (error) throw error
     return session
@@ -89,6 +101,8 @@ export const auth = {
 
   // Get current user
   async getUser() {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error) throw error
     return user
@@ -96,6 +110,8 @@ export const auth = {
 
   // Listen to auth state changes
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     return supabase.auth.onAuthStateChange(callback)
   }
 }

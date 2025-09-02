@@ -20,6 +20,8 @@ export interface CreateProfileData {
 export const userProfile = {
   // Create a new user profile
   async create(data: CreateProfileData): Promise<Profile> {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const profileData: ProfileInsert = {
       ...data,
       onboarding_completed: false,
@@ -39,6 +41,8 @@ export const userProfile = {
 
   // Get user profile by user ID
   async getByUserId(userId: string): Promise<Profile | null> {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { data: profile, error } = await supabase
       .from('profiles')
       .select()
@@ -55,6 +59,8 @@ export const userProfile = {
 
   // Update user profile
   async update(userId: string, updates: Partial<ProfileUpdate>): Promise<Profile> {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const updateData: ProfileUpdate = {
       ...updates,
       updated_at: new Date().toISOString()
@@ -73,6 +79,8 @@ export const userProfile = {
 
   // Mark onboarding as completed
   async completeOnboarding(userId: string): Promise<void> {
+    if (!supabase) throw new Error('Supabase not configured')
+    
     const { error } = await supabase
       .from('profiles')
       .update({

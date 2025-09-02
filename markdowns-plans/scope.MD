@@ -76,12 +76,12 @@ This plan outlines the development of a complete nutrition and diet management p
   - Responsive breakpoints ✅ (responsive container paddings)
   - Dark/light mode support (future consideration) ✅ (CSS variables present)
 
-### 1.4 Deployment Scripts
-- **GitHub Pages Deployment**
-  - Build script for static export ✅ (`npm run build:gh-pages`)
-  - GitHub Actions workflow for auto-deployment ✅ (`.github/workflows/gh-pages.yml`)
-  - Environment-specific configuration ✅ (`NEXT_PUBLIC_BASE_PATH=/app-dieta`)
-  - Pre-deployment testing scripts ✅ (`npm run export` local)
+### 1.4 Deployment Scripts (Vercel) ✅ COMPLETE
+- **Vercel Deployment Configuration**
+  - Standard Next.js build configuration ✅
+  - API routes support ✅
+  - Server-side functionality enabled ✅
+  - Production deployment ready ✅
 
 ---
 

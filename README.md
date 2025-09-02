@@ -16,24 +16,44 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## GitHub Pages Deployment
+## Development
 
-This project is configured to export static files and deploy to GitHub Pages at `/app-dieta`.
+This project is a nutrition and diet management SaaS application with the following features:
 
-- Local export with base path:
+- **Authentication System**: Supabase-based user authentication
+- **User Profiles**: Comprehensive user onboarding and profile management
+- **Diet Catalog**: AI-powered diet recommendations using Google Gemini
+- **Meal Planning**: Weekly meal planning and tracking
+- **Progress Tracking**: User progress and adherence monitoring
 
+## Build and Deploy
+
+### Local Development
 ```bash
-npm run build:gh-pages
-npm run deploy:gh-pages
+npm run dev
 ```
 
-- GitHub Actions auto-deploys on pushes to `main`.
+### Production Build
+```bash
+npm run build
+npm start
+```
 
-Ensure repository Settings → Pages is set to deploy from the `gh-pages` branch.
+### Deploy on Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Tech Stack
+
+- **Framework**: Next.js 15.5.1 (App Router)
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **AI Integration**: Google Gemini 2.0 Flash API
+- **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Forms**: React Hook Form + Zod validation
+- **Payments**: Stripe (future implementation)
 
 ## Learn More
 
@@ -43,10 +63,4 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
