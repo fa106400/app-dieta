@@ -29,47 +29,68 @@ export function useAuth(): UseAuthReturn {
 
   // Initialize auth state
   useEffect(() => {
+
     const initializeAuth = async () => {
+  
       try {
+    
         setLoading(true)
         
         // Check if Supabase is configured
         if (!supabase) {
+      
           setError(new Error('Supabase not configured') as AuthError)
           setLoading(false)
           return
         }
 
-        // Get initial session
-        const { data: { session: initialSession } } = await supabase.auth.getSession()
-        setSession(initialSession)
-        setUser(initialSession?.user ?? null)
-        
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
+        
             setSession(session)
             setUser(session?.user ?? null)
             
             // Create profile after successful signup
             if (event === 'SIGNED_IN' && session?.user) {
+          
               try {
+            
                 await createProfileAfterSignup(
                   session.user.id,
                   session.user.user_metadata
                 )
               } catch (error) {
+            
                 console.error('Error creating profile after signup:', error)
+              } finally {
+                setLoading(false)
               }
             }
             
+            
+
             setLoading(false)
+        
           }
         )
 
-        return () => subscription.unsubscribe()
+        // Safety timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+          if (loading) {
+            setLoading(false);
+          }
+        }, 5000); // 5 second timeout
+
+        return () => {
+          subscription.unsubscribe()
+          clearTimeout(timeoutId)
+        }
       } catch (err) {
+        console.error('useAuth signUp error:', err)
         setError(err as AuthError)
+        setLoading(false)
+      } finally {
         setLoading(false)
       }
     }

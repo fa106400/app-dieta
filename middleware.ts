@@ -22,7 +22,7 @@ const publicRoutes: string[] = [
 const authOnlyLandingRoutes: string[] = ['/login', '/signup', '/forgot-password', '/reset-password']
 
 // API routes that require authentication
-const protectedApiRoutes: string[] = ['/api/auth/me']
+const protectedApiRoutes: string[] = []
 
 // Prefix considered protected (app area)
 const protectedPrefix = '/(app)'
@@ -43,18 +43,34 @@ function hasValidAuthTokens(req: NextRequest): boolean {
   const accessToken = req.cookies.get('sb-access-token')?.value
   const refreshToken = req.cookies.get('sb-refresh-token')?.value
   
+  console.log('🔍 Middleware - Checking auth tokens:')
+  console.log('  Access token:', accessToken ? 'Present' : 'Missing')
+  console.log('  Refresh token:', refreshToken ? 'Present' : 'Missing')
+  
   // Check for both access and refresh tokens
-  return Boolean(accessToken || refreshToken)
+  const hasTokens = Boolean(accessToken || refreshToken)
+  console.log('  Has valid tokens:', hasTokens)
+  
+  return hasTokens
 }
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+  
+  console.log('🔍 Middleware - Processing request:', pathname)
 
   const hasAuthTokens = hasValidAuthTokens(req)
   const isProtected = pathname.startsWith('/(app)')
   const isPublic = isPublicPath(pathname)
   const isAuthLanding = isAuthLandingPath(pathname)
   const isProtectedApi = isProtectedApiPath(pathname)
+  
+  console.log('🔍 Middleware - Route analysis:')
+  console.log('  Is protected route:', isProtected)
+  console.log('  Is public route:', isPublic)
+  console.log('  Is auth landing:', isAuthLanding)
+  console.log('  Is protected API:', isProtectedApi)
+  console.log('  Has auth tokens:', hasAuthTokens)
 
   // Gate protected routes by auth
   if (isProtected && !hasAuthTokens) {

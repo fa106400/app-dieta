@@ -1,41 +1,50 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useAuthContext } from '@/contexts/AuthContext'
-import { PublicRoute } from '@/components/auth/PublicRoute'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { PublicRoute } from "@/components/auth/PublicRoute";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 function LoginPageContent() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const { signIn } = useAuthContext()
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { signIn } = useAuthContext();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
     try {
-      await signIn({ email, password })
+      await signIn({ email, password });
       // Redirect to home page after successful login
-      router.push('/home')
+      router.push("/home");
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in. Please check your credentials.'
-      setError(errorMessage)
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to sign in. Please check your credentials.";
+      setError(errorMessage);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -78,7 +87,7 @@ function LoginPageContent() {
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -90,7 +99,11 @@ function LoginPageContent() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -101,12 +114,8 @@ function LoginPageContent() {
                 </div>
               )}
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Signing In...' : 'Sign In'}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
@@ -119,9 +128,9 @@ function LoginPageContent() {
                   Forgot your password?
                 </Link>
               </div>
-              
+
               <div className="text-sm text-gray-600">
-                Don&apos;t have an account?{' '}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/signup"
                   className="text-blue-600 hover:text-blue-500 font-medium"
@@ -134,7 +143,7 @@ function LoginPageContent() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
 export default function LoginPage() {
@@ -142,7 +151,5 @@ export default function LoginPage() {
     <PublicRoute>
       <LoginPageContent />
     </PublicRoute>
-  )
+  );
 }
-
-

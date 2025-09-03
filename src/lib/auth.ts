@@ -160,13 +160,27 @@ export const cookieUtils = {
   getAccessToken(cookieHeader: string | null): string | null {
     if (!cookieHeader) return null
     
+    console.log('🍪 CookieUtils - Raw cookie header:', cookieHeader)
+    
     const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
       const [key, value] = cookie.trim().split('=')
-      acc[key] = value
+      if (key && value) {
+        acc[key] = value
+        console.log(`🍪 CookieUtils - Parsed cookie: ${key} = ${value.substring(0, 20)}...`)
+      }
       return acc
     }, {} as Record<string, string>)
     
-    return cookies['sb-access-token'] || null
+    console.log('🍪 CookieUtils - All cookie keys:', Object.keys(cookies))
+    
+    // Try multiple possible cookie names for Supabase
+    const accessToken = cookies['sb-access-token'] || 
+                       cookies['sb-access-token.0'] || 
+                       cookies['sb-access-token.1'] ||
+                       cookies['access_token']
+    
+    console.log('🍪 CookieUtils - Access token found:', accessToken ? 'Yes' : 'No')
+    return accessToken
   },
 
   // Extract refresh token from cookies
@@ -175,10 +189,19 @@ export const cookieUtils = {
     
     const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
       const [key, value] = cookie.trim().split('=')
-      acc[key] = value
+      if (key && value) {
+        acc[key] = value
+      }
       return acc
     }, {} as Record<string, string>)
     
-    return cookies['sb-refresh-token'] || null
+    // Try multiple possible cookie names for Supabase
+    const refreshToken = cookies['sb-refresh-token'] || 
+                        cookies['sb-refresh-token.0'] || 
+                        cookies['sb-refresh-token.1'] ||
+                        cookies['refresh_token']
+    
+    console.log('🍪 CookieUtils - Refresh token found:', refreshToken ? 'Yes' : 'No')
+    return refreshToken
   }
 }

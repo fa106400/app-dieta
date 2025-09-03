@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+  console.log('🔍 GET /api/auth/me - Starting request')
+  
   // Check if Supabase environment variables are available
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('❌ Supabase environment variables not configured')
     return NextResponse.json({ 
       error: 'Supabase not configured'
     }, { status: 503 })
@@ -14,11 +17,15 @@ export async function GET(request: NextRequest) {
     const { cookieUtils } = await import('@/lib/auth')
     
     const cookieHeader = request.headers.get('cookie')
+    console.log('🍪 Cookie header:', cookieHeader ? 'Present' : 'Missing')
+    
     const accessToken = cookieUtils.getAccessToken(cookieHeader)
+    console.log('🔑 Access token:', accessToken ? 'Present' : 'Missing')
     
     if (!accessToken) {
+      console.log('❌ No access token found, returning 401')
       return NextResponse.json({ 
-        error: 'Authentication required'
+        error: 'Authentication required - No access token found'
       }, { status: 401 })
     }
 
@@ -100,8 +107,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  console.log('🔍 PUT /api/auth/me - Starting request')
+  
   // Check if Supabase environment variables are available
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('❌ Supabase environment variables not configured')
     return NextResponse.json({ 
       error: 'Supabase not configured'
     }, { status: 503 })
@@ -113,11 +123,15 @@ export async function PUT(request: NextRequest) {
     const { cookieUtils } = await import('@/lib/auth')
     
     const cookieHeader = request.headers.get('cookie')
+    console.log('🍪 Cookie header:', cookieHeader ? 'Present' : 'Missing')
+    
     const accessToken = cookieUtils.getAccessToken(cookieHeader)
+    console.log('🔑 Access token:', accessToken ? 'Present' : 'Missing')
     
     if (!accessToken) {
+      console.log('❌ No access token found, returning 401')
       return NextResponse.json({ 
-        error: 'Authentication required'
+        error: 'Authentication required - No access token found'
       }, { status: 401 })
     }
 
