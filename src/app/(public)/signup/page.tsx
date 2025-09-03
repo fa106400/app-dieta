@@ -1,67 +1,84 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useAuthContext } from '@/contexts/AuthContext'
-import { PublicRoute } from '@/components/auth/PublicRoute'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { PublicRoute } from "@/components/auth/PublicRoute";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 
 function SignupPageContent() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const { signUp } = useAuthContext()
-  const router = useRouter()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const { signUp } = useAuthContext();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+    console.log("Form submitted!", { email, name, password: "***" });
+
     if (password !== confirmPassword) {
-      setError('Passwords do not match. Please try again.')
-      return
+      setError("Passwords do not match. Please try again.");
+      return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long.')
-      return
+      setError("Password must be at least 6 characters long.");
+      return;
     }
 
-    setIsLoading(true)
-    setError(null)
-    setSuccess(null)
+    console.log("Starting signup process...");
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      await signUp({ email, password, name })
-      setSuccess('Account created successfully! Please check your email to verify your account.')
-      
+      console.log("Calling signUp function...");
+      await signUp({ email, password, name });
+      console.log("Signup successful!");
+      setSuccess(
+        "Account created successfully! Please check your email to verify your account."
+      );
+
       // Clear form
-      setName('')
-      setEmail('')
-      setPassword('')
-      setConfirmPassword('')
-      
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
       // Redirect to login after a delay
       setTimeout(() => {
-        router.push('/login')
-      }, 3000)
+        router.push("/login");
+      }, 3000);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create account. Please try again.'
-      setError(errorMessage)
+      console.error("Signup error:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to create account. Please try again.";
+      setError(errorMessage);
     } finally {
-      setIsLoading(false)
+      console.log("Setting loading to false");
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -120,7 +137,7 @@ function SignupPageContent() {
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -132,10 +149,16 @@ function SignupPageContent() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500">Password must be at least 6 characters long</p>
+                <p className="text-xs text-gray-500">
+                  Password must be at least 6 characters long
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -144,7 +167,7 @@ function SignupPageContent() {
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -156,7 +179,11 @@ function SignupPageContent() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                   >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -173,18 +200,14 @@ function SignupPageContent() {
                 </div>
               )}
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <div className="text-sm text-gray-600">
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <Link
                   href="/login"
                   className="text-blue-600 hover:text-blue-500 font-medium"
@@ -197,7 +220,7 @@ function SignupPageContent() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
 export default function SignupPage() {
@@ -205,7 +228,5 @@ export default function SignupPage() {
     <PublicRoute>
       <SignupPageContent />
     </PublicRoute>
-  )
+  );
 }
-
-

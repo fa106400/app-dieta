@@ -80,10 +80,13 @@ export function useAuth(): UseAuthReturn {
   // Sign up function
   const signUp = useCallback(async (data: SignUpData) => {
     try {
+      console.log('useAuth signUp called with:', data)
+      console.log('Supabase client available:', !!supabase)
       setError(null)
       setLoading(true)
       await auth.signUp(data)
     } catch (err) {
+      console.error('useAuth signUp error:', err)
       setError(err as AuthError)
       throw err
     } finally {

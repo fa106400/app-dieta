@@ -31,8 +31,15 @@ export interface PasswordUpdateData {
 export const auth = {
   // Sign up with email/password
   async signUp({ email, password, name }: SignUpData) {
-    if (!supabase) throw new Error('Supabase not configured')
+    console.log('auth.signUp called with:', { email, name, password: '***' })
+    console.log('Supabase client available:', !!supabase)
     
+    if (!supabase) {
+      console.error('Supabase not configured!')
+      throw new Error('Supabase not configured')
+    }
+    
+    console.log('Calling supabase.auth.signUp...')
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -43,7 +50,12 @@ export const auth = {
       }
     })
     
-    if (error) throw error
+    console.log('Supabase signUp response:', { data, error })
+    
+    if (error) {
+      console.error('Supabase signUp error:', error)
+      throw error
+    }
     return data
   },
 
