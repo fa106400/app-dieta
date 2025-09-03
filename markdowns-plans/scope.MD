@@ -100,10 +100,13 @@ This plan outlines the development of a complete nutrition and diet management p
   - Forgot Password (Screen 1.3) ✅
   - Reset Password (Screen 1.4) ✅
 
-- **API Endpoints**
-  - `/api/auth/status` for user state checking
-  - Authentication middleware integration
-  - Route protection implementation
+- **API Endpoints** ✅ COMPLETE
+  - `/api/auth/status` for user state checking ✅
+  - `/api/auth/me` for user profile data ✅
+  - `/api/auth/refresh` for token refresh ✅
+  - `/api/auth/logout` for proper logout handling ✅
+  - Authentication middleware integration ✅
+  - Route protection implementation ✅
 
 ### 2.2 User Profile & Onboarding
 - **Onboarding Flow (Screen 2.1)**
