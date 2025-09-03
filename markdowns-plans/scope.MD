@@ -161,7 +161,7 @@ This plan outlines the development of a complete nutrition and diet management p
   - User profile analysis
   - Diet matching algorithms using Gemini
   - Score calculation and ranking
-  - Weekly refresh limitations (1 week cooldown)
+  - Weekly refresh limitations (1 week cooldown) (**TO-DO: validar a regra novamente, ler Screen Id da search diet**)
 
 - **Recommendation Screens**
   - AI-suggested diets display
@@ -1296,7 +1296,7 @@ This screen allows a new user to create an account in the system. The registrati
    * On submit, call `supabase.auth.signUp({ email, password, options: { data: { full_name } } })`.
    * Supabase should store `full_name` in `auth.users.user_metadata`.
    * User receives verification email (Supabase default).
-   * On success, user is redirected to **Home (2.1)**.
+   * On success, user is redirected to **Home (3.1)**.
 
 3. **Failure Handling**:
 
@@ -1323,7 +1323,7 @@ This screen allows a new user to create an account in the system. The registrati
 
 ## Navigation
 
-* Successful sign-up → redirect to **Home (2.1)**.
+* Successful sign-up → redirect to **Home (3.1)**.
 * Secondary action → navigate to **Login (1.1)**.
 
 ---
@@ -1786,7 +1786,7 @@ where email = 'test@example.com';
 This screen is presented **after a user completes signup (1.2) and logs in for the first time**.
 The goal is to **collect essential nutritional preferences and restrictions** to allow the system to **suggest appropriate diets**. This data is stored in the Supabase `profiles` table and later used by the **diet recommendation engine (AI matching)**.
 
-#Rule to implement:
+#Rule to implement (don't do this during phase 2, item 2.2 "User Profile & Onboarding". We will implement this on Phase 3, subitem 3.2):
 * After the user completes the onboarding questionnaire and all required profile fields for diet recommendations:
   1. The system collects user profile data from the database.
   2. The system retrieves all diet records from the catalog.
@@ -1801,7 +1801,7 @@ The goal is to **collect essential nutritional preferences and restrictions** to
 * Primary objective: weight loss, weight gain, maintain, general health
 * Dietary restrictions/preferences: vegan, vegetarian, lactose intolerance, gluten-free, low-carb, etc.
 * Allergies or special considerations
-* Activity level (optional)
+* Activity level
 * Food dislikes (optional)
 
 ---
@@ -1824,9 +1824,34 @@ The goal is to **collect essential nutritional preferences and restrictions** to
   5. **Dietary Restrictions / Preferences** (checkbox group, optional)
 
      * “Vegan”, “Vegetarian”, “Lactose Intolerant”, “Gluten-Free”, “Low Carb”, “Other (text input)”
-  6. **Activity Level** (select, optional)
+  6. **Activity Level** (select + panel to render the description and examples)
 
      * “Sedentary”, “Lightly Active”, “Moderately Active”, “Very Active”
+        6.1. Sedentary:
+          * Description: Little to no exercise and a job that involves sitting most of the day. 
+          * Examples: Office workers, receptionists, drivers, or individuals who spend most of their day in front of a computer with minimal movement
+          * Observation for AI use later: (BMR x 1.375)
+        
+        6.2. Lightly Active 
+          * Description: Light exercise or sports 1-3 days per week. 
+          * Examples: A sedentary job with light exercise, such as a short walk or a light workout a few times a week. 
+          * Observation for AI use later: (BMR x 1.375)
+        
+        6.3. Moderately Active 
+          * Description: Moderate exercise or sports 3-5 days per week. 
+          * Examples: Someone with a job that involves standing for a significant portion of the day, like a sales assistant, along with moderate exercise a few times a week. 
+          * Observation for AI use later: (BMR x 1.55)
+        
+        6.4. Very Active 
+          * Description: Hard exercise or sports 6-7 days a week. 
+          * Examples: Engaging in intense workouts for most days of the week. 
+          * Observation for AI use later: (BMR x 1.725)
+        
+        6.5. Extra Active 
+          * Description: Very intense exercise and training, a physically demanding job, or training twice a day. 
+          * Examples: Professions such as carpenters, paramedics, or individuals with physically demanding jobs combined with frequent, intense exercise.
+          * Observation for AI use later: (BMR x 1.9)
+
   7. **Food Dislikes** (textarea, optional)
 
 * **CTA Button**:
@@ -1877,21 +1902,7 @@ The goal is to **collect essential nutritional preferences and restrictions** to
 ## Technical Notes
 
 * **Supabase Table**: `profiles`
-
-```sql
-create table profiles (
-  id uuid references auth.users(id) primary key,
-  age integer not null,
-  weight float not null,
-  height float not null,
-  primary_goal text not null,
-  dietary_preferences text[] default '{}',
-  activity_level text,
-  food_dislikes text,
-  onboarding_completed boolean default false,
-  created_at timestamp default now()
-);
-```
+Check sql in the file "database-schema.sql"
 
 * **Form State Management**: `react-hook-form` + Zod schema validation
 * **UI Components**: Tailwind + shadcn/ui (Input, Select, Checkbox, RadioGroup, Button)
