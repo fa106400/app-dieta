@@ -96,7 +96,7 @@ export function useAuth(): UseAuthReturn {
     }
 
     initializeAuth()
-  }, [])
+  }, [loading])
 
   // Sign up function
   const signUp = useCallback(async (data: SignUpData) => {
