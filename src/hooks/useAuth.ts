@@ -29,11 +29,9 @@ export function useAuth(): UseAuthReturn {
 
   // Initialize auth state
   useEffect(() => {
-
     const initializeAuth = async () => {
   
       try {
-    
         setLoading(true)
         
         // Check if Supabase is configured
@@ -55,7 +53,6 @@ export function useAuth(): UseAuthReturn {
             if (event === 'SIGNED_IN' && session?.user) {
           
               try {
-            
                 await createProfileAfterSignup(
                   session.user.id,
                   session.user.user_metadata
@@ -67,11 +64,8 @@ export function useAuth(): UseAuthReturn {
                 setLoading(false)
               }
             }
-            
-            
 
             setLoading(false)
-        
           }
         )
 
@@ -96,7 +90,7 @@ export function useAuth(): UseAuthReturn {
     }
 
     initializeAuth()
-  }, [loading])
+  }, [])
 
   // Sign up function
   const signUp = useCallback(async (data: SignUpData) => {
