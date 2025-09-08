@@ -39,19 +39,12 @@ function isProtectedApiPath(pathname: string): boolean {
   return protectedApiRoutes.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }
 
-function hasValidAuthTokens(req: NextRequest): boolean {
-  const accessToken = req.cookies.get('sb-access-token')?.value
-  const refreshToken = req.cookies.get('sb-refresh-token')?.value
-  
-  console.log('🔍 Middleware - Checking auth tokens:')
-  console.log('  Access token:', accessToken ? 'Present' : 'Missing')
-  console.log('  Refresh token:', refreshToken ? 'Present' : 'Missing')
-  
-  // Check for both access and refresh tokens
-  const hasTokens = Boolean(accessToken || refreshToken)
-  console.log('  Has valid tokens:', hasTokens)
-  
-  return hasTokens
+// With @supabase/ssr, trust Supabase cookies by presence, no manual parsing
+function hasAnySupabaseCookie(req: NextRequest): boolean {
+  return Boolean(
+    req.cookies.get('sb-access-token')?.value ||
+    req.cookies.get('sb-refresh-token')?.value
+  )
 }
 
 export function middleware(req: NextRequest) {
@@ -59,7 +52,7 @@ export function middleware(req: NextRequest) {
   
   console.log('🔍 Middleware - Processing request:', pathname)
 
-  const hasAuthTokens = hasValidAuthTokens(req)
+  const hasAuthTokens = hasAnySupabaseCookie(req)
   const isProtected = pathname.startsWith('/(app)')
   const isPublic = isPublicPath(pathname)
   const isAuthLanding = isAuthLandingPath(pathname)
@@ -93,11 +86,6 @@ export function middleware(req: NextRequest) {
     const url = req.nextUrl.clone()
     url.pathname = '/home'
     return NextResponse.redirect(url)
-  }
-
-  // Public routes pass through
-  if (isPublic) {
-    return NextResponse.next()
   }
 
   return NextResponse.next()

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   console.log('🔍 GET /api/auth/me - Starting request')
   
   // Check if Supabase environment variables are available
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     console.error('❌ Supabase environment variables not configured')
     return NextResponse.json({ 
       error: 'Supabase not configured'
@@ -13,23 +13,9 @@ export async function GET(request: NextRequest) {
 
   try {
     // Import dynamically to avoid build-time issues
-    const { createServerSupabaseClient } = await import('@/lib/supabase')
-    const { cookieUtils } = await import('@/lib/auth')
-    
-    const cookieHeader = request.headers.get('cookie')
-    console.log('🍪 Cookie header:', cookieHeader ? 'Present' : 'Missing')
-    
-    const accessToken = cookieUtils.getAccessToken(cookieHeader)
-    console.log('🔑 Access token:', accessToken ? 'Present' : 'Missing')
-    
-    if (!accessToken) {
-      console.log('❌ No access token found, returning 401')
-      return NextResponse.json({ 
-        error: 'Authentication required - No access token found'
-      }, { status: 401 })
-    }
-
-    const supabase = createServerSupabaseClient()
+    const { createRouteSupabaseClient } = await import('@/lib/supabase-route')
+    const res = NextResponse.next()
+    const supabase = createRouteSupabaseClient(_request, res)
     
     if (!supabase) {
       return NextResponse.json({ 
@@ -38,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Get user info
-    const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
     
     if (userError || !user) {
       return NextResponse.json({ 
@@ -106,11 +92,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function PUT(_request: NextRequest) {
   console.log('🔍 PUT /api/auth/me - Starting request')
   
   // Check if Supabase environment variables are available
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     console.error('❌ Supabase environment variables not configured')
     return NextResponse.json({ 
       error: 'Supabase not configured'
@@ -119,23 +105,9 @@ export async function PUT(request: NextRequest) {
 
   try {
     // Import dynamically to avoid build-time issues
-    const { createServerSupabaseClient } = await import('@/lib/supabase')
-    const { cookieUtils } = await import('@/lib/auth')
-    
-    const cookieHeader = request.headers.get('cookie')
-    console.log('🍪 Cookie header:', cookieHeader ? 'Present' : 'Missing')
-    
-    const accessToken = cookieUtils.getAccessToken(cookieHeader)
-    console.log('🔑 Access token:', accessToken ? 'Present' : 'Missing')
-    
-    if (!accessToken) {
-      console.log('❌ No access token found, returning 401')
-      return NextResponse.json({ 
-        error: 'Authentication required - No access token found'
-      }, { status: 401 })
-    }
-
-    const supabase = createServerSupabaseClient()
+    const { createRouteSupabaseClient } = await import('@/lib/supabase-route')
+    const res = NextResponse.next()
+    const supabase = createRouteSupabaseClient(_request, res)
     
     if (!supabase) {
       return NextResponse.json({ 
@@ -144,7 +116,7 @@ export async function PUT(request: NextRequest) {
     }
     
     // Get user info
-    const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
     
     if (userError || !user) {
       return NextResponse.json({ 
@@ -153,7 +125,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Parse request body
-    const body = await request.json()
+    const body = await _request.json()
     const { name, avatar_url, ...otherProfileData } = body
 
     // Update user metadata if name or avatar_url provided

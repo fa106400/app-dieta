@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // Check if Supabase environment variables are available
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ 
       authenticated: false, 
       user: null,
@@ -12,23 +12,9 @@ export async function GET(request: NextRequest) {
 
   try {
     // Import dynamically to avoid build-time issues
-    const { createServerSupabaseClient } = await import('@/lib/supabase')
-    const { cookieUtils } = await import('@/lib/auth')
-    
-    const cookieHeader = request.headers.get('cookie')
-    const accessToken = cookieUtils.getAccessToken(cookieHeader)
-    const refreshToken = cookieUtils.getRefreshToken(cookieHeader)
-    
-    // If no tokens at all, user is not authenticated
-    if (!accessToken && !refreshToken) {
-      return NextResponse.json({ 
-        authenticated: false, 
-        user: null,
-        session: null
-      })
-    }
-
-    const supabase = createServerSupabaseClient()
+    const { createRouteSupabaseClient } = await import('@/lib/supabase-route')
+    const res = NextResponse.next()
+    const supabase = createRouteSupabaseClient(_request, res)
     
     if (!supabase) {
       return NextResponse.json({ 
@@ -39,32 +25,8 @@ export async function GET(request: NextRequest) {
       }, { status: 503 })
     }
     
-    // Try to get user with access token first
-    let user = null
-    let session = null
-    let error = null
+    const { data: { user }, error } = await supabase.auth.getUser()
 
-    if (accessToken) {
-      const { data: { user: userData }, error: userError } = await supabase.auth.getUser(accessToken)
-      user = userData
-      error = userError
-    }
-
-    // If access token failed but we have refresh token, try to refresh
-    if ((error || !user) && refreshToken) {
-      const { data: { session: sessionData }, error: sessionError } = await supabase.auth.refreshSession({
-        refresh_token: refreshToken
-      })
-      
-      if (sessionData?.user) {
-        user = sessionData.user
-        session = sessionData
-        error = null
-      } else {
-        error = sessionError
-      }
-    }
-    
     if (error || !user) {
       return NextResponse.json({ 
         authenticated: false, 
@@ -84,12 +46,7 @@ export async function GET(request: NextRequest) {
         created_at: user.created_at,
         email_confirmed_at: user.email_confirmed_at
       },
-      session: session ? {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        expires_at: session.expires_at,
-        expires_in: session.expires_in
-      } : null
+      session: null
     })
   } catch (error) {
     console.error('Auth status check error:', error)

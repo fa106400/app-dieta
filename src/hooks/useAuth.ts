@@ -42,6 +42,14 @@ export function useAuth(): UseAuthReturn {
           return
         }
 
+        // Prime state with existing session to avoid flicker/redirects
+        const { data: sessionData, error: getSessionError } = await supabase.auth.getSession()
+        if (getSessionError) {
+          setError(getSessionError as AuthError)
+        }
+        setSession(sessionData.session ?? null)
+        setUser(sessionData.session?.user ?? null)
+
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
@@ -71,10 +79,8 @@ export function useAuth(): UseAuthReturn {
 
         // Safety timeout to prevent infinite loading
         const timeoutId = setTimeout(() => {
-          if (loading) {
-            setLoading(false);
-          }
-        }, 5000); // 5 second timeout
+          setLoading(false)
+        }, 5000)
 
         return () => {
           subscription.unsubscribe()
