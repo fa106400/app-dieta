@@ -30,6 +30,11 @@ export function Breadcrumbs() {
     return null;
   }
 
+  //fixing the breadcrumbs for the diets detail page
+  if (pathSegments.length === 2 && pathSegments[0] === "diets") {
+    pathSegments.pop();
+  }
+
   return (
     <nav className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
