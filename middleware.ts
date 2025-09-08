@@ -53,7 +53,7 @@ export function middleware(req: NextRequest) {
   console.log('🔍 Middleware - Processing request:', pathname)
 
   const hasAuthTokens = hasAnySupabaseCookie(req)
-  const isProtected = pathname.startsWith('/(app)')
+  const isProtected = pathname.startsWith(protectedPrefix)
   const isPublic = isPublicPath(pathname)
   const isAuthLanding = isAuthLandingPath(pathname)
   const isProtectedApi = isProtectedApiPath(pathname)
