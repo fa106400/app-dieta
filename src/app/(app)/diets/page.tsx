@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { DietCard } from "@/components/diets/DietCard";
@@ -73,7 +73,15 @@ export default function DietCatalogPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Refs to prevent unnecessary re-fetches
+  const hasFetchedDiets = useRef(false);
+  const hasFetchedRecommended = useRef(false);
+  const isInitialized = useRef(false);
+
   const fetchDiets = useCallback(async () => {
+    // Prevent multiple simultaneous fetches
+    if (hasFetchedDiets.current) return;
+
     if (!supabase) {
       setError("Database connection not available");
       setLoading(false);
@@ -83,6 +91,7 @@ export default function DietCatalogPage() {
     try {
       setLoading(true);
       setError(null);
+      hasFetchedDiets.current = true;
 
       const { data, error } = await supabase
         .from("diet_catalog_view")
@@ -95,15 +104,21 @@ export default function DietCatalogPage() {
     } catch (err) {
       console.error("Error fetching diets:", err);
       setError("Unable to load diets. Please try again.");
+      hasFetchedDiets.current = false; // Reset on error to allow retry
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // No dependencies to prevent re-creation
 
   const fetchRecommendedDiets = useCallback(async () => {
-    if (!user || !supabase) return;
+    // Prevent multiple simultaneous fetches
+    if (hasFetchedRecommended.current || !user) return;
+
+    if (!supabase) return;
 
     try {
+      hasFetchedRecommended.current = true;
+
       const { data, error } = await supabase
         .from("diet_recommendations")
         .select(
@@ -142,9 +157,11 @@ export default function DietCatalogPage() {
       setRecommendedDiets(recommended);
     } catch (err) {
       console.error("Error fetching recommended diets:", err);
+      hasFetchedRecommended.current = false; // Reset on error to allow retry
       // Don't show error for recommendations, just hide the section
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]); // Only depend on user.id, not the entire user object
 
   const applyFiltersAndSearch = useCallback(() => {
     let filtered = [...diets];
@@ -214,18 +231,39 @@ export default function DietCatalogPage() {
     setFilteredDiets(filtered);
   }, [diets, searchQuery, filters, sortBy]);
 
-  // Fetch all diets
+  // Initialize data fetching only once
   useEffect(() => {
-    fetchDiets();
-    if (user) {
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      fetchDiets();
+    }
+  }, [fetchDiets]);
+
+  // Fetch recommended diets when user changes
+  useEffect(() => {
+    if (user && !hasFetchedRecommended.current) {
       fetchRecommendedDiets();
     }
-  }, [user, fetchDiets, fetchRecommendedDiets]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, fetchRecommendedDiets]);
 
   // Apply filters and search
   useEffect(() => {
     applyFiltersAndSearch();
   }, [applyFiltersAndSearch]);
+
+  // Handle browser visibility changes to prevent unnecessary re-fetches
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // Don't refetch when tab becomes visible again
+      // The data should still be valid
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   const handleFilterChange = (newFilters: DietFilters) => {
     setFilters(newFilters);
@@ -267,7 +305,13 @@ export default function DietCatalogPage() {
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Unable to Load Diets</h3>
             <p className="text-gray-600 mb-4">{error}</p>
-            <Button onClick={fetchDiets} variant="outline">
+            <Button
+              onClick={() => {
+                hasFetchedDiets.current = false;
+                fetchDiets();
+              }}
+              variant="outline"
+            >
               Try Again
             </Button>
           </CardContent>
