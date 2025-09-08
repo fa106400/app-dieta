@@ -33,6 +33,7 @@ export interface Diet {
   is_public?: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
+  // These fields are only available in diet_catalog_view, not in base diets table
   variant_count?: number | null;
   min_calories?: number | null;
   max_calories?: number | null;
