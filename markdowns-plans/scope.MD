@@ -2775,9 +2775,9 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 **Main Goals**:
 
 * Display full diet information clearly.
-* Allow users to select a **caloric variation** if pre-calculated options exist.
 * Provide access to **substitutions** for ingredients or meals.
 * Support marking the diet as **“Follow Now”**, which sets it as the user’s active diet plan.
+* Support marking the diet as **favorite**, which sets this diet_id in the favorites table for this user_id. Heart sign for Toggle/untoggle.
 
 ---
 
@@ -2787,12 +2787,7 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 
   * Diet name
   * Category badges
-  * Back button → navigates to previous screen (Catalog, Favorites, or Week Plan)
-
-* **Caloric Options / Pre-Calculated Variations**
-
-  * Dropdown or buttons to select caloric version (e.g., 1500 kcal, 1800 kcal, 2000 kcal)
-  * Selecting a variation updates meal macros and totals
+  * Back button → navigates to previous screen (router.back())
 
 * **Daily Meal Plan**
 
@@ -2809,7 +2804,7 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 * **Meal Substitutions** (Pop-up/Expandable)
 
   * Show alternative ingredients maintaining macro balance
-  * Triggered by “Swap” or “Suggest Alternative” button on each meal item
+  * Triggered by “Swap” or “Suggest Alternative” button on each meal item. (for now, create a button but let it without action. We will develop this feature later)
 
 * **Follow Now CTA**
 
@@ -2838,7 +2833,7 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 
 3. **Meal Substitutions**
 
-   * Fetch from `meal_alternatives` table based on meal\_id
+   * Fetch from `meal_alternatives` table based on meal_id
    * Limit suggestions to maintain macro/calorie equivalence
 
 4. **Caloric Variation Switch**
@@ -2876,8 +2871,8 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 * **Supabase Tables**
 
   * `diets` → main diet metadata
-  * `diet_meals` → meals per diet (meal\_id, day, order)
-  * `meal_alternatives` → alternative ingredients or recipes
+  * `diet_meals` → meals per diet (meal_id, day, order) (actual table name is 'diet')
+  * `meal_alternatives` → alternative ingredients or recipes (CREATE THE TABLE IN OUR SCHEMA, SUPABASE FILES E HANDLE ME THE SCRIPT FOR CREATING THE TABLE IN SUPABASE SERVER)
   * `user_current_diet` → tracks the user’s active diet and selected variation
 
 * **UI Components**
@@ -2955,8 +2950,7 @@ export default function DietDetail({ dietId }) {
 
 ## Acceptance Criteria
 
-* All meals, macros, and calorie variations display correctly.
-* User can switch caloric variation and see updated values.
+* All meals, macros display correctly.
 * Follow Now button updates **user\_current\_diet** correctly.
 * Meal substitution button opens alternatives (if available).
 * Back navigation works consistently.
@@ -2973,7 +2967,7 @@ export default function DietDetail({ dietId }) {
 
 ## Next.js App Routing & Middleware Interplay
 
-* Route: `/diets/[dietId]`
+* Route: `/diets/[dietId]` (ALTER SCREEN 4.1: EACH DIET CARD HAS A "View Details" BUTTON THAT SHOULD ROUTES TO THIS PATH PATTERN `/diets/[dietId]` TOO)
 * Middleware:
 
   * Authenticated session required → redirect `/login`.
