@@ -152,9 +152,9 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Diet Catalog Screens** ✅
   - Favorites management (Screen 4.2) ✅
 
-### 3.1.4 Diet Catalog System (Screen 5.1)
-- **Diet Catalog Screens**
-  - Diet detail view (Screen 5.1)
+### 3.1.4 Diet Catalog System (Screen 5.1) ✅
+- **Diet Catalog Screens** ✅
+  - Diet detail view (Screen 5.1) ✅
 
 ### 3.1.5 Diet Catalog System (search & filter diets)
 - **Diet Catalog Screens**

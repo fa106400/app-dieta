@@ -1,0 +1,539 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  Heart,
+  Loader2,
+  AlertCircle,
+  Users,
+  Star,
+  ChevronDown,
+  ChevronRight,
+  Flame,
+  Utensils,
+  Calendar,
+  Target,
+} from "lucide-react";
+import { Diet } from "@/app/(app)/diets/page";
+import { toast } from "sonner";
+
+interface Macros {
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+interface MealPlan {
+  name: string;
+  calories: number;
+  ingredients?: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>;
+  macros?: Macros;
+}
+
+interface DayPlan {
+  meals: MealPlan[];
+}
+
+interface WeekPlan {
+  days: DayPlan[];
+}
+
+interface DietVariant {
+  id: string;
+  diet_id: string;
+  calories_total: number;
+  macros: Macros;
+  week_plan: WeekPlan;
+  created_at: string | null;
+}
+
+interface Meal {
+  id: string;
+  diet_variant_id: string;
+  day_index: number;
+  meal_index: number;
+  title: string;
+  description: string | null;
+  ingredients: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>;
+  macros: Macros;
+  calories: number;
+  meal_type: string | null;
+  created_at: string | null;
+}
+
+interface DietDetail extends Diet {
+  variants: DietVariant[];
+  meals: Meal[];
+  is_favorited?: boolean;
+}
+
+export default function DietDetailPage() {
+  const router = useRouter();
+  const params = useParams();
+  const { user } = useAuthContext();
+  const dietId = params.dietId as string;
+
+  const [diet, setDiet] = useState<DietDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<DietVariant | null>(
+    null
+  );
+  const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0])); // Expand first day by default
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+
+  // Fetch diet details
+  const fetchDiet = useCallback(async () => {
+    if (!dietId || !supabase) {
+      setError("Invalid diet ID or database connection not available");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Fetch diet basic info
+      const { data: dietData, error: dietError } = await supabase
+        .from("diets")
+        .select("*")
+        .eq("id", dietId)
+        .single();
+
+      if (dietError) throw dietError;
+
+      // Fetch diet variants
+      const { data: variantsData, error: variantsError } = await supabase
+        .from("diet_variants")
+        .select("*")
+        .eq("diet_id", dietId)
+        .order("calories_total", { ascending: true });
+
+      if (variantsError) throw variantsError;
+
+      // Fetch meals for all variants
+      const { data: mealsData, error: mealsError } = await supabase
+        .from("meals")
+        .select("*")
+        .in("diet_variant_id", variantsData?.map((v) => v.id) || [])
+        .order("day_index, meal_index");
+
+      if (mealsError) throw mealsError;
+
+      // Check if user has favorited this diet
+      let isFavorited = false;
+      if (user) {
+        const { data: favoriteData } = await supabase
+          .from("favorites")
+          .select("diet_id")
+          .eq("user_id", user.id)
+          .eq("diet_id", dietId)
+          .single();
+
+        isFavorited = !!favoriteData;
+      }
+
+      const dietDetail: DietDetail = {
+        ...dietData,
+        variants: (variantsData || []).map((v) => ({
+          ...v,
+          macros: v.macros as unknown as Macros,
+          week_plan: v.week_plan as unknown as WeekPlan,
+        })),
+        meals: (mealsData || []).map((m) => ({
+          ...m,
+          ingredients: m.ingredients as unknown as Array<{
+            name: string;
+            quantity: number;
+            unit: string;
+          }>,
+          macros: m.macros as unknown as Macros,
+        })),
+        is_favorited: isFavorited,
+      };
+
+      setDiet(dietDetail);
+
+      // Set first variant as selected by default
+      if (dietDetail.variants && dietDetail.variants.length > 0) {
+        setSelectedVariant(dietDetail.variants[0]);
+      }
+    } catch (err) {
+      console.error("Error fetching diet:", err);
+      setError("Could not load diet. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }, [dietId, user]);
+
+  useEffect(() => {
+    fetchDiet();
+  }, [fetchDiet]);
+
+  // Toggle favorite
+  const toggleFavorite = async () => {
+    if (!user || !supabase || !diet || !diet.id) return;
+
+    setIsTogglingFavorite(true);
+
+    try {
+      if (diet.is_favorited) {
+        // Remove from favorites
+        const { error } = await supabase
+          .from("favorites")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("diet_id", diet.id);
+
+        if (error) throw error;
+
+        setDiet((prev) => (prev ? { ...prev, is_favorited: false } : null));
+        toast.success("Removed from favorites");
+      } else {
+        // Add to favorites
+        const { error } = await supabase.from("favorites").insert({
+          user_id: user.id,
+          diet_id: diet.id,
+        });
+
+        if (error) throw error;
+
+        setDiet((prev) => (prev ? { ...prev, is_favorited: true } : null));
+        toast.success("Added to favorites");
+      }
+    } catch (err) {
+      console.error("Error toggling favorite:", err);
+      toast.error("Action failed, please retry.");
+    } finally {
+      setIsTogglingFavorite(false);
+    }
+  };
+
+  // Follow Now functionality
+  const followNow = async () => {
+    if (!user || !supabase || !diet || !diet.id || !selectedVariant) return;
+
+    setIsFollowing(true);
+
+    try {
+      // First, deactivate any current active diet
+      await supabase
+        .from("user_current_diet")
+        .update({ is_active: false })
+        .eq("user_id", user.id)
+        .eq("is_active", true);
+
+      // Set new active diet
+      const { error } = await supabase.from("user_current_diet").insert({
+        user_id: user.id,
+        diet_id: diet.id,
+        diet_variant_id: selectedVariant.id,
+        is_active: true,
+      });
+
+      if (error) throw error;
+
+      toast.success("Diet set as your current plan!");
+      router.push("/my-week");
+    } catch (err) {
+      console.error("Error setting active diet:", err);
+      toast.error("Failed to set as active diet.");
+    } finally {
+      setIsFollowing(false);
+    }
+  };
+
+  // Toggle day expansion
+  const toggleDay = (dayIndex: number) => {
+    setExpandedDays((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(dayIndex)) {
+        newSet.delete(dayIndex);
+      } else {
+        newSet.add(dayIndex);
+      }
+      return newSet;
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading diet details...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !diet) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <Card className="max-w-md">
+          <CardContent className="p-6 text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Unable to Load Diet</h3>
+            <p className="text-gray-600 mb-4">{error || "Diet not found"}</p>
+            <Button onClick={fetchDiet} variant="outline">
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="flex items-center space-x-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {diet.title || "Untitled Diet"}
+            </h1>
+            <p className="text-gray-600 mt-1">
+              {diet.description || "No description available"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleFavorite}
+            disabled={isTogglingFavorite}
+            className={`${
+              diet.is_favorited
+                ? "text-red-500 hover:text-red-600"
+                : "text-gray-400 hover:text-red-500"
+            }`}
+          >
+            {isTogglingFavorite ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Heart
+                className={`h-4 w-4 ${diet.is_favorited ? "fill-current" : ""}`}
+              />
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Diet Info Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Target className="h-5 w-5 text-blue-500" />
+              <span className="text-sm font-medium text-gray-600">
+                Category
+              </span>
+            </div>
+            <Badge variant="secondary">
+              {diet.category?.replace("_", " ").toUpperCase() || "Unknown"}
+            </Badge>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Users className="h-5 w-5 text-green-500" />
+              <span className="text-sm font-medium text-gray-600">
+                Difficulty
+              </span>
+            </div>
+            <Badge variant="secondary">
+              {diet.difficulty?.toUpperCase() || "Unknown"}
+            </Badge>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Calendar className="h-5 w-5 text-purple-500" />
+              <span className="text-sm font-medium text-gray-600">
+                Duration
+              </span>
+            </div>
+            <div className="text-lg font-semibold">
+              {diet.duration_weeks || 0} weeks
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Star className="h-5 w-5 text-yellow-500" />
+              <span className="text-sm font-medium text-gray-600">
+                Popularity
+              </span>
+            </div>
+            <div className="text-lg font-semibold">
+              {diet.popularity_score || 0}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Caloric Variations */}
+      {diet.variants.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Flame className="h-5 w-5" />
+              <span>Caloric Variations</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {diet.variants.map((variant) => (
+                <Card
+                  key={variant.id}
+                  className={`cursor-pointer transition-all ${
+                    selectedVariant?.id === variant.id
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:shadow-md"
+                  }`}
+                  onClick={() => setSelectedVariant(variant)}
+                >
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {variant.calories_total} cal
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <div>Protein: {variant.macros.protein}g</div>
+                        <div>Carbs: {variant.macros.carbs}g</div>
+                        <div>Fat: {variant.macros.fat}g</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Daily Meal Plan */}
+      {selectedVariant && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Utensils className="h-5 w-5" />
+              <span>Daily Meal Plan</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {selectedVariant.week_plan.days.map((day, dayIndex) => (
+                <Card key={dayIndex}>
+                  <CardHeader
+                    className="cursor-pointer"
+                    onClick={() => toggleDay(dayIndex)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">
+                        Day {dayIndex + 1}
+                      </CardTitle>
+                      {expandedDays.has(dayIndex) ? (
+                        <ChevronDown className="h-5 w-5" />
+                      ) : (
+                        <ChevronRight className="h-5 w-5" />
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  {expandedDays.has(dayIndex) && (
+                    <CardContent>
+                      <div className="space-y-3">
+                        {day.meals.map((meal, mealIndex) => (
+                          <div
+                            key={mealIndex}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                          >
+                            <div className="flex-1">
+                              <h4 className="font-medium">{meal.name}</h4>
+                              <div className="text-sm text-gray-600">
+                                {meal.calories} calories
+                                {meal.macros && (
+                                  <span className="ml-2">
+                                    • {meal.macros.protein}P /{" "}
+                                    {meal.macros.carbs}C / {meal.macros.fat}F
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled
+                              className="opacity-50"
+                            >
+                              Swap
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Follow Now Button */}
+      <div className="flex justify-center">
+        <Button
+          onClick={followNow}
+          disabled={!selectedVariant || isFollowing}
+          size="lg"
+          className="px-8"
+        >
+          {isFollowing ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Setting as Active...
+            </>
+          ) : (
+            "Follow Now"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}

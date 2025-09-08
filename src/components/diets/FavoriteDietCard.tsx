@@ -170,7 +170,7 @@ export function FavoriteDietCard({
 
             <div className="ml-4 flex flex-col items-end space-y-2">
               <Button asChild size="sm">
-                <Link href={`/diets/${diet.slug || diet.id}`}>
+                <Link href={`/diets/${diet.id}`}>
                   View Details
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
@@ -280,7 +280,7 @@ export function FavoriteDietCard({
 
         <div className="pt-2">
           <Button asChild className="w-full" size="sm">
-            <Link href={`/diets/${diet.slug || diet.id}`}>
+            <Link href={`/diets/${diet.id}`}>
               View Details
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>
