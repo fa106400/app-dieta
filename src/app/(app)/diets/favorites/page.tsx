@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase, validateSession } from "@/lib/supabase";
 import { FavoriteDietCard } from "@/components/diets/FavoriteDietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,8 +36,15 @@ export default function FavoritesPage() {
     new Set()
   );
 
+  // Refs to prevent unnecessary re-fetches
+  const hasFetchedFavorites = useRef(false);
+  const isInitialized = useRef(false);
+
   // Fetch user's favorite diets
   const fetchFavorites = useCallback(async () => {
+    // Prevent multiple simultaneous fetches
+    if (hasFetchedFavorites.current) return;
+
     if (!user || !supabase) {
       setError("User not authenticated");
       setLoading(false);
@@ -47,6 +54,10 @@ export default function FavoritesPage() {
     try {
       setLoading(true);
       setError(null);
+      hasFetchedFavorites.current = true;
+
+      // Validate session before making requests
+      await validateSession();
 
       const { data, error } = await supabase
         .from("favorites")
@@ -87,14 +98,33 @@ export default function FavoritesPage() {
     } catch (err) {
       console.error("Error fetching favorites:", err);
       setError("Could not load favorites. Please try again.");
+      hasFetchedFavorites.current = false; // Reset on error to allow retry
     } finally {
       setLoading(false);
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]); // Only depend on user.id, not entire user object
 
+  // Initialize data fetching only once
   useEffect(() => {
-    fetchFavorites();
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      fetchFavorites();
+    }
   }, [fetchFavorites]);
+
+  // Handle browser visibility changes to prevent unnecessary re-fetches
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // Don't refetch when tab becomes visible again
+      // The data should still be valid
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   // Toggle favorite status
   const toggleFavorite = async (dietId: string) => {
@@ -157,7 +187,19 @@ export default function FavoritesPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading favorites...</span>
+          <span className="text-center">
+            Loading favorites... <br /> Refresh the page (F5) if it takes too
+            long...
+            <br />
+            <br />
+            <Button
+              size="lg"
+              className="px-8"
+              onClick={() => window.location.reload()}
+            >
+              Refresh
+            </Button>
+          </span>
         </div>
       </div>
     );
@@ -173,7 +215,13 @@ export default function FavoritesPage() {
               Unable to Load Favorites
             </h3>
             <p className="text-gray-600 mb-4">{error}</p>
-            <Button onClick={fetchFavorites} variant="outline">
+            <Button
+              onClick={() => {
+                hasFetchedFavorites.current = false;
+                fetchFavorites();
+              }}
+              variant="outline"
+            >
               Try Again
             </Button>
           </CardContent>

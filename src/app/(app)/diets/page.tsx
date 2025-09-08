@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase, validateSession } from "@/lib/supabase";
 import { DietCard } from "@/components/diets/DietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -93,6 +93,9 @@ export default function DietCatalogPage() {
       setError(null);
       hasFetchedDiets.current = true;
 
+      // Validate session before making requests
+      await validateSession();
+
       const { data, error } = await supabase
         .from("diet_catalog_view")
         .select("*")
@@ -118,6 +121,9 @@ export default function DietCatalogPage() {
 
     try {
       hasFetchedRecommended.current = true;
+
+      // Validate session before making requests
+      await validateSession();
 
       const { data, error } = await supabase
         .from("diet_recommendations")
@@ -291,7 +297,19 @@ export default function DietCatalogPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading diets...</span>
+          <span className="text-center">
+            Loading diets... <br /> Refresh the page (F5) if it takes too
+            long...
+            <br />
+            <br />
+            <Button
+              size="lg"
+              className="px-8"
+              onClick={() => window.location.reload()}
+            >
+              Refresh
+            </Button>
+          </span>
         </div>
       </div>
     );

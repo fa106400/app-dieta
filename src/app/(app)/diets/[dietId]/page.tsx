@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase, validateSession } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -98,8 +98,15 @@ export default function DietDetailPage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
 
+  // Refs to prevent unnecessary re-fetches
+  const hasFetchedDiet = useRef(false);
+  const isInitialized = useRef(false);
+
   // Fetch diet details
   const fetchDiet = useCallback(async () => {
+    // Prevent multiple simultaneous fetches
+    if (hasFetchedDiet.current) return;
+
     if (!dietId || !supabase) {
       setError("Invalid diet ID or database connection not available");
       setLoading(false);
@@ -109,6 +116,10 @@ export default function DietDetailPage() {
     try {
       setLoading(true);
       setError(null);
+      hasFetchedDiet.current = true;
+
+      // Validate session before making requests
+      await validateSession();
 
       // Fetch diet basic info
       const { data: dietData, error: dietError } = await supabase
@@ -178,14 +189,33 @@ export default function DietDetailPage() {
     } catch (err) {
       console.error("Error fetching diet:", err);
       setError("Could not load diet. Try again later.");
+      hasFetchedDiet.current = false; // Reset on error to allow retry
     } finally {
       setLoading(false);
     }
-  }, [dietId, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dietId, user?.id]); // Only depend on user.id, not entire user object
 
+  // Initialize data fetching only once
   useEffect(() => {
-    fetchDiet();
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      fetchDiet();
+    }
   }, [fetchDiet]);
+
+  // Handle browser visibility changes to prevent unnecessary re-fetches
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // Don't refetch when tab becomes visible again
+      // The data should still be valid
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   // Toggle favorite
   const toggleFavorite = async () => {
@@ -278,7 +308,19 @@ export default function DietDetailPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading diet details...</span>
+          <span className="text-center">
+            Loading diet details... <br /> Refresh the page (F5) if it takes too
+            long...
+            <br />
+            <br />
+            <Button
+              size="lg"
+              className="px-8"
+              onClick={() => window.location.reload()}
+            >
+              Refresh
+            </Button>
+          </span>
         </div>
       </div>
     );
@@ -292,7 +334,13 @@ export default function DietDetailPage() {
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Unable to Load Diet</h3>
             <p className="text-gray-600 mb-4">{error || "Diet not found"}</p>
-            <Button onClick={fetchDiet} variant="outline">
+            <Button
+              onClick={() => {
+                hasFetchedDiet.current = false;
+                fetchDiet();
+              }}
+              variant="outline"
+            >
               Try Again
             </Button>
           </CardContent>
