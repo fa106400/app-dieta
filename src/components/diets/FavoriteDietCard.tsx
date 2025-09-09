@@ -164,10 +164,10 @@ export function FavoriteDietCard({
                   <Clock className="h-4 w-4 mr-1" />
                   {diet.duration_weeks || 0} weeks
                 </div>
-                {diet.min_calories && diet.max_calories && (
+                {diet.calories_total && (
                   <div className="flex items-center text-sm text-gray-500">
                     <Flame className="h-4 w-4 mr-1" />
-                    {diet.min_calories}-{diet.max_calories} cal
+                    {diet.calories_total} cal
                   </div>
                 )}
               </div>
@@ -274,10 +274,10 @@ export function FavoriteDietCard({
               <Clock className="h-4 w-4 mr-1" />
               {diet.duration_weeks || 0} weeks
             </div>
-            {diet.min_calories && diet.max_calories && (
+            {diet.calories_total && (
               <div className="flex items-center">
                 <Flame className="h-4 w-4 mr-1" />
-                {diet.min_calories}-{diet.max_calories}
+                {diet.calories_total}
               </div>
             )}
           </div>

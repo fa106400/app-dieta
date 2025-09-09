@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import type { Json } from "../../../../supabase";
 import { DietCard } from "@/components/diets/DietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,10 +34,11 @@ export interface Diet {
   is_public?: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
-  // These fields are only available in diet_catalog_view, not in base diets table
-  variant_count?: number | null;
-  min_calories?: number | null;
-  max_calories?: number | null;
+  // New fields from simplified schema
+  calories_total?: number | null;
+  macros?: Json | null; // JSONB field
+  week_plan?: Json | null; // JSONB field
+  // Recommendation fields (still used)
   is_recommended?: boolean;
   recommendation_score?: number;
   recommendation_reasoning?: string | null;
@@ -95,7 +97,22 @@ export default function DietCatalogPage() {
 
       const { data, error } = await supabase
         .from("diet_catalog_view")
-        .select("*")
+        .select(
+          `
+          id,
+          title,
+          description,
+          category,
+          difficulty,
+          duration_weeks,
+          popularity_score,
+          calories_total,
+          macros,
+          week_plan,
+          tags,
+          slug
+        `
+        )
         .order("popularity_score", { ascending: false });
 
       if (error) throw error;
@@ -135,9 +152,9 @@ export default function DietCatalogPage() {
             difficulty,
             duration_weeks,
             popularity_score,
-            is_public,
-            created_at,
-            updated_at
+            calories_total,
+            macros,
+            week_plan
           )
         `
         )

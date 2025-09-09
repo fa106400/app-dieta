@@ -72,6 +72,9 @@ export default function FavoritesPage() {
             difficulty,
             duration_weeks,
             popularity_score,
+            calories_total,
+            macros,
+            week_plan,
             is_public,
             created_at,
             updated_at

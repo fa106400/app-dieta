@@ -139,10 +139,10 @@ This plan outlines the development of a complete nutrition and diet management p
 
 ### 3.1.1 Diet Catalog System (Database) ✅
 - **Database Schema Implementation** ✅
-  - `diets` table with metadata ✅
-  - `diet_variants` for caloric variations ✅
-  - `meals` table for individual meal data ✅
+  - `diets` table with metadata and JSONB fields ✅
+  - Simplified schema with `calories_total`, `macros`, `week_plan` ✅
   - `diet_recommendations` for AI suggestions ✅
+  - Removed `diet_variants` and `meals` tables (simplified) ✅
 
 ### 3.1.2 Diet Catalog System (Screen 4.1) ✅
 - **Diet Catalog Screens** ✅
@@ -713,29 +713,43 @@ Detailed List of all screens in the system is in the file ./screens-chatgpt.MD
 * `description` (text)
 * `is_public` (bool, default true)
 
-**`diet_variants`** (prebuilt calorie ranges)
+**Updated `diets` table structure** (simplified schema)
 
 * `id` (uuid, pk)
-* `diet_id` (uuid, fk → diets)
+* `slug` (text, unique)
+* `title` (text)
+* `description` (text)
+* `tags` (text[]) — e.g., `{low_carb, keto, vegetarian}`
+* `category` (text) — e.g., `low_carb`, `keto`, `vegetarian`
+* `difficulty` (text) — e.g., `beginner`, `intermediate`, `advanced`
+* `duration_weeks` (int) — diet duration in weeks
+* `popularity_score` (int) — for sorting and recommendations
+* `is_public` (bool, default true)
 * `calories_total` (int) — e.g., 1500, 1800, 2200
 * `macros` (jsonb) — e.g., `{protein: 120, carbs: 150, fat: 60}`
-* `week_plan` (jsonb) — normalized representation: days → meals → items
+* `week_plan` (jsonb) — complete meal plan structure: days → meals → items with alt_items
+* `created_at` (timestamptz)
+* `updated_at` (timestamptz)
 
-**`meals`** *(optional if not embedding in `week_plan`)*
-If you prefer normalization:
-
-* `id` (uuid, pk)
-* `diet_variant_id` (uuid, fk)
-* `day_index` (int 0–6)
-* `meal_index` (int)
-* `title` (text)
-* `items` (jsonb)
+**Removed tables** (simplified schema):
+- ❌ `diet_variants` — functionality moved to `diets` table
+- ❌ `meals` — functionality moved to `week_plan` JSONB field
+- ❌ `user_meal_log` — simplified meal tracking
 
 **`favorites`**
 
 * `user_id` (uuid, pk part)
 * `diet_id` (uuid, pk part)
 * `created_at` (timestamptz)
+
+**`user_current_diet`** (simplified schema)
+
+* `user_id` (uuid, pk)
+* `diet_id` (uuid, fk → diets)
+* `is_active` (bool, default true)
+* `started_at` (timestamptz)
+* `created_at` (timestamptz)
+* `updated_at` (timestamptz)
 
 **`weights`**
 
@@ -784,7 +798,7 @@ If you prefer normalization:
 
   * **Select/Insert/Update/Delete** where `auth.uid() = user_id`
   * For `subscriptions`: **Select** where `auth.uid() = user_id` (mutations only via webhooks/service role on server)
-  * For public catalog (`diets`, `diet_variants`): `SELECT` allowed to anon (read-only), `INSERT/UPDATE/DELETE` disabled in public role.
+  * For public catalog (`diets`): `SELECT` allowed to anon (read-only), `INSERT/UPDATE/DELETE` disabled in public role.
 * **Service role** (server-only) used in Stripe webhook to write `subscriptions`.
 
 ---
@@ -2818,21 +2832,23 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 1. **Diet Fetching**
 
    * Fetch diet from Supabase `diets` table using `diet_id`
-   * Fetch related meals and pre-calculated caloric variations
+   * Diet includes `calories_total`, `macros`, and `week_plan` JSONB fields
+   * No need to fetch separate variants or meals tables
 
 2. **Follow Now Logic**
 
    * On button click:
 
-     * Update `user_current_diet` table with selected `diet_id` and caloric variation
+     * Update `user_current_diet` table with selected `diet_id`
      * If user already has an active diet, replace it
 
-3. **Meal Substitutions**
+3. **Meal Plan Display**
 
-   * Fetch from `meal_alternatives` table based on meal_id
-   * Limit suggestions to maintain macro/calorie equivalence
+   * Parse `week_plan` JSONB structure to display days and meals
+   * Show individual meal items with quantities and units
+   * Display alternative items (`alt_items`) for meal swapping
 
-4. **Caloric Variation Switch**
+4. **Meal Item Swapping**
 
    * Update displayed macros/calories in real-time
    * Store selected variation in state until “Follow Now” confirmation
@@ -2866,10 +2882,9 @@ The **Diet Detail** screen presents all information about a selected diet. It is
 
 * **Supabase Tables**
 
-  * `diets` → main diet metadata
-  * `diet_meals` → meals per diet (meal_id, day, order) (actual table name is 'diet')
-  * `meal_alternatives` → alternative ingredients or recipes (CREATE THE TABLE IN OUR SCHEMA, SUPABASE FILES E HANDLE ME THE SCRIPT FOR CREATING THE TABLE IN SUPABASE SERVER)
-  * `user_current_diet` → tracks the user’s active diet and selected variation
+  * `diets` → main diet metadata with `calories_total`, `macros`, `week_plan` JSONB fields
+  * `user_current_diet` → tracks the user's active diet (simplified schema)
+  * `favorites` → user's favorited diets
 
 * **UI Components**
 
@@ -2898,12 +2913,24 @@ export default function DietDetail({ dietId }) {
     async function fetchDiet() {
       const { data, error } = await supabase
         .from("diets")
-        .select("*, diet_meals(*), pre_caloric_variations(*)")
+        .select(`
+          id,
+          title,
+          description,
+          category,
+          difficulty,
+          duration_weeks,
+          popularity_score,
+          calories_total,
+          macros,
+          week_plan,
+          tags,
+          slug
+        `)
         .eq("id", dietId)
         .single();
       if (!error) {
         setDiet(data);
-        setSelectedCalories(data.pre_caloric_variations[0].calories);
       }
     }
     fetchDiet();
@@ -2912,7 +2939,12 @@ export default function DietDetail({ dietId }) {
   async function followNow() {
     await supabase
       .from("user_current_diet")
-      .upsert({ user_id: supabase.auth.user().id, diet_id: diet.id, calories: selectedCalories });
+      .upsert({ 
+        user_id: supabase.auth.user().id, 
+        diet_id: diet.id, 
+        is_active: true,
+        started_at: new Date().toISOString()
+      });
     alert("Diet set as current plan!");
   }
 
@@ -2928,12 +2960,25 @@ export default function DietDetail({ dietId }) {
           </button>
         ))}
       </div>
-      {diet.diet_meals.map(meal => (
-        <div key={meal.id} className="meal-card">
-          <h2>{meal.name} ({meal.type})</h2>
-          <p>{meal.ingredients}</p>
-          <p>{meal.macros.protein}P / {meal.macros.carbs}C / {meal.macros.fat}F</p>
-          <button>Swap</button>
+      {diet.week_plan?.days?.map((day, dayIndex) => (
+        <div key={dayIndex} className="day-card">
+          <h2>Day {dayIndex + 1}</h2>
+          {day.meals.map((meal, mealIndex) => (
+            <div key={mealIndex} className="meal-card">
+              <h3>{meal.name}</h3>
+              <p>{meal.calories} calories</p>
+              {meal.items.map((item, itemIndex) => (
+                <div key={itemIndex} className="item">
+                  <span>{item.name} - {item.quantity} {item.unit}</span>
+                  {item.alt_items && item.alt_items.length > 0 && (
+                    <button onClick={() => toggleItemSwap(dayIndex, mealIndex, itemIndex)}>
+                      Swap
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       ))}
       <button onClick={followNow}>Follow Now</button>
@@ -2982,16 +3027,14 @@ export default function DietDetail({ dietId }) {
 ### Supabase SQL Checks
 
 ```sql
--- Fetch diet with meals and variations
-select d.*, dm.*, v.*
+-- Fetch diet with new simplified schema
+select d.*
 from diets d
-join diet_meals dm on dm.diet_id = d.id
-join pre_caloric_variations v on v.diet_id = d.id
 where d.id = '<diet_id>';
 
--- Set diet as current for user
-upsert into user_current_diet(user_id, diet_id, calories)
-values ('<user_id>', '<diet_id>', <selected_calories>);
+-- Set diet as current for user (simplified schema)
+upsert into user_current_diet(user_id, diet_id, is_active, started_at)
+values ('<user_id>', '<diet_id>', true, now());
 ```
 
 ---
@@ -3053,21 +3096,19 @@ The **Minha Semana / Current Plan** screen shows the **user’s active diet plan
 1. **Fetch Active Diet**
 
    * Query `user_current_diet` by `user_id`
-   * Fetch related meals from `diet_meals` table with caloric variation
+   * Fetch diet details including `week_plan` JSONB field
+   * Parse `week_plan` to display meal structure
 
-2. **Meal Adherence Logging**
+2. **Meal Plan Display**
 
-   * Each meal checkbox updates `user_meal_log` table:
+   * Display weekly meal plan from `week_plan` JSONB structure
+   * Show days, meals, and individual items
+   * Support meal item swapping with `alt_items`
 
-     ```json
-     { user_id, diet_id, meal_id, date, completed: true/false }
-     ```
-   * Persist across sessions
+3. **Weekly Overview**
 
-3. **Weekly Aggregation**
-
-   * Calculate total calories consumed (based on completed meals)
-   * Calculate % adherence per day and per week
+   * Calculate total calories from diet `calories_total`
+   * Display macro breakdown from diet `macros` JSONB field
 
 4. **Swap Diet**
 
@@ -3105,9 +3146,8 @@ The **Minha Semana / Current Plan** screen shows the **user’s active diet plan
 
 * **Supabase Tables**
 
-  * `user_current_diet` → active diet
-  * `diet_meals` → meal details
-  * `user_meal_log` → stores meal completion for adherence
+  * `user_current_diet` → active diet (simplified schema)
+  * `diets` → diet details with `week_plan` JSONB field
 * **UI Components**
 
   * shadcn/ui: Card, Collapsible, Button, Checkbox, Toast
@@ -3134,14 +3174,14 @@ export default function CurrentWeekPlan() {
     async function fetchPlan() {
       const { data } = await supabase
         .from("user_current_diet")
-        .select("*, diet_meals(*), user_meal_log(*)")
+        .select("*, diets(*)")
         .eq("user_id", supabase.auth.user().id)
         .single();
-      setMeals(data.diet_meals);
-      // Initialize adherence state
-      const log = {};
-      data.user_meal_log.forEach(m => log[m.meal_id] = m.completed);
-      setAdherence(log);
+      if (data?.diets) {
+        setDiet(data.diets);
+        // Parse week_plan JSONB structure
+        setWeekPlan(data.diets.week_plan);
+      }
     }
     fetchPlan();
   }, []);
@@ -3161,18 +3201,18 @@ export default function CurrentWeekPlan() {
   return (
     <div className="current-week">
       <h1>My Current Plan</h1>
-      {meals.map(day => (
-        <div key={day.day} className="day-card">
-          <h2>{day.day}</h2>
-          {day.meals.map(meal => (
-            <div key={meal.id} className="meal-card">
+      {weekPlan?.days?.map((day, dayIndex) => (
+        <div key={dayIndex} className="day-card">
+          <h2>Day {dayIndex + 1}</h2>
+          {day.meals.map((meal, mealIndex) => (
+            <div key={mealIndex} className="meal-card">
               <h3>{meal.name}</h3>
-              <p>{meal.macros.protein}P / {meal.macros.carbs}C / {meal.macros.fat}F</p>
-              <input
-                type="checkbox"
-                checked={adherence[meal.id] || false}
-                onChange={() => toggleMeal(meal.id)}
-              />
+              <p>{meal.calories} calories</p>
+              {meal.items.map((item, itemIndex) => (
+                <div key={itemIndex} className="item">
+                  <span>{item.name} - {item.quantity} {item.unit}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -3224,16 +3264,11 @@ export default function CurrentWeekPlan() {
 ### Supabase SQL Checks
 
 ```sql
--- Fetch current diet with meals and user log
-select u.*, dm.*
+-- Fetch current diet with week_plan
+select u.*, d.*
 from user_current_diet u
-join diet_meals dm on dm.diet_id = u.diet_id
-left join user_meal_log l on l.meal_id = dm.id and l.user_id = u.user_id
-where u.user_id = '<user_id>';
-
--- Update meal adherence
-upsert into user_meal_log(user_id, diet_id, meal_id, date, completed)
-values ('<user_id>', '<diet_id>', '<meal_id>', '<date>', <completed>);
+join diets d on d.id = u.diet_id
+where u.user_id = '<user_id>' and u.is_active = true;
 ```
 
 ---
@@ -3482,7 +3517,8 @@ The **Shopping List** screen generates a **weekly grocery list** based on the us
 1. **Fetch Current Diet Ingredients**
 
    * Query `user_current_diet` to retrieve selected diet
-   * Fetch all meals → aggregate ingredients by type and sum quantities
+   * Parse `week_plan` JSONB field to extract all ingredients
+   * Aggregate ingredients by type and sum quantities across all meals
 
 2. **Checkbox / Completion Tracking**
 
@@ -3516,8 +3552,8 @@ The **Shopping List** screen generates a **weekly grocery list** based on the us
 
 * **Supabase Tables**
 
-  * `user_current_diet` → selected diet and meals
-  * `diet_meals` → recipes with ingredients and quantities
+  * `user_current_diet` → selected diet (simplified schema)
+  * `diets` → diet details with `week_plan` JSONB field containing ingredients
   * Optional: `user_shopping_progress` → track checked items
 
 * **UI Components**
@@ -3544,9 +3580,11 @@ export default function ShoppingList() {
   useEffect(() => {
     async function fetchIngredients() {
       const { data } = await supabase
-        .from("diet_meals")
-        .select("*")
-        .eq("diet_id", supabase.auth.user().current_diet_id);
+        .from("user_current_diet")
+        .select("*, diets(*)")
+        .eq("user_id", supabase.auth.user().id)
+        .eq("is_active", true)
+        .single();
       
       // Aggregate quantities by ingredient
       const aggregated = aggregateIngredients(data);
@@ -3616,11 +3654,11 @@ export default function ShoppingList() {
 ### Supabase SQL Checks
 
 ```sql
--- Fetch aggregated ingredients for current user diet
-SELECT ingredient_name, SUM(quantity) as total_quantity, unit
-FROM diet_meals
-WHERE diet_id = (SELECT current_diet_id FROM user_current_diet WHERE user_id = '<user_id>')
-GROUP BY ingredient_name, unit;
+-- Fetch current diet with week_plan for ingredient aggregation
+SELECT d.week_plan
+FROM user_current_diet u
+JOIN diets d ON d.id = u.diet_id
+WHERE u.user_id = '<user_id>' AND u.is_active = true;
 ```
 
 ---

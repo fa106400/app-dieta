@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import type { Json } from "../../../../../supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,61 +25,10 @@ import {
 import { Diet } from "@/app/(app)/diets/page";
 import { toast } from "sonner";
 
-interface Macros {
-  protein: number;
-  carbs: number;
-  fat: number;
-}
+// New interfaces for simplified schema - using Json types from Supabase
 
-interface MealPlan {
-  name: string;
-  calories: number;
-  ingredients?: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
-  }>;
-  macros?: Macros;
-}
-
-interface DayPlan {
-  meals: MealPlan[];
-}
-
-interface WeekPlan {
-  days: DayPlan[];
-}
-
-interface DietVariant {
-  id: string;
-  diet_id: string;
-  calories_total: number;
-  macros: Macros;
-  week_plan: WeekPlan;
-  created_at: string | null;
-}
-
-interface Meal {
-  id: string;
-  diet_variant_id: string;
-  day_index: number;
-  meal_index: number;
-  title: string;
-  description: string | null;
-  ingredients: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
-  }>;
-  macros: Macros;
-  calories: number;
-  meal_type: string | null;
-  created_at: string | null;
-}
-
+// Simplified DietDetail interface - no more variants or separate meals
 interface DietDetail extends Diet {
-  variants: DietVariant[];
-  meals: Meal[];
   is_favorited?: boolean;
 }
 
@@ -91,12 +41,12 @@ export default function DietDetailPage() {
   const [diet, setDiet] = useState<DietDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<DietVariant | null>(
-    null
-  );
+  // Removed selectedVariant state - no longer needed with simplified schema
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0])); // Expand first day by default
   const [isFollowing, setIsFollowing] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+  // State to track which items have been swapped (dayIndex-mealIndex-itemIndex)
+  const [swappedItems, setSwappedItems] = useState<Set<string>>(new Set());
 
   // Refs to prevent unnecessary re-fetches
   const hasFetchedDiet = useRef(false);
@@ -121,29 +71,31 @@ export default function DietDetailPage() {
       // Fetch diet basic info
       const { data: dietData, error: dietError } = await supabase
         .from("diets")
-        .select("*")
+        .select(
+          `
+          id,
+          title,
+          description,
+          category,
+          difficulty,
+          duration_weeks,
+          popularity_score,
+          calories_total,
+          macros,
+          week_plan,
+          tags,
+          slug,
+          is_public,
+          created_at,
+          updated_at
+        `
+        )
         .eq("id", dietId)
         .single();
 
       if (dietError) throw dietError;
 
-      // Fetch diet variants
-      const { data: variantsData, error: variantsError } = await supabase
-        .from("diet_variants")
-        .select("*")
-        .eq("diet_id", dietId)
-        .order("calories_total", { ascending: true });
-
-      if (variantsError) throw variantsError;
-
-      // Fetch meals for all variants
-      const { data: mealsData, error: mealsError } = await supabase
-        .from("meals")
-        .select("*")
-        .in("diet_variant_id", variantsData?.map((v) => v.id) || [])
-        .order("day_index, meal_index");
-
-      if (mealsError) throw mealsError;
+      // No need to fetch variants or meals - they are now part of the diet record
 
       // Check if user has favorited this diet
       let isFavorited = false;
@@ -160,29 +112,10 @@ export default function DietDetailPage() {
 
       const dietDetail: DietDetail = {
         ...dietData,
-        variants: (variantsData || []).map((v) => ({
-          ...v,
-          macros: v.macros as unknown as Macros,
-          week_plan: v.week_plan as unknown as WeekPlan,
-        })),
-        meals: (mealsData || []).map((m) => ({
-          ...m,
-          ingredients: m.ingredients as unknown as Array<{
-            name: string;
-            quantity: number;
-            unit: string;
-          }>,
-          macros: m.macros as unknown as Macros,
-        })),
         is_favorited: isFavorited,
       };
 
       setDiet(dietDetail);
-
-      // Set first variant as selected by default
-      if (dietDetail.variants && dietDetail.variants.length > 0) {
-        setSelectedVariant(dietDetail.variants[0]);
-      }
     } catch (err) {
       console.error("Error fetching diet:", err);
       setError("Could not load diet. Try again later.");
@@ -255,7 +188,7 @@ export default function DietDetailPage() {
 
   // Follow Now functionality
   const followNow = async () => {
-    if (!user || !supabase || !diet || !diet.id || !selectedVariant) return;
+    if (!user || !supabase || !diet || !diet.id) return;
 
     setIsFollowing(true);
 
@@ -271,7 +204,6 @@ export default function DietDetailPage() {
       const { error } = await supabase.from("user_current_diet").insert({
         user_id: user.id,
         diet_id: diet.id,
-        diet_variant_id: selectedVariant.id,
         is_active: true,
       });
 
@@ -295,6 +227,23 @@ export default function DietDetailPage() {
         newSet.delete(dayIndex);
       } else {
         newSet.add(dayIndex);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleItemSwap = (
+    dayIndex: number,
+    mealIndex: number,
+    itemIndex: number
+  ) => {
+    const swapKey = `${dayIndex}-${mealIndex}-${itemIndex}`;
+    setSwappedItems((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(swapKey)) {
+        newSet.delete(swapKey);
+      } else {
+        newSet.add(swapKey);
       }
       return newSet;
     });
@@ -440,110 +389,192 @@ export default function DietDetailPage() {
         </Card>
       </div>
 
-      {/* Caloric Variations */}
-      {diet.variants.length > 0 && (
+      {/* Diet Information */}
+      {diet.calories_total && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Flame className="h-5 w-5" />
-              <span>Caloric Variations</span>
+              <span>Diet Information</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {diet.variants.map((variant) => (
-                <Card
-                  key={variant.id}
-                  className={`cursor-pointer transition-all ${
-                    selectedVariant?.id === variant.id
-                      ? "ring-2 ring-blue-500 bg-blue-50"
-                      : "hover:shadow-md"
-                  }`}
-                  onClick={() => setSelectedVariant(variant)}
-                >
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {variant.calories_total} cal
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        <div>Protein: {variant.macros.protein}g</div>
-                        <div>Carbs: {variant.macros.carbs}g</div>
-                        <div>Fat: {variant.macros.fat}g</div>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="text-center space-y-2">
+                <div className="text-2xl font-bold text-blue-600">
+                  {diet.calories_total} cal
+                </div>
+                <div className="text-sm text-gray-600">Daily Calories</div>
+              </div>
+              {diet.macros && (
+                <div className="text-center space-y-2">
+                  <div className="text-sm text-gray-600">Macros</div>
+                  <div className="text-sm">
+                    <div>
+                      Protein:{" "}
+                      {(diet.macros as Json & { protein?: number })?.protein}g
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <div>
+                      Carbs: {(diet.macros as Json & { carbs?: number })?.carbs}
+                      g
+                    </div>
+                    <div>
+                      Fat: {(diet.macros as Json & { fat?: number })?.fat}g
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Daily Meal Plan */}
-      {selectedVariant && (
+      {/* Weekly Meal Plan */}
+      {diet.week_plan && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Utensils className="h-5 w-5" />
-              <span>Daily Meal Plan</span>
+              <span>Weekly Meal Plan</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {selectedVariant.week_plan.days.map((day, dayIndex) => (
-                <Card key={dayIndex}>
-                  <CardHeader
-                    className="cursor-pointer"
-                    onClick={() => toggleDay(dayIndex)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">
-                        Day {dayIndex + 1}
-                      </CardTitle>
-                      {expandedDays.has(dayIndex) ? (
-                        <ChevronDown className="h-5 w-5" />
-                      ) : (
-                        <ChevronRight className="h-5 w-5" />
-                      )}
-                    </div>
-                  </CardHeader>
+              {(
+                diet.week_plan as Json & {
+                  days?: Array<{
+                    day_index: number;
+                    meals: Array<{
+                      name: string;
+                      calories: number;
+                      items: Array<{
+                        name: string;
+                        quantity: number;
+                        unit: string;
+                        alt_items?: Array<{
+                          name: string;
+                          quantity: number;
+                          unit: string;
+                        }>;
+                      }>;
+                    }>;
+                  }>;
+                }
+              )?.days?.map(
+                (
+                  day: Json & {
+                    day_index: number;
+                    meals: Array<{
+                      name: string;
+                      calories: number;
+                      items: Array<{
+                        name: string;
+                        quantity: number;
+                        unit: string;
+                        alt_items?: Array<{
+                          name: string;
+                          quantity: number;
+                          unit: string;
+                        }>;
+                      }>;
+                    }>;
+                  },
+                  dayIndex: number
+                ) => (
+                  <Card key={dayIndex}>
+                    <CardHeader
+                      className="cursor-pointer"
+                      onClick={() => toggleDay(dayIndex)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">
+                          Day {dayIndex + 1}
+                        </CardTitle>
+                        {expandedDays.has(dayIndex) ? (
+                          <ChevronDown className="h-5 w-5" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5" />
+                        )}
+                      </div>
+                    </CardHeader>
 
-                  {expandedDays.has(dayIndex) && (
-                    <CardContent>
-                      <div className="space-y-3">
-                        {day.meals.map((meal, mealIndex) => (
-                          <div
-                            key={mealIndex}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                          >
-                            <div className="flex-1">
-                              <h4 className="font-medium">{meal.name}</h4>
-                              <div className="text-sm text-gray-600">
-                                {meal.calories} calories
-                                {meal.macros && (
-                                  <span className="ml-2">
-                                    • {meal.macros.protein}P /{" "}
-                                    {meal.macros.carbs}C / {meal.macros.fat}F
-                                  </span>
-                                )}
+                    {expandedDays.has(dayIndex) && (
+                      <CardContent>
+                        <div className="space-y-3">
+                          {day.meals.map((meal, mealIndex) => (
+                            <div
+                              key={mealIndex}
+                              className="p-4 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex items-center justify-between mb-3">
+                                <div>
+                                  <h4 className="font-medium">{meal.name}</h4>
+                                  <div className="text-sm text-gray-600">
+                                    {meal.calories} calories
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                {meal.items.map((item, itemIndex) => {
+                                  const swapKey = `${dayIndex}-${mealIndex}-${itemIndex}`;
+                                  const isSwapped = swappedItems.has(swapKey);
+                                  const currentItem =
+                                    isSwapped &&
+                                    item.alt_items &&
+                                    item.alt_items.length > 0
+                                      ? item.alt_items[0]
+                                      : item;
+                                  const hasAlternatives =
+                                    item.alt_items && item.alt_items.length > 0;
+
+                                  return (
+                                    <div
+                                      key={itemIndex}
+                                      className="flex items-center justify-between p-2 bg-white rounded border"
+                                    >
+                                      <div className="flex-1">
+                                        <div className="font-medium text-sm">
+                                          {currentItem.name}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {currentItem.quantity}{" "}
+                                          {currentItem.unit}
+                                        </div>
+                                        {isSwapped && (
+                                          <div className="text-xs text-blue-600 mt-1">
+                                            Swapped from: {item.name}
+                                          </div>
+                                        )}
+                                      </div>
+                                      {hasAlternatives && (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() =>
+                                            toggleItemSwap(
+                                              dayIndex,
+                                              mealIndex,
+                                              itemIndex
+                                            )
+                                          }
+                                          className="ml-2"
+                                        >
+                                          {isSwapped ? "Revert" : "Swap"}
+                                        </Button>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled
-                              className="opacity-50"
-                            >
-                              Swap
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  )}
-                </Card>
-              ))}
+                          ))}
+                        </div>
+                      </CardContent>
+                    )}
+                  </Card>
+                )
+              )}
             </div>
           </CardContent>
         </Card>
@@ -553,7 +584,7 @@ export default function DietDetailPage() {
       <div className="flex justify-center">
         <Button
           onClick={followNow}
-          disabled={!selectedVariant || isFollowing}
+          disabled={!diet || isFollowing}
           size="lg"
           className="px-8"
         >
