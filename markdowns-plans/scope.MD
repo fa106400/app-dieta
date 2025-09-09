@@ -167,7 +167,7 @@ This plan outlines the development of a complete nutrition and diet management p
   - User profile analysis
   - Diet matching algorithms using Gemini
   - Score calculation and ranking
-  - Weekly refresh limitations (1 week cooldown) (**TO-DO: validar a regra novamente, ler Screen Id da search diet**)
+  - Weekly refresh limitations (1 week cooldown)
 
 - **3.2.3 Recommendation Screens**
   - AI-suggested diets display
@@ -879,7 +879,7 @@ Detailed List of all screens in the system is in the file ./screens-chatgpt.MD
 
 * Implemented server-side (RSC) or via API route using:
 
-  * User profile `goal`, onboarding preferences, and `tags` on `diets`
+  * User profile onboarding preferences (all fields), and `diets.tags`, `diets.calories_total` and `diets.macros`
   * Simple scoring/filtering; explainability via “Why suggested” component
 * No external AI calls required in MVP (catalog-driven).
 
