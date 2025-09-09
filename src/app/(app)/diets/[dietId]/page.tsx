@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { supabase, validateSession } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -117,9 +117,6 @@ export default function DietDetailPage() {
       setLoading(true);
       setError(null);
       hasFetchedDiet.current = true;
-
-      // Validate session before making requests
-      await validateSession();
 
       // Fetch diet basic info
       const { data: dietData, error: dietError } = await supabase

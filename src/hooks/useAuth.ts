@@ -93,11 +93,24 @@ export function useAuth(): UseAuthReturn {
           if (document.visibilityState === 'visible' && supabase) {
             console.log('🔍 Browser regained focus, refreshing session...')
             try {
-              const { data: sessionData, error } = await supabase.auth.getSession()
-              if (error) {
-                console.error('🔍 Error refreshing session:', error)
+              // First try to get current session
+              console.log('🔍 Getting current session...')
+              const { data: sessionData, error: getSessionError } = await supabase.auth.getSession()
+              
+              if (getSessionError) {
+                console.error('🔍 Error getting session:', getSessionError)
+                // If getting session fails, try to refresh
+                console.log('🔍 Attempting to refresh session...')
+                const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+                if (refreshError) {
+                  console.error('🔍 Error refreshing session:', refreshError)
+                } else {
+                  console.log('🔍 Session refreshed successfully:', refreshData.session ? 'Valid' : 'Invalid')
+                  setSession(refreshData.session ?? null)
+                  setUser(refreshData.session?.user ?? null)
+                }
               } else {
-                console.log('🔍 Session refreshed:', sessionData.session ? 'Valid' : 'Invalid')
+                console.log('🔍 Current session retrieved:', sessionData.session ? 'Valid' : 'Invalid')
                 setSession(sessionData.session ?? null)
                 setUser(sessionData.session?.user ?? null)
               }

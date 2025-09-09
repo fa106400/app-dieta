@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { supabase, validateSession } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { DietCard } from "@/components/diets/DietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -93,9 +93,6 @@ export default function DietCatalogPage() {
       setError(null);
       hasFetchedDiets.current = true;
 
-      // Validate session before making requests
-      await validateSession();
-
       const { data, error } = await supabase
         .from("diet_catalog_view")
         .select("*")
@@ -121,9 +118,6 @@ export default function DietCatalogPage() {
 
     try {
       hasFetchedRecommended.current = true;
-
-      // Validate session before making requests
-      await validateSession();
 
       const { data, error } = await supabase
         .from("diet_recommendations")

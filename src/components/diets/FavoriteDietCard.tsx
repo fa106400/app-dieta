@@ -67,10 +67,30 @@ export function FavoriteDietCard({
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
+    console.log("🔍 FavoriteDietCard - BUTTON CLICKED!");
     e.preventDefault();
     e.stopPropagation();
+
+    console.log("🔍 FavoriteDietCard - handleToggleFavorite called");
+    console.log("🔍 FavoriteDietCard - diet.id:", diet.id);
+    console.log(
+      "🔍 FavoriteDietCard - onToggleFavorite function:",
+      !!onToggleFavorite
+    );
+    console.log("🔍 FavoriteDietCard - isToggling:", isToggling);
+    console.log("🔍 FavoriteDietCard - diet.is_favorited:", diet.is_favorited);
+
     if (onToggleFavorite && diet.id) {
+      console.log(
+        "🔍 FavoriteDietCard - Calling onToggleFavorite with dietId:",
+        diet.id
+      );
       onToggleFavorite(diet.id);
+    } else {
+      console.log("🔍 FavoriteDietCard - Cannot call onToggleFavorite:", {
+        hasOnToggleFavorite: !!onToggleFavorite,
+        hasDietId: !!diet.id,
+      });
     }
   };
 
