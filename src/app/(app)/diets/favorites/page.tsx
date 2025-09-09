@@ -222,19 +222,7 @@ export default function FavoritesPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">
-            Loading favorites... <br /> Refresh the page (F5) if it takes too
-            long...
-            <br />
-            <br />
-            <Button
-              size="lg"
-              className="px-8"
-              onClick={() => window.location.reload()}
-            >
-              Refresh
-            </Button>
-          </span>
+          <span className="text-center">Loading favorites...</span>
         </div>
       </div>
     );
