@@ -45,8 +45,10 @@ export default function DietDetailPage() {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0])); // Expand first day by default
   const [isFollowing, setIsFollowing] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
-  // State to track which items have been swapped (dayIndex-mealIndex-itemIndex)
-  const [swappedItems, setSwappedItems] = useState<Set<string>>(new Set());
+  // State to track which alt_item index is currently shown for each item (dayIndex-mealIndex-itemIndex -> altIndex)
+  const [itemAltIndex, setItemAltIndex] = useState<Map<string, number>>(
+    new Map()
+  );
 
   // Refs to prevent unnecessary re-fetches
   const hasFetchedDiet = useRef(false);
@@ -232,20 +234,19 @@ export default function DietDetailPage() {
     });
   };
 
-  const toggleItemSwap = (
+  const cycleItemSwap = (
     dayIndex: number,
     mealIndex: number,
-    itemIndex: number
+    itemIndex: number,
+    altItemsCount: number
   ) => {
     const swapKey = `${dayIndex}-${mealIndex}-${itemIndex}`;
-    setSwappedItems((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(swapKey)) {
-        newSet.delete(swapKey);
-      } else {
-        newSet.add(swapKey);
-      }
-      return newSet;
+    setItemAltIndex((prev) => {
+      const newMap = new Map(prev);
+      const currentIndex = newMap.get(swapKey) || 0;
+      const nextIndex = (currentIndex + 1) % altItemsCount;
+      newMap.set(swapKey, nextIndex);
+      return newMap;
     });
   };
 
@@ -404,7 +405,6 @@ export default function DietDetailPage() {
                 <div className="text-2xl font-bold text-blue-600">
                   {diet.calories_total} cal
                 </div>
-                <div className="text-sm text-gray-600">Daily Calories</div>
               </div>
               {diet.macros && (
                 <div className="text-center space-y-2">
@@ -412,14 +412,19 @@ export default function DietDetailPage() {
                   <div className="text-sm">
                     <div>
                       Protein:{" "}
-                      {(diet.macros as Json & { protein?: number })?.protein}g
+                      {(diet.macros as Json & { proteina?: number })?.proteina}g
                     </div>
                     <div>
-                      Carbs: {(diet.macros as Json & { carbs?: number })?.carbs}
+                      Carbs:{" "}
+                      {
+                        (diet.macros as Json & { carboidrato?: number })
+                          ?.carboidrato
+                      }
                       g
                     </div>
                     <div>
-                      Fat: {(diet.macros as Json & { fat?: number })?.fat}g
+                      Fat:{" "}
+                      {(diet.macros as Json & { gordura?: number })?.gordura}g
                     </div>
                   </div>
                 </div>
@@ -518,15 +523,17 @@ export default function DietDetailPage() {
                               <div className="space-y-2">
                                 {meal.items.map((item, itemIndex) => {
                                   const swapKey = `${dayIndex}-${mealIndex}-${itemIndex}`;
-                                  const isSwapped = swappedItems.has(swapKey);
-                                  const currentItem =
-                                    isSwapped &&
-                                    item.alt_items &&
-                                    item.alt_items.length > 0
-                                      ? item.alt_items[0]
-                                      : item;
+                                  const currentAltIndex =
+                                    itemAltIndex.get(swapKey) || 0;
                                   const hasAlternatives =
                                     item.alt_items && item.alt_items.length > 0;
+
+                                  // Create combined array: [originalItem, ...alt_items]
+                                  const allItems = hasAlternatives
+                                    ? [item, ...item.alt_items!]
+                                    : [item];
+
+                                  const currentItem = allItems[currentAltIndex];
 
                                   return (
                                     <div
@@ -541,26 +548,22 @@ export default function DietDetailPage() {
                                           {currentItem.quantity}{" "}
                                           {currentItem.unit}
                                         </div>
-                                        {isSwapped && (
-                                          <div className="text-xs text-blue-600 mt-1">
-                                            Swapped from: {item.name}
-                                          </div>
-                                        )}
                                       </div>
                                       {hasAlternatives && (
                                         <Button
                                           variant="outline"
                                           size="sm"
                                           onClick={() =>
-                                            toggleItemSwap(
+                                            cycleItemSwap(
                                               dayIndex,
                                               mealIndex,
-                                              itemIndex
+                                              itemIndex,
+                                              allItems.length
                                             )
                                           }
                                           className="ml-2"
                                         >
-                                          {isSwapped ? "Revert" : "Swap"}
+                                          Swap
                                         </Button>
                                       )}
                                     </div>
