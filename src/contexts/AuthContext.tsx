@@ -19,7 +19,7 @@ export function useAuthContext(): UseAuthReturn {
   }
 
   // Add logging to debug auth state
-  console.log("🔍 useAuthContext - Current state:", {
+  console.debug("🔍 useAuthContext - Current state:", {
     user: context.user ? "Present" : "Missing",
     email: context.user ? context.user.email : "Not logged",
     session: context.session ? "Present" : "Missing",
