@@ -156,24 +156,20 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Diet Catalog Screens** ✅
   - Diet detail view (Screen 5.1) ✅
 
-### 3.1.5 Diet Catalog System (search & filter diets)
-- **Diet Catalog Screens**
-  - Search and filtering functionality
-
 ### 3.2 Google Gemini 2.0 Flash API Integration
-- **AI Service Setup**
+- **3.2.1 AI Service Setup**
   - Google Gemini API configuration
   - API key management and security
   - Rate limiting and cost control (free tier limits)
   - Error handling and fallbacks
 
-- **Recommendation Logic**
+- **3.2.2 Recommendation Logic**
   - User profile analysis
   - Diet matching algorithms using Gemini
   - Score calculation and ranking
   - Weekly refresh limitations (1 week cooldown) (**TO-DO: validar a regra novamente, ler Screen Id da search diet**)
 
-- **Recommendation Screens**
+- **3.2.3 Recommendation Screens**
   - AI-suggested diets display
   - "Why recommended" explanations
   - Manual refresh functionality with cooldown timer
