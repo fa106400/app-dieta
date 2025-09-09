@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Sticker, RefreshCw } from "lucide-react";
 
 export function BrowserMinimizationHandler() {
   const [showPopup, setShowPopup] = useState(false);
@@ -60,25 +60,21 @@ export function BrowserMinimizationHandler() {
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <Card className="w-full max-w-md mx-auto shadow-2xl border-2 border-orange-200">
+      <Card className="w-full max-w-md mx-auto shadow-2xl border-2 border-green-200">
         <CardHeader className="text-center pb-4">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
-              <AlertTriangle className="h-8 w-8 text-orange-600" />
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <Sticker className="h-8 w-8 text-green-600" />
             </div>
           </div>
           <CardTitle className="text-xl font-bold text-gray-900">
-            Page Refresh Required
+            Poxa vida, atualiza pra gente?
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-gray-600 leading-relaxed">
-            The page needs to be refreshed to ensure all features work correctly
-            after minimizing the browser window.
-          </p>
-          <p className="text-sm text-gray-500">
-            This helps maintain the best user experience and prevents any
-            technical issues.
+            O seu navegador perdeu o foco. Por favor, atualize a página para
+            continuar.
           </p>
           <Button
             onClick={handleRefresh}
@@ -86,7 +82,7 @@ export function BrowserMinimizationHandler() {
             size="lg"
           >
             <RefreshCw className="h-5 w-5 mr-2" />
-            Refresh Page
+            Atualizar página
           </Button>
         </CardContent>
       </Card>
