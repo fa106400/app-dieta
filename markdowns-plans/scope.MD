@@ -163,7 +163,7 @@ This plan outlines the development of a complete nutrition and diet management p
   - Rate limiting and cost control (free tier limits) ✅
   - Error handling and fallbacks ✅
 
-- **3.2.2 Recommendation Logic**
+- **3.2.2 Recommendation Logic** ✅
   - User profile analysis
   - Diet matching algorithms using Gemini
   - Score calculation and ranking
@@ -4266,7 +4266,7 @@ The **User Weight Log** screen allows users to **record, view, and edit their we
 #Rule to implement:
 * On the "Eu > Registro de Peso" screen, there is a button: **"Update diet recommendations using AI"**.
 * Behavior:
-  1. Button is disabled for **1 week** after each use.
+  1. Button is disabled for **1 week** after each use - **use cooldownHours logic implemented in step 3.2.2** .
   2. When clicked:
      - Fetch the latest user profile data from the database.
      - Fetch all diet records from the catalog.

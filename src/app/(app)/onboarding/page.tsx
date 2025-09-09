@@ -175,8 +175,42 @@ function OnboardingPageContent() {
       }
 
       console.log(
-        "🔍 Onboarding - Profile saved successfully, onboarding_completed set to true, redirecting to home"
+        "🔍 Onboarding - Profile saved successfully, onboarding_completed set to true"
       );
+
+      // Generate initial AI recommendations
+      try {
+        console.log("🔍 Onboarding - Generating initial AI recommendations...");
+        const recommendationsResponse = await fetch(
+          "/api/ai/onboarding-recommendations",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (recommendationsResponse.ok) {
+          const recommendationsData = await recommendationsResponse.json();
+          console.log(
+            "🔍 Onboarding - Generated",
+            recommendationsData.recommendations?.length || 0,
+            "AI recommendations"
+          );
+        } else {
+          console.warn(
+            "🔍 Onboarding - Failed to generate AI recommendations, but continuing..."
+          );
+        }
+      } catch (recommendationError) {
+        console.warn(
+          "🔍 Onboarding - Error generating recommendations:",
+          recommendationError
+        );
+        // Don't fail the onboarding process if recommendations fail
+      }
+
       // Redirect to home page after successful onboarding
       router.push("/home");
     } catch (err) {

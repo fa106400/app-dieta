@@ -90,17 +90,17 @@ export function useAIRecommendations() {
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 429) {
-          // Rate limited or cooldown
-          setState(prev => ({
-            ...prev,
-            loading: false,
-            error: data.message || data.error,
-            canRequestNew: false,
-            cooldownRemaining: data.cooldownHours ? data.cooldownHours * 60 * 60 * 1000 : undefined,
-          }));
-          return;
-        }
+      if (response.status === 429) {
+        // Rate limited or cooldown
+        setState(prev => ({
+          ...prev,
+          loading: false,
+          error: data.message || data.error,
+          canRequestNew: false,
+          cooldownRemaining: data.cooldownRemaining || (data.cooldownHours ? data.cooldownHours * 60 * 60 * 1000 : undefined),
+        }));
+        return;
+      }
         throw new Error(data.error || 'Failed to generate recommendations');
       }
 

@@ -24,28 +24,28 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { forceRefresh = false } = body;
 
-    // Check if user can request new recommendations
+    // Check if user can request new recommendations (per-user cooldown)
     const { data: lastRecommendation } = await supabase
       .from('diet_recommendations')
-      .select('generated_at')
+      .select('last_refreshed')
       .eq('user_id', user.id)
-      .order('generated_at', { ascending: false })
+      .order('last_refreshed', { ascending: false })
       .limit(1)
       .single();
 
-    if (!forceRefresh && lastRecommendation?.generated_at) {
+    if (!forceRefresh && lastRecommendation?.last_refreshed) {
       const cooldownCheck = aiService.canRequestRecommendations(
         user.id,
-        new Date(lastRecommendation.generated_at).getTime()
+        lastRecommendation.last_refreshed
       );
 
       if (!cooldownCheck.allowed) {
-        const cooldownHours = Math.ceil((cooldownCheck.cooldownRemaining || 0) / (1000 * 60 * 60));
         return NextResponse.json(
           { 
             error: 'Recommendations are on cooldown',
-            cooldownHours,
-            message: `Please wait ${cooldownHours} hours before requesting new recommendations.`
+            cooldownHours: cooldownCheck.cooldownHours,
+            cooldownRemaining: cooldownCheck.cooldownRemaining,
+            message: `Please wait ${cooldownCheck.cooldownHours} hours before requesting new recommendations.`
           },
           { status: 429 }
         );
@@ -139,12 +139,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Save recommendations to database
+    const now = new Date().toISOString();
     const recommendationInserts = aiResponse.recommendations.map(rec => ({
       user_id: user.id,
       diet_id: rec.dietId,
       score: rec.score,
       reasoning: rec.reasoning,
-      generated_at: new Date().toISOString(),
+      generated_at: now,
+      last_refreshed: now,
     }));
 
     const { error: insertError } = await supabase
@@ -216,6 +218,7 @@ export async function GET(_request: NextRequest) {
         score,
         reasoning,
         generated_at,
+        last_refreshed,
         diets:diet_id (
           id,
           title,
@@ -241,7 +244,7 @@ export async function GET(_request: NextRequest) {
     const lastRecommendation = recommendations?.[0];
     const cooldownCheck = aiService.canRequestRecommendations(
       user.id,
-      lastRecommendation?.generated_at ? new Date(lastRecommendation.generated_at).getTime() : undefined
+      lastRecommendation?.last_refreshed || undefined
     );
 
     // Get rate limit status

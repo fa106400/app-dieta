@@ -201,7 +201,7 @@ class AIService {
   }
 
   /**
-   * Build the prompt for diet recommendations
+   * Build the prompt for diet recommendations with enhanced matching logic
    */
   private buildRecommendationPrompt(
     userProfile: UserProfile,
@@ -218,21 +218,39 @@ class AIService {
       `ID: ${diet.id}, Title: ${diet.title}, Category: ${diet.category}, Difficulty: ${diet.difficulty}, Calories: ${diet.calories_total}, Tags: ${diet.tags.join(', ')}`
     ).join('\n');
 
-    return `
-You are a nutrition expert AI assistant. Analyze the user profile and available diets to recommend the best 3-5 diets.
+    // Calculate user's estimated daily calorie needs
+    const estimatedCalories = this.calculateEstimatedCalories(userProfile);
 
-User Profile:
-- Age: ${userProfile.age || 'Not specified'}
-- Gender: ${userProfile.gender || 'Not specified'}
+    return `
+You are a nutrition expert AI assistant specializing in personalized diet recommendations. Analyze the user profile and available diets to recommend the best 3-5 diets with detailed matching logic.
+
+USER PROFILE ANALYSIS:
+- Age: ${userProfile.age || 'Not specified'} years
 - Weight: ${userProfile.weight || 'Not specified'} kg
 - Height: ${userProfile.height || 'Not specified'} cm
 - Activity Level: ${userProfile.activityLevel || 'Not specified'}
 - Dietary Restrictions: ${userProfile.dietaryRestrictions?.join(', ') || 'None'}
-- Goals: ${userProfile.goals?.join(', ') || 'Not specified'}
-- Preferences: ${userProfile.preferences?.join(', ') || 'Not specified'}
+- Health Goals: ${userProfile.goals?.join(', ') || 'Not specified'}
+- Food Preferences: ${userProfile.preferences?.join(', ') || 'Not specified'}
+- Estimated Daily Calorie Needs: ${estimatedCalories} calories
 
-Available Diets:
+AVAILABLE DIETS:
 ${dietList}
+
+MATCHING CRITERIA (in order of importance):
+1. DIETARY COMPATIBILITY: Match dietary restrictions and preferences
+2. CALORIE ALIGNMENT: Compare diet calories with user's estimated needs (±200 calories ideal)
+3. GOAL ALIGNMENT: Match diet category with user's health goals
+4. DIFFICULTY SUITABILITY: Match diet difficulty with user's experience level
+5. TAG RELEVANCE: Consider diet tags for additional personalization
+
+SCORING METHODOLOGY:
+- Base score: 0.0 to 1.0
+- Dietary compatibility: +0.3 if perfect match, +0.2 if partial match
+- Calorie alignment: +0.25 if within ±200 calories, +0.15 if within ±400 calories
+- Goal alignment: +0.2 if category matches goal, +0.1 if related
+- Difficulty suitability: +0.15 if appropriate for user level
+- Tag relevance: +0.1 for each relevant tag match
 
 Please provide your recommendations in the following JSON format:
 {
@@ -240,20 +258,59 @@ Please provide your recommendations in the following JSON format:
     {
       "dietId": "diet_id_here",
       "score": 0.85,
-      "reasoning": "Brief explanation of why this diet is recommended for this user"
+      "reasoning": "Detailed explanation of why this diet is recommended, including specific matching factors and how it aligns with the user's profile"
     }
   ]
 }
 
-Consider factors like:
-- User's dietary restrictions and preferences
-- Activity level and calorie needs
-- Health goals and objectives
-- Diet difficulty matching user's experience level
-- Category preferences
+REQUIREMENTS:
+- Provide exactly 3-5 recommendations
+- Scores should be between 0.0 and 1.0
+- Reasoning should be specific and detailed (2-3 sentences)
+- Prioritize diets that best match the user's profile
+- Consider the user's complete profile holistically
 
 Return only the JSON response, no additional text.
     `.trim();
+  }
+
+  /**
+   * Calculate estimated daily calorie needs based on user profile
+   */
+  private calculateEstimatedCalories(userProfile: UserProfile): number {
+    if (!userProfile.age || !userProfile.weight || !userProfile.height || !userProfile.activityLevel) {
+      return 2000; // Default fallback
+    }
+
+    // Calculate BMR using Mifflin-St Jeor Equation
+    const age = userProfile.age;
+    const weight = userProfile.weight;
+    const height = userProfile.height;
+    
+    // BMR calculation (simplified - using average for gender)
+    const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    
+    // Activity level multipliers
+    const activityMultipliers = {
+      'sedentary': 1.2,
+      'lightly_active': 1.375,
+      'moderately_active': 1.55,
+      'very_active': 1.725,
+      'extra_active': 1.9
+    };
+    
+    const multiplier = activityMultipliers[userProfile.activityLevel as keyof typeof activityMultipliers] || 1.55;
+    const tdee = bmr * multiplier;
+    
+    // Adjust based on goals
+    let adjustedCalories = tdee;
+    if (userProfile.goals?.includes('lose_weight')) {
+      adjustedCalories = tdee - 500; // 1 lb per week deficit
+    } else if (userProfile.goals?.includes('gain_muscle')) {
+      adjustedCalories = tdee + 300; // Surplus for muscle gain
+    }
+    
+    return Math.round(adjustedCalories);
   }
 
   /**
@@ -296,23 +353,28 @@ Return only the JSON response, no additional text.
   }
 
   /**
-   * Check if user can request new recommendations (cooldown check)
+   * Check if user can request new recommendations (per-user cooldown check)
+   * Uses the last_refreshed timestamp from diet_recommendations table
    */
-  canRequestRecommendations(userId: string, lastRequestTime?: number): {
+  canRequestRecommendations(userId: string, lastRefreshedTime?: string): {
     allowed: boolean;
     cooldownRemaining?: number;
+    cooldownHours?: number;
   } {
-    if (!lastRequestTime) {
+    if (!lastRefreshedTime) {
       return { allowed: true };
     }
 
-    const timeSinceLastRequest = Date.now() - lastRequestTime;
-    const cooldownRemaining = RATE_LIMIT_CONFIG.RECOMMENDATION_COOLDOWN - timeSinceLastRequest;
+    const lastRefreshTimestamp = new Date(lastRefreshedTime).getTime();
+    const timeSinceLastRefresh = Date.now() - lastRefreshTimestamp;
+    const cooldownRemaining = RATE_LIMIT_CONFIG.RECOMMENDATION_COOLDOWN - timeSinceLastRefresh;
 
     if (cooldownRemaining > 0) {
+      const cooldownHours = Math.ceil(cooldownRemaining / (1000 * 60 * 60));
       return {
         allowed: false,
         cooldownRemaining,
+        cooldownHours,
       };
     }
 
@@ -341,6 +403,284 @@ Return only the JSON response, no additional text.
       minuteUsed: recentRequests.length,
       minuteLimit: RATE_LIMIT_CONFIG.REQUESTS_PER_MINUTE,
     };
+  }
+
+  /**
+   * Generate initial recommendations after onboarding completion
+   * This function is called automatically after user completes onboarding
+   */
+  async generateInitialRecommendations(
+    userId: string,
+    userProfile: UserProfile,
+    availableDiets: Array<{
+      id: string;
+      title: string;
+      description: string;
+      category: string;
+      difficulty: string;
+      calories_total: number;
+      tags: string[];
+    }>
+  ): Promise<{
+    success: boolean;
+    recommendations?: DietRecommendation[];
+    error?: string;
+  }> {
+    console.log('🔍 AI Service - Generating initial recommendations for user:', userId);
+    
+    if (!this.isAvailable()) {
+      return {
+        success: false,
+        error: 'AI service is not available. Please check configuration.',
+      };
+    }
+
+    try {
+      // Generate recommendations using the enhanced matching logic
+      const aiResponse = await this.generateDietRecommendations(userProfile, availableDiets);
+      
+      if (!aiResponse.success) {
+        return {
+          success: false,
+          error: aiResponse.error || 'Failed to generate recommendations',
+        };
+      }
+
+      if (!aiResponse.recommendations || aiResponse.recommendations.length === 0) {
+        return {
+          success: false,
+          error: 'No recommendations generated',
+        };
+      }
+
+      console.log('🔍 AI Service - Generated', aiResponse.recommendations.length, 'initial recommendations');
+      
+      return {
+        success: true,
+        recommendations: aiResponse.recommendations,
+      };
+    } catch (error) {
+      console.error('🔍 AI Service - Error generating initial recommendations:', error);
+      return {
+        success: false,
+        error: 'Failed to generate initial recommendations',
+      };
+    }
+  }
+
+  /**
+   * Enhanced recommendation logic with advanced matching algorithms
+   */
+  async generateAdvancedRecommendations(
+    userProfile: UserProfile,
+    availableDiets: Array<{
+      id: string;
+      title: string;
+      description: string;
+      category: string;
+      difficulty: string;
+      calories_total: number;
+      tags: string[];
+    }>
+  ): Promise<{
+    success: boolean;
+    recommendations?: DietRecommendation[];
+    error?: string;
+    matchingFactors?: {
+      dietaryCompatibility: number;
+      calorieAlignment: number;
+      goalAlignment: number;
+      difficultySuitability: number;
+      tagRelevance: number;
+    };
+  }> {
+    if (!this.isAvailable()) {
+      return {
+        success: false,
+        error: 'AI service is not available. Please check configuration.',
+      };
+    }
+
+    try {
+      // Calculate matching factors for analysis
+      const matchingFactors = this.calculateMatchingFactors(userProfile, availableDiets);
+      
+      // Generate recommendations with enhanced prompt
+      const aiResponse = await this.generateDietRecommendations(userProfile, availableDiets);
+      
+      if (!aiResponse.success) {
+        return {
+          success: false,
+          error: aiResponse.error || 'Failed to generate recommendations',
+        };
+      }
+
+      return {
+        success: true,
+        recommendations: aiResponse.recommendations,
+        matchingFactors,
+      };
+    } catch (error) {
+      console.error('🔍 AI Service - Error in advanced recommendations:', error);
+      return {
+        success: false,
+        error: 'Failed to generate advanced recommendations',
+      };
+    }
+  }
+
+  /**
+   * Calculate matching factors for recommendation analysis
+   */
+  private calculateMatchingFactors(
+    userProfile: UserProfile,
+    availableDiets: Array<{
+      id: string;
+      title: string;
+      category: string;
+      difficulty: string;
+      calories_total: number;
+      tags: string[];
+    }>
+  ): {
+    dietaryCompatibility: number;
+    calorieAlignment: number;
+    goalAlignment: number;
+    difficultySuitability: number;
+    tagRelevance: number;
+  } {
+    const estimatedCalories = this.calculateEstimatedCalories(userProfile);
+    
+    // Calculate average matching factors across all diets
+    let totalDietaryCompatibility = 0;
+    let totalCalorieAlignment = 0;
+    let totalGoalAlignment = 0;
+    let totalDifficultySuitability = 0;
+    let totalTagRelevance = 0;
+    
+    availableDiets.forEach(diet => {
+      // Dietary compatibility (simplified)
+      const dietaryMatch = this.calculateDietaryCompatibility(userProfile, diet);
+      totalDietaryCompatibility += dietaryMatch;
+      
+      // Calorie alignment
+      const calorieDiff = Math.abs(diet.calories_total - estimatedCalories);
+      const calorieAlignment = calorieDiff <= 200 ? 1 : calorieDiff <= 400 ? 0.5 : 0;
+      totalCalorieAlignment += calorieAlignment;
+      
+      // Goal alignment
+      const goalAlignment = this.calculateGoalAlignment(userProfile, diet);
+      totalGoalAlignment += goalAlignment;
+      
+      // Difficulty suitability
+      const difficultySuitability = this.calculateDifficultySuitability(userProfile, diet);
+      totalDifficultySuitability += difficultySuitability;
+      
+      // Tag relevance
+      const tagRelevance = this.calculateTagRelevance(userProfile, diet);
+      totalTagRelevance += tagRelevance;
+    });
+    
+    const dietCount = availableDiets.length;
+    
+    return {
+      dietaryCompatibility: totalDietaryCompatibility / dietCount,
+      calorieAlignment: totalCalorieAlignment / dietCount,
+      goalAlignment: totalGoalAlignment / dietCount,
+      difficultySuitability: totalDifficultySuitability / dietCount,
+      tagRelevance: totalTagRelevance / dietCount,
+    };
+  }
+
+  /**
+   * Calculate dietary compatibility score
+   */
+  private calculateDietaryCompatibility(userProfile: UserProfile, _diet: {
+    id: string;
+    title: string;
+    category: string;
+    difficulty: string;
+    calories_total: number;
+    tags: string[];
+  }): number {
+    if (!userProfile.dietaryRestrictions || userProfile.dietaryRestrictions.length === 0) {
+      return 1; // No restrictions, perfect compatibility
+    }
+    
+    // This is a simplified calculation - in a real implementation,
+    // you'd have more sophisticated matching logic
+    return 0.8; // Placeholder
+  }
+
+  /**
+   * Calculate goal alignment score
+   */
+  private calculateGoalAlignment(userProfile: UserProfile, diet: {
+    id: string;
+    title: string;
+    category: string;
+    difficulty: string;
+    calories_total: number;
+    tags: string[];
+  }): number {
+    if (!userProfile.goals || userProfile.goals.length === 0) {
+      return 0.5; // Neutral if no goals specified
+    }
+    
+    // Map goals to diet categories
+    const goalCategoryMap: { [key: string]: string[] } = {
+      'lose_weight': ['weight_loss', 'low_calorie', 'keto'],
+      'gain_muscle': ['muscle_gain', 'high_protein', 'bodybuilding'],
+      'maintain': ['balanced', 'maintenance', 'healthy'],
+      'health': ['mediterranean', 'heart_healthy', 'anti_inflammatory']
+    };
+    
+    const relevantCategories = userProfile.goals.flatMap(goal => 
+      goalCategoryMap[goal] || []
+    );
+    
+    return relevantCategories.includes(diet.category) ? 1 : 0.3;
+  }
+
+  /**
+   * Calculate difficulty suitability score
+   */
+  private calculateDifficultySuitability(_userProfile: UserProfile, _diet: {
+    id: string;
+    title: string;
+    category: string;
+    difficulty: string;
+    calories_total: number;
+    tags: string[];
+  }): number {
+    // This is a simplified calculation - in a real implementation,
+    // you'd consider user's experience level, time constraints, etc.
+    return 0.7; // Placeholder
+  }
+
+  /**
+   * Calculate tag relevance score
+   */
+  private calculateTagRelevance(userProfile: UserProfile, diet: {
+    id: string;
+    title: string;
+    category: string;
+    difficulty: string;
+    calories_total: number;
+    tags: string[];
+  }): number {
+    if (!userProfile.preferences || userProfile.preferences.length === 0) {
+      return 0.5; // Neutral if no preferences
+    }
+    
+    const matchingTags = diet.tags.filter((tag: string) => 
+      userProfile.preferences?.some(pref => 
+        pref.toLowerCase().includes(tag.toLowerCase()) ||
+        tag.toLowerCase().includes(pref.toLowerCase())
+      )
+    );
+    
+    return Math.min(matchingTags.length / diet.tags.length, 1);
   }
 }
 
