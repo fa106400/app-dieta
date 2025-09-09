@@ -5,6 +5,172 @@ INSERT INTO diets
 (slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
 VALUES
 (
+  'mediterranea-2000',
+  'Dieta Mediterrânea (2000 kcal)',
+  'Plano inspirado no padrão alimentar mediterrâneo, com ênfase em azeite de oliva, peixes, legumes e cereais integrais. Versão ajustada para 2000 kcal por dia.',
+  '{"mediterranea","equilibrada","saude"}',
+  'equilibrada',
+  'intermediario',
+  6,
+  17,
+  TRUE,
+  NOW(),
+  NOW(),
+  2000,
+  '{
+    "proteina": 120,
+    "carboidrato": 200,
+    "gordura": 75
+  }',
+  '{
+    "days": [
+      {
+        "day_index": 0,
+        "meals": [
+          {
+            "name": "Café da manhã",
+            "items": [
+              {
+                "name": "Iogurte natural integral",
+                "quantity": 250,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Iogurte grego natural", "quantity": 200, "unit": "g" },
+                  { "name": "Kefir", "quantity": 250, "unit": "ml" }
+                ]
+              },
+              {
+                "name": "Aveia em flocos",
+                "quantity": 50,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Granola sem açúcar", "quantity": 45, "unit": "g" },
+                  { "name": "Centeio em flocos", "quantity": 50, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Morangos",
+                "quantity": 150,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Mirtilos", "quantity": 120, "unit": "g" },
+                  { "name": "Maçã", "quantity": 1, "unit": "unidade" }
+                ]
+              }
+            ],
+            "calories": 450
+          },
+          {
+            "name": "Almoço",
+            "items": [
+              {
+                "name": "Peito de frango grelhado",
+                "quantity": 150,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Peixe branco grelhado", "quantity": 150, "unit": "g" },
+                  { "name": "Grão-de-bico cozido", "quantity": 120, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Arroz integral",
+                "quantity": 110,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Cevada cozida", "quantity": 110, "unit": "g" },
+                  { "name": "Quinoa cozida", "quantity": 100, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Brócolis cozidos",
+                "quantity": 150,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Couve-flor", "quantity": 150, "unit": "g" },
+                  { "name": "Abobrinha", "quantity": 150, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Azeite de oliva",
+                "quantity": 20,
+                "unit": "ml",
+                "alt_items": [
+                  { "name": "Azeite de abacate", "quantity": 20, "unit": "ml" },
+                  { "name": "Sementes de linhaça", "quantity": 20, "unit": "g" }
+                ]
+              }
+            ],
+            "calories": 600
+          },
+          {
+            "name": "Lanche da tarde",
+            "items": [
+              {
+                "name": "Nozes",
+                "quantity": 30,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Amêndoas", "quantity": 30, "unit": "g" },
+                  { "name": "Castanha-do-pará", "quantity": 25, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Pera",
+                "quantity": 1,
+                "unit": "unidade",
+                "alt_items": [
+                  { "name": "Maçã", "quantity": 1, "unit": "unidade" },
+                  { "name": "Laranja", "quantity": 1, "unit": "unidade" }
+                ]
+              }
+            ],
+            "calories": 300
+          },
+          {
+            "name": "Jantar",
+            "items": [
+              {
+                "name": "Peixe grelhado",
+                "quantity": 180,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Frango grelhado", "quantity": 180, "unit": "g" },
+                  { "name": "Ovos cozidos", "quantity": 3, "unit": "unidades" }
+                ]
+              },
+              {
+                "name": "Salada de folhas (alface, rúcula, tomate)",
+                "quantity": 200,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Espinafre cru", "quantity": 200, "unit": "g" },
+                  { "name": "Couve", "quantity": 180, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Batata-doce assada",
+                "quantity": 120,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Abóbora assada", "quantity": 120, "unit": "g" },
+                  { "name": "Inhame cozido", "quantity": 120, "unit": "g" }
+                ]
+              }
+            ],
+            "calories": 500
+          }
+        ]
+      }
+    ]
+  }'
+);
+
+
+
+INSERT INTO diets 
+(slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
+VALUES
+(
   'mediterranea-1600',
   'Dieta Mediterrânea (1600 kcal)',
   'Plano inspirado no padrão alimentar mediterrâneo, com ênfase em azeite de oliva, peixes, legumes e cereais integrais. Versão ajustada para 1600 kcal por dia.',
