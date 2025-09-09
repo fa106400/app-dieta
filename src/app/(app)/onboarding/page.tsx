@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -161,6 +160,7 @@ function OnboardingPageContent() {
         body: JSON.stringify({
           name: user?.user_metadata?.name || user?.email?.split("@")[0],
           ...formData,
+          onboarding_completed: true,
         }),
       });
 
@@ -175,7 +175,7 @@ function OnboardingPageContent() {
       }
 
       console.log(
-        "🔍 Onboarding - Profile saved successfully, redirecting to home"
+        "🔍 Onboarding - Profile saved successfully, onboarding_completed set to true, redirecting to home"
       );
       // Redirect to home page after successful onboarding
       router.push("/home");
@@ -544,9 +544,5 @@ function OnboardingPageContent() {
 }
 
 export default function OnboardingPage() {
-  return (
-    <ProtectedRoute>
-      <OnboardingPageContent />
-    </ProtectedRoute>
-  );
+  return <OnboardingPageContent />;
 }

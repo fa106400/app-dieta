@@ -1,6 +1,7 @@
 "use client";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { OnboardingGuard } from "@/components/auth/OnboardingGuard";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { BrowserMinimizationHandler } from "@/components/layout/BrowserMinimizationHandler";
 
@@ -11,8 +12,10 @@ export default function AppLayoutWrapper({
 }) {
   return (
     <ProtectedRoute>
-      <AppLayout>{children}</AppLayout>
-      <BrowserMinimizationHandler />
+      <OnboardingGuard>
+        <AppLayout>{children}</AppLayout>
+        <BrowserMinimizationHandler />
+      </OnboardingGuard>
     </ProtectedRoute>
   );
 }
