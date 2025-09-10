@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     // Get available diets
     const { data: diets, error: dietsError } = await supabase
-      .from('diet_catalog_view')
+      .from('diets')
       .select(`
         id,
         title,

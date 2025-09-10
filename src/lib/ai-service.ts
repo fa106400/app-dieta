@@ -1,5 +1,8 @@
 import { GoogleGenerativeAI, GenerativeModel, GenerationConfig } from '@google/generative-ai';
 
+// Feature flag: AI debug mode
+const AI_DEBUG_MODE = String(process.env.AI_DEBUG_MODE || '').toLowerCase() === 'true';
+
 // Rate limiting configuration
 const RATE_LIMIT_CONFIG = {
   // Free tier limits (requests per minute)
@@ -26,6 +29,8 @@ class AIService {
   private isConfigured: boolean = false;
 
   constructor() {
+    console.log('🔍 AI Service - AI debug mode:', AI_DEBUG_MODE);
+    
     const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
     
     if (!apiKey) {
@@ -54,6 +59,7 @@ class AIService {
    * Check if the AI service is properly configured
    */
   isAvailable(): boolean {
+    if (AI_DEBUG_MODE) return true; // In debug mode, always report available
     return this.isConfigured && !!this.model && !!this.genAI;
   }
 
@@ -61,6 +67,10 @@ class AIService {
    * Rate limiting check
    */
   private checkRateLimit(userId: string): { allowed: boolean; resetTime?: number } {
+    if (AI_DEBUG_MODE) {
+      // Bypass all limits in debug mode
+      return { allowed: true };
+    }
     const now = Date.now();
     const userKey = `user_${userId}`;
     
@@ -150,7 +160,13 @@ class AIService {
     }
 
     try {
+      if (AI_DEBUG_MODE) {
+        // Return mocked recommendations without calling the API
+        const mocked = this.buildMockRecommendations(availableDiets);
+        return { success: true, recommendations: mocked };
+      }
       const prompt = this.buildRecommendationPrompt(userProfile, availableDiets);
+      console.log('🔍 AI Service - Prompt:', prompt);
       
       if (!this.model) {
         throw new Error('AI model not initialized');
@@ -162,6 +178,7 @@ class AIService {
 
       // Parse the AI response
       const recommendations = this.parseRecommendations(text, availableDiets);
+      console.log('🔍 AI Service - Recommendations:', recommendations);
       
       return {
         success: true,
@@ -198,6 +215,21 @@ class AIService {
         error: 'Failed to generate recommendations. Please try again later.',
       };
     }
+  }
+
+  /**
+   * Build mocked recommendations for debug mode
+   */
+  private buildMockRecommendations(
+    availableDiets: Array<{ id: string; title: string; description: string; category: string; difficulty: string; calories_total: number; tags: string[] }>
+  ): Array<{ dietId: string; score: number; reasoning: string }> {
+    // Pick up to 4 diets deterministically
+    const picks = availableDiets.slice(0, Math.min(4, availableDiets.length));
+    return picks.map((diet, index) => ({
+      dietId: diet.id,
+      score: Math.max(0.45, 0.8 - index * 0.1),
+      reasoning: `Mocked: The ${diet.title} (${diet.calories_total} kcal) is a suitable option based on category '${diet.category}', difficulty '${diet.difficulty}', and tags ${diet.tags.slice(0,2).join(', ')}.`,
+    }));
   }
 
   /**
@@ -361,6 +393,10 @@ Return only the JSON response, no additional text.
     cooldownRemaining?: number;
     cooldownHours?: number;
   } {
+    if (AI_DEBUG_MODE) {
+      // Always allow in debug mode
+      return { allowed: true };
+    }
     if (!lastRefreshedTime) {
       return { allowed: true };
     }

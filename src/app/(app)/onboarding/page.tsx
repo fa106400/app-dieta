@@ -181,6 +181,11 @@ function OnboardingPageContent() {
       // Generate initial AI recommendations
       try {
         console.log("🔍 Onboarding - Generating initial AI recommendations...");
+        console.log(
+          "🔍 Onboarding - Making request to:",
+          "/api/ai/onboarding-recommendations"
+        );
+
         const recommendationsResponse = await fetch(
           "/api/ai/onboarding-recommendations",
           {
@@ -189,6 +194,15 @@ function OnboardingPageContent() {
               "Content-Type": "application/json",
             },
           }
+        );
+
+        console.log(
+          "🔍 Onboarding - Response status:",
+          recommendationsResponse.status
+        );
+        console.log(
+          "🔍 Onboarding - Response URL:",
+          recommendationsResponse.url
         );
 
         if (recommendationsResponse.ok) {
