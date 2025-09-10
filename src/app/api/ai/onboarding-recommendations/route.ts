@@ -152,6 +152,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    //first, delete all recommendations for the user
+    console.log('🔍 Onboarding Recommendations - Deleting all recommendations for the user...');
+    const { error: deleteError } = await supabase
+      .from('diet_recommendations')
+      .delete()
+      .eq('user_id', user.id);
+    
+    console.log('🔍 Onboarding Recommendations - Delete result:');
+    console.log('  - Delete error:', deleteError);
+    
+    if (deleteError) {
+      console.log('🔍 Onboarding Recommendations - Failed to delete recommendations, returning 500');
+      console.error('Error deleting recommendations:', deleteError);
+      return NextResponse.json(
+        { error: 'Failed to delete recommendations', details: deleteError.message },
+        { status: 500 }
+      );
+    }
+
     // Save recommendations to database
     console.log('🔍 Onboarding Recommendations - Saving recommendations to database...');
     const now = new Date().toISOString();

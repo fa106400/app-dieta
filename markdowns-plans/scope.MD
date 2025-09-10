@@ -187,16 +187,16 @@ This plan outlines the development of a complete nutrition and diet management p
 - **My Week Implementation (Screen 6.1)** ✅
   - Shows the user’s active diet plan for the current week ✅
 
-### 4.2 Progress Tracking
-- **Weight Management (Screen 9.2)**
-  - Weight entry form
-  - Historical weight data
-  - Progress visualization with charts
-  - Goal tracking
-  - **AI Recommendation Refresh Button**
-    - Disabled for 1 week after each use
-    - Triggers Gemini API call for new diet suggestions
-    - Updates `diet_recommendations` table
+### 4.2 Progress Tracking ✅ **COMPLETED**
+- **Weight Management (Screen 9.2)** ✅
+  - Weight entry form ✅
+  - Historical weight data ✅
+  - Progress visualization with charts ✅
+  - Goal tracking ✅
+  - **AI Recommendation Refresh Button** ✅
+    - Disabled for 1 week after each use ✅
+    - Triggers Gemini API call for new diet suggestions ✅
+    - Updates `diet_recommendations` table ✅
 
 - **Shopping List (Screen 7.1)**
   - Ingredient aggregation
@@ -4219,9 +4219,9 @@ The **User Weight Log** screen allows users to **record, view, and edit their we
 * Integrate with dashboard and gamification system for badge triggering.
 
 #Rule to implement:
-* On the "Eu > Registro de Peso" screen, there is a button: **"Update diet recommendations using AI"**.
+* On the "Me > Weight Log" screen, there is a button like: **"Update diet recommendations using AI"**.
 * Behavior:
-  1. Button is disabled for **1 week** after each use - **use cooldownHours logic implemented in step 3.2.2** .
+  1. Button is disabled for **1 week** after onboarding and then after each use - **use cooldownHours logic implemented in step 3.2.2** .
   2. When clicked:
      - Fetch the latest user profile data from the database.
      - Fetch all diet records from the catalog.
@@ -4259,6 +4259,7 @@ The **User Weight Log** screen allows users to **record, view, and edit their we
 * **Empty / Placeholder State**
 
   * Message: “No weight entries yet. Add your first entry to start tracking.”
+  * Rule: To overcome this, always set the onboarding weight as the first log! Include an insert to `user_metrics` after onboarding submission!
 
 ---
 
@@ -4394,7 +4395,7 @@ export default function WeightLog() {
 
 ## Next.js App Routing & Middleware
 
-* Route: `/eu/weight-log`
+* Route: `/me/weight-log`
 * Middleware:
 
   * Authenticated session required → redirect `/login`

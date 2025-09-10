@@ -178,6 +178,37 @@ function OnboardingPageContent() {
         "🔍 Onboarding - Profile saved successfully, onboarding_completed set to true"
       );
 
+      // Insert initial weight entry
+      try {
+        console.log("🔍 Onboarding - Inserting initial weight entry...");
+        const weightResponse = await fetch("/api/me/weight", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            weight: formData.weight_start_kg,
+            date: new Date().toISOString().split("T")[0],
+          }),
+        });
+
+        if (weightResponse.ok) {
+          console.log(
+            "🔍 Onboarding - Initial weight entry saved successfully"
+          );
+        } else {
+          console.warn(
+            "🔍 Onboarding - Failed to save initial weight entry, but continuing..."
+          );
+        }
+      } catch (weightError) {
+        console.warn(
+          "🔍 Onboarding - Error saving initial weight:",
+          weightError
+        );
+        // Don't fail the onboarding process if weight entry fails
+      }
+
       // Generate initial AI recommendations
       try {
         console.log("🔍 Onboarding - Generating initial AI recommendations...");
