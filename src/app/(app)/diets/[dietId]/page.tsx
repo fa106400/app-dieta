@@ -31,6 +31,7 @@ import { toast } from "sonner";
 interface DietDetail extends Diet {
   is_favorited?: boolean;
   recommendation_reasoning?: string | null;
+  is_currently_active?: boolean;
 }
 
 export default function DietDetailPage() {
@@ -125,10 +126,25 @@ export default function DietDetailPage() {
         isFavorited = !!favoriteData;
       }
 
+      // Check if this diet is currently active for the user
+      let isCurrentlyActive = false;
+      if (user) {
+        const { data: currentDietData } = await supabase
+          .from("user_current_diet")
+          .select("diet_id")
+          .eq("user_id", user.id)
+          .eq("diet_id", dietId)
+          .eq("is_active", true)
+          .single();
+
+        isCurrentlyActive = !!currentDietData;
+      }
+
       const dietDetail: DietDetail = {
         ...dietData,
         is_favorited: isFavorited,
         recommendation_reasoning,
+        is_currently_active: isCurrentlyActive,
       };
 
       setDiet(dietDetail);
@@ -618,7 +634,7 @@ export default function DietDetailPage() {
       <div className="flex justify-center">
         <Button
           onClick={followNow}
-          disabled={!diet || isFollowing}
+          disabled={!diet || isFollowing || diet.is_currently_active}
           size="lg"
           className="px-8"
         >
@@ -627,6 +643,8 @@ export default function DietDetailPage() {
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Setting as Active...
             </>
+          ) : diet.is_currently_active ? (
+            "Currently Following"
           ) : (
             "Follow Now"
           )}

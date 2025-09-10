@@ -173,12 +173,11 @@ This plan outlines the development of a complete nutrition and diet management p
   - AI-suggested diets display: Implemented in `src/app/(app)/diets/page.tsx`. Recommended diets are highlighted in a "Recommended for You" section, merged into the main list, and can be sorted by "Recommendation". Rules from Screen 4.1 (lines 2331, 2372, 2465) respected.
   - "Why recommended" explanations: Implemented in `src/app/(app)/diets/[dietId]/page.tsx`. Added conditional section showing `diet_recommendations.reasoning` only when the diet was recommended for the current user.
 
-### 3.3 Diet Management
-- **Diet Selection & Following**
-  - "Follow Now" functionality
-  - Current diet tracking
-  - Diet switching capabilities
-  - Meal plan visualization
+### 3.3 Diet Management ✅
+- **Diet Selection & Following** ✅
+  - "Follow Now" functionality: Implemented in `src/app/(app)/diets/[dietId]/page.tsx`. Users can set any diet as their active plan, which deactivates previous diets and sets the new one as active in `user_current_diet` table.
+  - Current diet tracking: Implemented in `src/app/(app)/my-week/page.tsx` with `CurrentDietCard` component. Displays active diet details, progress tracking, and provides easy access to change diets.
+  - Diet switching capabilities: Users can switch diets through the "Change Diet" button in My Week page, which redirects to the diet catalog for selection.
 
 ---
 
