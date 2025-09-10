@@ -30,6 +30,7 @@ import { toast } from "sonner";
 // Simplified DietDetail interface - no more variants or separate meals
 interface DietDetail extends Diet {
   is_favorited?: boolean;
+  recommendation_reasoning?: string | null;
 }
 
 export default function DietDetailPage() {
@@ -97,6 +98,18 @@ export default function DietDetailPage() {
 
       if (dietError) throw dietError;
 
+      // Fetch recommendation reasoning for this user+diet (if exists)
+      let recommendation_reasoning: string | null = null;
+      if (user) {
+        const { data: recData } = await supabase
+          .from("diet_recommendations")
+          .select("reasoning")
+          .eq("user_id", user.id)
+          .eq("diet_id", dietId)
+          .maybeSingle();
+        recommendation_reasoning = recData?.reasoning ?? null;
+      }
+
       // No need to fetch variants or meals - they are now part of the diet record
 
       // Check if user has favorited this diet
@@ -115,6 +128,7 @@ export default function DietDetailPage() {
       const dietDetail: DietDetail = {
         ...dietData,
         is_favorited: isFavorited,
+        recommendation_reasoning,
       };
 
       setDiet(dietDetail);
@@ -430,6 +444,23 @@ export default function DietDetailPage() {
                 </div>
               )}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Why recommended (only if this diet was recommended for the user) */}
+      {diet.recommendation_reasoning && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Star className="h-5 w-5 text-yellow-500" />
+              <span>Why this was recommended</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 whitespace-pre-line">
+              {diet.recommendation_reasoning}
+            </p>
           </CardContent>
         </Card>
       )}

@@ -164,15 +164,14 @@ This plan outlines the development of a complete nutrition and diet management p
   - Error handling and fallbacks ✅
 
 - **3.2.2 Recommendation Logic** ✅
-  - User profile analysis
-  - Diet matching algorithms using Gemini
-  - Score calculation and ranking
-  - Weekly refresh limitations (1 week cooldown)
+  - User profile analysis ✅
+  - Diet matching algorithms using Gemini ✅
+  - Score calculation and ranking ✅
+  - Weekly refresh limitations (1 week cooldown) ✅
 
-- **3.2.3 Recommendation Screens**
-  - AI-suggested diets display
-  - "Why recommended" explanations
-  - Manual refresh functionality with cooldown timer
+- **3.2.3 Recommendation Screens** ✅
+  - AI-suggested diets display: Implemented in `src/app/(app)/diets/page.tsx`. Recommended diets are highlighted in a "Recommended for You" section, merged into the main list, and can be sorted by "Recommendation". Rules from Screen 4.1 (lines 2331, 2372, 2465) respected.
+  - "Why recommended" explanations: Implemented in `src/app/(app)/diets/[dietId]/page.tsx`. Added conditional section showing `diet_recommendations.reasoning` only when the diet was recommended for the current user.
 
 ### 3.3 Diet Management
 - **Diet Selection & Following**
@@ -2326,9 +2325,9 @@ The **Diet Catalog** is the main browsing interface where users can explore all 
     * Preview image (optional placeholder)
     * CTA: “View details” → (5.1 Diet Detail)
 
-* **Suggested / Highlighted Section (Optional)**
+* **Suggested / Highlighted Section**
 
-  * At the top, “Recommended for You” showing 3–5 diets flagged by the AI recommendation system.
+  * At the top, “Recommended for You” showing top 3 scored diets flagged by the AI recommendation system.
 
 * **Footer**
 
@@ -2390,7 +2389,7 @@ The **Diet Catalog** is the main browsing interface where users can explore all 
 * **Supabase Tables**
 
   * `diets` → diet metadata (id, name, description, category, duration, difficulty, popularity\_score, created\_at)
-  * `diet_recommendations` (optional) → AI-suggested diets per user
+  * `diet_recommendations` → AI-suggested diets per user
 * **UI Components**
 
   * shadcn/ui: Card, Badge, Modal, Dropdown

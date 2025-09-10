@@ -172,6 +172,8 @@ export default function DietCatalogPage() {
       }));
 
       setRecommendedDiets(recommended);
+      // When we have recommendations, default sort by recommendation
+      setSortBy((prev) => (prev === "popularity" ? "recommendation" : prev));
     } catch (err) {
       console.error("Error fetching recommended diets:", err);
       hasFetchedRecommended.current = false; // Reset on error to allow retry
@@ -181,7 +183,32 @@ export default function DietCatalogPage() {
   }, [user?.id]); // Only depend on user.id, not the entire user object
 
   const applyFiltersAndSearch = useCallback(() => {
-    let filtered = [...diets];
+    // Merge recommendation metadata into the full diets list
+    const recommendationById = new Map<
+      string,
+      { score?: number; reasoning?: string }
+    >();
+    recommendedDiets.forEach((d) => {
+      if (d.id)
+        recommendationById.set(d.id, {
+          score: d.recommendation_score,
+          reasoning: d.recommendation_reasoning || undefined,
+        });
+    });
+
+    const merged = diets.map((d) => {
+      const rec = d.id ? recommendationById.get(d.id) : undefined;
+      return rec
+        ? {
+            ...d,
+            is_recommended: true,
+            recommendation_score: rec.score,
+            recommendation_reasoning: rec.reasoning,
+          }
+        : d;
+    });
+
+    let filtered = [...merged];
 
     // Apply search
     if (searchQuery.trim()) {
@@ -246,7 +273,7 @@ export default function DietCatalogPage() {
     });
 
     setFilteredDiets(filtered);
-  }, [diets, searchQuery, filters, sortBy]);
+  }, [diets, recommendedDiets, searchQuery, filters, sortBy]);
 
   // Initialize data fetching only once
   useEffect(() => {
@@ -487,7 +514,7 @@ export default function DietCatalogPage() {
                 key={diet.id}
                 diet={diet}
                 viewMode={viewMode}
-                isRecommended={false}
+                isRecommended={!!diet.is_recommended}
               />
             ))}
           </div>
