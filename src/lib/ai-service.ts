@@ -506,7 +506,7 @@ Return only the JSON response, no additional text.
 
   /**
    * Enhanced recommendation logic with advanced matching algorithms
-   */
+  
   async generateAdvancedRecommendations(
     userProfile: UserProfile,
     availableDiets: Array<{
@@ -564,10 +564,11 @@ Return only the JSON response, no additional text.
       };
     }
   }
+  */
 
   /**
    * Calculate matching factors for recommendation analysis
-   */
+   
   private calculateMatchingFactors(
     userProfile: UserProfile,
     availableDiets: Array<{
@@ -627,10 +628,11 @@ Return only the JSON response, no additional text.
       tagRelevance: totalTagRelevance / dietCount,
     };
   }
+  */
 
   /**
    * Calculate dietary compatibility score
-   */
+   
   private calculateDietaryCompatibility(userProfile: UserProfile, _diet: {
     id: string;
     title: string;
@@ -647,10 +649,11 @@ Return only the JSON response, no additional text.
     // you'd have more sophisticated matching logic
     return 0.8; // Placeholder
   }
+  */
 
   /**
    * Calculate goal alignment score
-   */
+   
   private calculateGoalAlignment(userProfile: UserProfile, diet: {
     id: string;
     title: string;
@@ -677,10 +680,11 @@ Return only the JSON response, no additional text.
     
     return relevantCategories.includes(diet.category) ? 1 : 0.3;
   }
+  */
 
   /**
    * Calculate difficulty suitability score
-   */
+   
   private calculateDifficultySuitability(_userProfile: UserProfile, _diet: {
     id: string;
     title: string;
@@ -693,10 +697,11 @@ Return only the JSON response, no additional text.
     // you'd consider user's experience level, time constraints, etc.
     return 0.7; // Placeholder
   }
+  */
 
   /**
    * Calculate tag relevance score
-   */
+   
   private calculateTagRelevance(userProfile: UserProfile, diet: {
     id: string;
     title: string;
@@ -718,7 +723,9 @@ Return only the JSON response, no additional text.
     
     return Math.min(matchingTags.length / diet.tags.length, 1);
   }
+  */
 }
+
 
 // Export singleton instance
 export const aiService = new AIService();
