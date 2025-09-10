@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { CurrentDietCard } from "@/components/diets/CurrentDietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, AlertCircle, Calendar, Target, Plus } from "lucide-react";
+import { Loader2, AlertCircle, Target, Plus } from "lucide-react";
 
 interface CurrentDiet {
   id: string;
