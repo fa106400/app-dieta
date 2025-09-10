@@ -210,26 +210,6 @@ export default function MyWeekPage() {
           </CardContent>
         </Card>
       )}
-
-      {/* Weekly Progress Section - Placeholder for future implementation */}
-      {currentDiet && (
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-5 w-5 text-green-600" />
-            <h2 className="text-xl font-semibold text-gray-900">
-              This Week&apos;s Progress
-            </h2>
-          </div>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <p className="text-gray-600">
-                Weekly meal tracking and progress visualization will be
-                implemented in Phase 4.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

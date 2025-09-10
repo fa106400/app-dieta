@@ -3040,16 +3040,15 @@ values ('<user_id>', '<diet_id>', true, now());
 
 ---
 
-# Screen ID: 6.1 – Minha Semana / Current Plan
+# Screen ID: 6.1 – My Week / Current Plan
 
 ## Overview
 
-The **Minha Semana / Current Plan** screen shows the **user’s active diet plan** for the current week. It acts as a **central hub** for daily meal tracking, adherence logging, and quick access to the shopping list. Users can also **switch to another diet** from here (redirect to Diet Catalog – 4.1).
+The **My Week / Current Plan** screen shows the **user’s active diet plan** for the current week. It acts as a **central hub** for checking his actual diet plan and quick access to the shopping list. Users can also **switch to another diet** from here (redirect to Diet Catalog – 4.1).
 
 **Main Goals:**
 
 * Display current week’s meal plan with clear structure (days and meals).
-* Allow users to mark meals as **completed** (checkbox).
 * Provide quick links to **Lista de Compras / Shopping List (7.1)** and **Diet Detail (5.1)**.
 * Enable **diet swapping** to choose another diet from the catalog.
 
@@ -3062,30 +3061,16 @@ The **Minha Semana / Current Plan** screen shows the **user’s active diet plan
   * Week label (e.g., “Week of Aug 26 – Sep 1”)
   * Back button → Home (3.1)
 
-* **Week Overview / Calendar**
+* **Page body**
 
-  * Each day displayed horizontally or vertically
-  * Shows daily total calories and macro summary
-  * Click a day → expand meals for that day
-
-* **Meal Cards**
-
-  * Breakfast, Lunch, Dinner, Snacks
-  * Each meal shows:
-
-    * Recipe name
-    * Calorie & macro info
-    * Checkboxes to mark **adherence**
+  * Current active diet plan displayed
+  *** Remove the "This Week's Progress section. Not in the MVP anymore! ***
 
 * **Links & CTAs**
 
   * **Shopping List (7.1)** → button navigates to generated shopping list
   * **View Diet Detail (5.1)** → link to the full diet
   * **Swap Diet** → button redirects to Diet Catalog (4.1)
-
-* **Progress Summary**
-
-  * Optional small bar showing completion percentage of meals logged for the week
 
 ---
 
@@ -3094,37 +3079,22 @@ The **Minha Semana / Current Plan** screen shows the **user’s active diet plan
 1. **Fetch Active Diet**
 
    * Query `user_current_diet` by `user_id`
-   * Fetch diet details including `week_plan` JSONB field
-   * Parse `week_plan` to display meal structure
 
-2. **Meal Plan Display**
-
-   * Display weekly meal plan from `week_plan` JSONB structure
-   * Show days, meals, and individual items
-   * Support meal item swapping with `alt_items`
-
-3. **Weekly Overview**
-
-   * Calculate total calories from diet `calories_total`
-   * Display macro breakdown from diet `macros` JSONB field
-
-4. **Swap Diet**
+2. **Swap Diet**
 
    * Redirect to Diet Catalog (4.1)
    * Confirmation toast if user selects new diet
 
-5. **Navigation**
+3. **Navigation**
 
    * Back → Home (3.1)
-   * Click day → expand meals
-   * Meal → navigate to Diet Detail (5.1)
+   * Click View Details → navigate to Diet Detail (5.1)
 
 ---
 
 ## Error Handling
 
-* No active diet → show empty state with CTA: “Choose a diet now”
-* Meal log update fails → toast: “Failed to update meal. Try again.”
+* No active diet → show empty state with CTA: "Browse Diets"
 * Fetch diet fails → toast: “Could not load current plan. Try again later.”
 
 ---
@@ -3145,7 +3115,6 @@ The **Minha Semana / Current Plan** screen shows the **user’s active diet plan
 * **Supabase Tables**
 
   * `user_current_diet` → active diet (simplified schema)
-  * `diets` → diet details with `week_plan` JSONB field
 * **UI Components**
 
   * shadcn/ui: Card, Collapsible, Button, Checkbox, Toast
@@ -3153,7 +3122,6 @@ The **Minha Semana / Current Plan** screen shows the **user’s active diet plan
 * **Performance**
 
   * Fetch entire week in a single query
-  * Lazy-load meal details on day expansion
 
 ---
 
@@ -3226,8 +3194,6 @@ export default function CurrentWeekPlan() {
 
 ## Acceptance Criteria
 
-* Display current week with all meals correctly.
-* User can toggle meal completion → updates `user_meal_log`.
 * Links to Shopping List and Diet Detail work.
 * Swap Diet button redirects correctly.
 * Handles empty state if no active diet.
@@ -3237,13 +3203,12 @@ export default function CurrentWeekPlan() {
 ## Security Considerations
 
 * Users can only see and update their own meal logs.
-* Row-level security enforced in `user_meal_log` table.
 
 ---
 
 ## Next.js App Routing & Middleware
 
-* Route: `/current-plan`
+* Route: `/my-week`
 * Middleware:
 
   * Authenticated session required → redirect `/login`
