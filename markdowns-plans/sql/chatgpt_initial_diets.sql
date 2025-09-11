@@ -5,6 +5,610 @@ INSERT INTO diets
 (slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
 VALUES
 (
+  'vegetariana-2400',
+  'Dieta Vegetariana (2400 kcal)',
+  'Plano alimentar baseado em vegetais, ovos, laticínios e leguminosas. Livre de carnes, focado em proteínas vegetais e equilíbrio nutricional. Versão ajustada para 2400 kcal por dia.',
+  '{"vegetariana","equilibrada","saude"}',
+  'vegetariana',
+  'avancado',
+  6,
+  15,
+  TRUE,
+  '2025-09-11 17:45:01',
+  '2025-09-11 17:45:01',
+  2400,
+  '{"proteina": 130, "carboidrato": 260, "gordura": 80}',
+  '{
+  "days": [
+    {
+      "day_index": 0,
+      "meals": [
+        {
+          "name": "Café da manhã",
+          "items": [
+            {
+              "name": "Pão integral",
+              "quantity": 90,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Pão de centeio", "quantity": 90, "unit": "grams" },
+                { "name": "Tapioca", "quantity": 100, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Queijo branco",
+              "quantity": 70,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Iogurte natural", "quantity": 150, "unit": "grams" },
+                { "name": "Ricota", "quantity": 70, "unit": "grams" }
+              ]
+            }
+          ],
+          "calories": 500
+        },
+        {
+          "name": "Almoço",
+          "items": [
+            {
+              "name": "Arroz integral",
+              "quantity": 180,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Quinoa", "quantity": 140, "unit": "grams" },
+                { "name": "Cuscuz marroquino", "quantity": 160, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Feijão carioca",
+              "quantity": 150,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Grão-de-bico", "quantity": 150, "unit": "grams" },
+                { "name": "Lentilha", "quantity": 150, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Tofu grelhado",
+              "quantity": 150,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Proteína de soja", "quantity": 100, "unit": "grams" },
+                { "name": "Hambúrguer de grão-de-bico", "quantity": 1, "unit": "pc" }
+              ]
+            }
+          ],
+          "calories": 900
+        },
+        {
+          "name": "Lanche da tarde",
+          "items": [
+            {
+              "name": "Iogurte natural",
+              "quantity": 180,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Queijo cottage", "quantity": 120, "unit": "grams" },
+                { "name": "Kefir", "quantity": 180, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Granola",
+              "quantity": 70,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Aveia em flocos", "quantity": 70, "unit": "grams" },
+                { "name": "Castanhas mistas", "quantity": 40, "unit": "grams" }
+              ]
+            }
+          ],
+          "calories": 500
+        },
+        {
+          "name": "Jantar",
+          "items": [
+            {
+              "name": "Macarrão integral",
+              "quantity": 180,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Nhoque de batata-doce", "quantity": 250, "unit": "grams" },
+                { "name": "Arroz integral", "quantity": 180, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Molho de tomate com legumes",
+              "quantity": 180,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Molho pesto", "quantity": 60, "unit": "grams" },
+                { "name": "Molho de cogumelos", "quantity": 180, "unit": "grams" }
+              ]
+            }
+          ],
+          "calories": 500
+        }
+      ]
+    }
+  ]
+}
+'
+);
+
+
+
+
+INSERT INTO diets 
+(slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
+VALUES
+(
+  'vegetariana-2000',
+  'Dieta Vegetariana (2000 kcal)',
+  'Plano alimentar baseado em vegetais, ovos, laticínios e leguminosas. Livre de carnes, focado em proteínas vegetais e equilíbrio nutricional. Versão ajustada para 2000 kcal por dia.',
+  '{"vegetariana","equilibrada","saude"}',
+  'vegetariana',
+  'intermediario',
+  6,
+  14,
+  TRUE,
+  '2025-09-11 17:45:01',
+  '2025-09-11 17:45:01',
+  2000,
+  '{"proteina": 110, "carboidrato": 220, "gordura": 65}',
+  '{
+  "days": [
+    {
+      "day_index": 0,
+      "meals": [
+        {
+          "name": "Café da manhã",
+          "items": [
+            {
+              "name": "Pão integral",
+              "quantity": 70,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Pão de centeio", "quantity": 70, "unit": "grams" },
+                { "name": "Tapioca", "quantity": 80, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Queijo branco",
+              "quantity": 50,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Iogurte natural", "quantity": 120, "unit": "grams" },
+                { "name": "Ricota", "quantity": 50, "unit": "grams" }
+              ]
+            }
+          ],
+          "calories": 400
+        },
+        {
+          "name": "Almoço",
+          "items": [
+            {
+              "name": "Arroz integral",
+              "quantity": 150,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Quinoa", "quantity": 120, "unit": "grams" },
+                { "name": "Cuscuz marroquino", "quantity": 130, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Feijão carioca",
+              "quantity": 120,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Grão-de-bico", "quantity": 120, "unit": "grams" },
+                { "name": "Lentilha", "quantity": 120, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Tofu grelhado",
+              "quantity": 120,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Proteína de soja", "quantity": 80, "unit": "grams" },
+                { "name": "Hambúrguer de grão-de-bico", "quantity": 1, "unit": "pc" }
+              ]
+            }
+          ],
+          "calories": 700
+        },
+        {
+          "name": "Lanche da tarde",
+          "items": [
+            {
+              "name": "Iogurte natural",
+              "quantity": 150,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Queijo cottage", "quantity": 100, "unit": "grams" },
+                { "name": "Kefir", "quantity": 150, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Granola",
+              "quantity": 50,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Aveia em flocos", "quantity": 50, "unit": "grams" },
+                { "name": "Castanhas mistas", "quantity": 30, "unit": "grams" }
+              ]
+            }
+          ],
+          "calories": 400
+        },
+        {
+          "name": "Jantar",
+          "items": [
+            {
+              "name": "Macarrão integral",
+              "quantity": 140,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Nhoque de batata-doce", "quantity": 200, "unit": "grams" },
+                { "name": "Arroz integral", "quantity": 150, "unit": "grams" }
+              ]
+            },
+            {
+              "name": "Molho de tomate com legumes",
+              "quantity": 150,
+              "unit": "grams",
+              "alt_items": [
+                { "name": "Molho pesto", "quantity": 50, "unit": "grams" },
+                { "name": "Molho de cogumelos", "quantity": 150, "unit": "grams" }
+              ]
+            }
+          ],
+          "calories": 500
+        }
+      ]
+    }
+  ]
+}
+'
+);
+
+
+
+
+
+INSERT INTO diets 
+(slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
+VALUES
+(
+  'vegetariana-1600',
+  'Dieta Vegetariana (1600 kcal)',
+  'Plano alimentar baseado em vegetais, ovos, laticínios e leguminosas. Livre de carnes, focado em proteínas vegetais e equilíbrio nutricional. Versão ajustada para 1600 kcal por dia.',
+  '{"vegetariana","equilibrada","saude"}',
+  'vegetariana',
+  'iniciante',
+  6,
+  13,
+  TRUE,
+  '2025-09-11 17:45:01',
+  '2025-09-11 17:45:01',
+  1600,
+  '{"proteina": 85, "carboidrato": 180, "gordura": 50}',
+  '{
+  "days": [
+    {
+      "day_index": 0,
+      "meals": [
+        {
+          "name": "Café da manhã",
+          "items": [
+            {
+              "name": "Ovos mexidos",
+              "quantity": 3,
+              "unit": "unidades",
+              "alt_items": [
+                { "name": "Ovos cozidos", "quantity": 3, "unit": "unidades" },
+                { "name": "Omelete de queijo", "quantity": 3, "unit": "ovos" }
+              ]
+            },
+            {
+              "name": "Pão integral",
+              "quantity": 2,
+              "unit": "fatias",
+              "alt_items": [
+                { "name": "Tapioca pequena", "quantity": 2, "unit": "unidades" },
+                { "name": "Pão de centeio", "quantity": 2, "unit": "fatias" }
+              ]
+            },
+            {
+              "name": "Mamão",
+              "quantity": 150,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Maçã", "quantity": 1, "unit": "unidade" },
+                { "name": "Banana", "quantity": 1, "unit": "unidade" }
+              ]
+            }
+          ],
+          "calories": 400
+        },
+        {
+          "name": "Almoço",
+          "items": [
+            {
+              "name": "Grão-de-bico cozido",
+              "quantity": 100,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Lentilha cozida", "quantity": 110, "unit": "g" },
+                { "name": "Feijão carioca", "quantity": 100, "unit": "g" }
+              ]
+            },
+            {
+              "name": "Arroz integral",
+              "quantity": 90,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Quinoa", "quantity": 80, "unit": "g" },
+                { "name": "Cevada", "quantity": 90, "unit": "g" }
+              ]
+            },
+            {
+              "name": "Brócolis cozidos",
+              "quantity": 120,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Couve-flor", "quantity": 120, "unit": "g" },
+                { "name": "Abobrinha", "quantity": 120, "unit": "g" }
+              ]
+            },
+            {
+              "name": "Azeite de oliva",
+              "quantity": 15,
+              "unit": "ml",
+              "alt_items": [
+                { "name": "Azeite de abacate", "quantity": 15, "unit": "ml" },
+                { "name": "Sementes de linhaça", "quantity": 15, "unit": "g" }
+              ]
+            }
+          ],
+          "calories": 500
+        },
+        {
+          "name": "Lanche da tarde",
+          "items": [
+            {
+              "name": "Iogurte natural desnatado",
+              "quantity": 200,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Iogurte grego light", "quantity": 150, "unit": "g" },
+                { "name": "Kefir", "quantity": 200, "unit": "ml" }
+              ]
+            },
+            {
+              "name": "Castanhas de caju",
+              "quantity": 30,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Amêndoas", "quantity": 30, "unit": "g" },
+                { "name": "Nozes", "quantity": 30, "unit": "g" }
+              ]
+            }
+          ],
+          "calories": 300
+        },
+        {
+          "name": "Jantar",
+          "items": [
+            {
+              "name": "Omelete de queijo",
+              "quantity": 3,
+              "unit": "ovos",
+              "alt_items": [
+                { "name": "Ovos mexidos", "quantity": 3, "unit": "unidades" },
+                { "name": "Tofu grelhado", "quantity": 150, "unit": "g" }
+              ]
+            },
+            {
+              "name": "Salada de folhas (alface, rúcula, tomate)",
+              "quantity": 180,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Espinafre cru", "quantity": 180, "unit": "g" },
+                { "name": "Couve", "quantity": 150, "unit": "g" }
+              ]
+            },
+            {
+              "name": "Batata-doce assada",
+              "quantity": 100,
+              "unit": "g",
+              "alt_items": [
+                { "name": "Abóbora assada", "quantity": 100, "unit": "g" },
+                { "name": "Inhame cozido", "quantity": 100, "unit": "g" }
+              ]
+            }
+          ],
+          "calories": 400
+        }
+      ]
+    }
+  ]
+}
+'
+);
+
+
+
+INSERT INTO diets 
+(slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
+VALUES
+(
+  'vegetariana-1200',
+  'Dieta Vegetariana (1200 kcal)',
+  'Plano alimentar baseado em vegetais, ovos, laticínios e leguminosas. Livre de carnes, focado em proteínas vegetais e equilíbrio nutricional. Versão ajustada para 1200 kcal por dia.',
+  '{"vegetariana","equilibrada","saude"}',
+  'vegetariana',
+  'iniciante',
+  6,
+  12,
+  TRUE,
+  NOW(),
+  NOW(),
+  1200,
+  '{
+    "proteina": 65,
+    "carboidrato": 140,
+    "gordura": 35
+  }',
+  '{
+    "days": [
+      {
+        "day_index": 0,
+        "meals": [
+          {
+            "name": "Café da manhã",
+            "items": [
+              {
+                "name": "Ovos mexidos",
+                "quantity": 2,
+                "unit": "unidades",
+                "alt_items": [
+                  { "name": "Ovos cozidos", "quantity": 2, "unit": "unidades" },
+                  { "name": "Omelete de queijo", "quantity": 2, "unit": "ovos" }
+                ]
+              },
+              {
+                "name": "Pão integral",
+                "quantity": 1,
+                "unit": "fatia",
+                "alt_items": [
+                  { "name": "Tapioca pequena", "quantity": 1, "unit": "unidade" },
+                  { "name": "Pão de centeio", "quantity": 1, "unit": "fatia" }
+                ]
+              },
+              {
+                "name": "Mamão",
+                "quantity": 120,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Maçã", "quantity": 1, "unit": "unidade" },
+                  { "name": "Banana", "quantity": 1, "unit": "unidade" }
+                ]
+              }
+            ],
+            "calories": 300
+          },
+          {
+            "name": "Almoço",
+            "items": [
+              {
+                "name": "Grão-de-bico cozido",
+                "quantity": 80,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Lentilha cozida", "quantity": 90, "unit": "g" },
+                  { "name": "Feijão carioca", "quantity": 80, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Arroz integral",
+                "quantity": 70,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Quinoa", "quantity": 60, "unit": "g" },
+                  { "name": "Cevada", "quantity": 70, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Brócolis cozidos",
+                "quantity": 100,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Couve-flor", "quantity": 100, "unit": "g" },
+                  { "name": "Abobrinha", "quantity": 100, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Azeite de oliva",
+                "quantity": 10,
+                "unit": "ml",
+                "alt_items": [
+                  { "name": "Azeite de abacate", "quantity": 10, "unit": "ml" },
+                  { "name": "Sementes de linhaça", "quantity": 10, "unit": "g" }
+                ]
+              }
+            ],
+            "calories": 400
+          },
+          {
+            "name": "Lanche da tarde",
+            "items": [
+              {
+                "name": "Iogurte natural desnatado",
+                "quantity": 150,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Iogurte grego light", "quantity": 120, "unit": "g" },
+                  { "name": "Kefir", "quantity": 150, "unit": "ml" }
+                ]
+              },
+              {
+                "name": "Castanhas de caju",
+                "quantity": 20,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Amêndoas", "quantity": 20, "unit": "g" },
+                  { "name": "Nozes", "quantity": 20, "unit": "g" }
+                ]
+              }
+            ],
+            "calories": 200
+          },
+          {
+            "name": "Jantar",
+            "items": [
+              {
+                "name": "Omelete de queijo",
+                "quantity": 2,
+                "unit": "ovos",
+                "alt_items": [
+                  { "name": "Ovos mexidos", "quantity": 2, "unit": "unidades" },
+                  { "name": "Tofu grelhado", "quantity": 100, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Salada de folhas (alface, rúcula, tomate)",
+                "quantity": 150,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Espinafre cru", "quantity": 150, "unit": "g" },
+                  { "name": "Couve", "quantity": 120, "unit": "g" }
+                ]
+              },
+              {
+                "name": "Batata-doce assada",
+                "quantity": 80,
+                "unit": "g",
+                "alt_items": [
+                  { "name": "Abóbora assada", "quantity": 80, "unit": "g" },
+                  { "name": "Inhame cozido", "quantity": 80, "unit": "g" }
+                ]
+              }
+            ],
+            "calories": 300
+          }
+        ]
+      }
+    ]
+  }'
+);
+
+
+
+INSERT INTO diets 
+(slug, title, description, tags, category, difficulty, duration_weeks, popularity_score, is_public, created_at, updated_at, calories_total, macros, week_plan)
+VALUES
+(
   'mediterranea-2400',
   'Dieta Mediterrânea (2400 kcal)',
   'Plano inspirado no padrão alimentar mediterrâneo, com ênfase em azeite de oliva, peixes, legumes e cereais integrais. Versão ajustada para 2400 kcal por dia.',
