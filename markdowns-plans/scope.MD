@@ -198,7 +198,10 @@ This plan outlines the development of a complete nutrition and diet management p
     - Triggers Gemini API call for new diet suggestions ✅
     - Updates `diet_recommendations` table ✅
 
-- **Shopping List (Screen 7.1)** ***CRIAR JSON JA CALCULADO NO GPT, INSERIR NOVA COLUNA NA DIETS E REFATORAR O DOC DA SCREEN 7.1 INCLUINDO ESTA NOVA REGRA E O LAYOUT DO JSON NOVO NA NOVA COLUNA. TELA DEVE SÓ TER O RADIO E CALCULAR X4 SE FOR MONTH***
+- **Shopping List (Foundation)** ✅
+  - New column `shopping_plan` in the table `diets` ✅
+
+- **Shopping List (Screen 7.1)**
   - Ingredient aggregation
   - Category organization
   - Checkbox functionality

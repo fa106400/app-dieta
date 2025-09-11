@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
+import type { Json } from '../../supabase';
 
 export interface DietRecommendation {
   id: string;
@@ -13,6 +14,7 @@ export interface DietRecommendation {
     category: string;
     difficulty: string;
     calories_total: number;
+    shopping_plan: Json;
     tags: string[];
   } | null;
 }

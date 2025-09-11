@@ -38,20 +38,38 @@ CREATE TABLE subscriptions (
 );
 
 -- 3. Diets table (catalog)
-CREATE TABLE diets (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    slug TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    tags TEXT[] DEFAULT '{}',
-    category TEXT NOT NULL,
-    difficulty TEXT CHECK (difficulty IN ('beginner', 'intermediate', 'advanced')),
-    duration_weeks INTEGER CHECK (duration_weeks >= 1 AND duration_weeks <= 52),
-    popularity_score INTEGER DEFAULT 0,
-    is_public BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+create table diets (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  slug text not null,
+  title text not null,
+  description text not null,
+  tags text[] null default '{}'::text[],
+  category text not null,
+  difficulty text null,
+  duration_weeks integer null,
+  popularity_score integer null default 0,
+  is_public boolean null default true,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  calories_total integer null,
+  macros jsonb null,
+  week_plan jsonb null,
+  shopping_plan jsonb not null default '[]'::jsonb,
+  constraint diets_pkey primary key (id),
+  constraint diets_slug_key unique (slug),
+  constraint diets_calories_total_check check (
+    (
+      (calories_total >= 800)
+      and (calories_total <= 10000)
+    )
+  ),
+  constraint diets_duration_weeks_check check (
+    (
+      (duration_weeks >= 1)
+      and (duration_weeks <= 52)
+    )
+  )
+) TABLESPACE pg_default;
 
 -- 4. Diet variants table (prebuilt calorie ranges)
 CREATE TABLE diet_variants (

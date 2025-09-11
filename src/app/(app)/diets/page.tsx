@@ -38,6 +38,7 @@ export interface Diet {
   calories_total?: number | null;
   macros?: Json | null; // JSONB field
   week_plan?: Json | null; // JSONB field
+  shopping_plan?: Json | null; // JSONB field
   // Recommendation fields (still used)
   is_recommended?: boolean;
   recommendation_score?: number;

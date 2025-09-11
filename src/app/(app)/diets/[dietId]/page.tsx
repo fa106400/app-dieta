@@ -87,6 +87,7 @@ export default function DietDetailPage() {
           calories_total,
           macros,
           week_plan,
+          shopping_plan,
           tags,
           slug,
           is_public,

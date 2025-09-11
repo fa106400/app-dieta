@@ -129,6 +129,7 @@ export type Database = {
           is_public: boolean | null
           macros: Json | null
           popularity_score: number | null
+          shopping_plan: Json
           slug: string
           tags: string[] | null
           title: string
@@ -146,6 +147,7 @@ export type Database = {
           is_public?: boolean | null
           macros?: Json | null
           popularity_score?: number | null
+          shopping_plan?: Json
           slug: string
           tags?: string[] | null
           title: string
@@ -163,6 +165,7 @@ export type Database = {
           is_public?: boolean | null
           macros?: Json | null
           popularity_score?: number | null
+          shopping_plan?: Json
           slug?: string
           tags?: string[] | null
           title?: string

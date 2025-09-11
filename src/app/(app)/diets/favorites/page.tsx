@@ -75,6 +75,7 @@ export default function FavoritesPage() {
             calories_total,
             macros,
             week_plan,
+            shopping_plan,
             is_public,
             created_at,
             updated_at

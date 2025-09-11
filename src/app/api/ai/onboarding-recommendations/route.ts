@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
         category,
         difficulty,
         calories_total,
+        shopping_plan,
         tags
       `)
       .eq('is_public', true)

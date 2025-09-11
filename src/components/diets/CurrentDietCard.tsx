@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Target, Users, Star, Flame, ArrowRight } from "lucide-react";
+import type { Json } from "../../../supabase";
 
 interface CurrentDiet {
   id: string;
@@ -15,6 +16,7 @@ interface CurrentDiet {
   duration_weeks: number;
   popularity_score: number;
   calories_total: number;
+  shopping_plan: Json;
   tags: string[];
   slug: string;
   started_at: string;

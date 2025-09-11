@@ -7,6 +7,21 @@ import { CurrentDietCard } from "@/components/diets/CurrentDietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, AlertCircle, Target, Plus } from "lucide-react";
+import type { Json } from "../../../../supabase";
+
+interface DietFromQuery {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  duration_weeks: number;
+  popularity_score: number;
+  calories_total: number;
+  shopping_plan: Json;
+  tags: string[];
+  slug: string;
+}
 
 interface CurrentDiet {
   id: string;
@@ -17,6 +32,7 @@ interface CurrentDiet {
   duration_weeks: number;
   popularity_score: number;
   calories_total: number;
+  shopping_plan: Json;
   tags: string[];
   slug: string;
   started_at: string;
@@ -64,6 +80,7 @@ export default function MyWeekPage() {
             duration_weeks,
             popularity_score,
             calories_total,
+            shopping_plan,
             tags,
             slug
           )
@@ -102,6 +119,7 @@ export default function MyWeekPage() {
           duration_weeks: diet.duration_weeks,
           popularity_score: diet.popularity_score,
           calories_total: diet.calories_total,
+          shopping_plan: (diet as DietFromQuery).shopping_plan || [],
           tags: diet.tags || [],
           slug: diet.slug,
           started_at: currentDietData.started_at || new Date().toISOString(),
