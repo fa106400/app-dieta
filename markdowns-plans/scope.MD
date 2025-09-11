@@ -187,7 +187,7 @@ This plan outlines the development of a complete nutrition and diet management p
 - **My Week Implementation (Screen 6.1)** ✅
   - Shows the user’s active diet plan for the current week ✅
 
-### 4.2 Progress Tracking ✅ **COMPLETED**
+### 4.2 Progress Tracking
 - **Weight Management (Screen 9.2)** ✅
   - Weight entry form ✅
   - Historical weight data ✅
@@ -198,7 +198,7 @@ This plan outlines the development of a complete nutrition and diet management p
     - Triggers Gemini API call for new diet suggestions ✅
     - Updates `diet_recommendations` table ✅
 
-- **Shopping List (Screen 7.1)**
+- **Shopping List (Screen 7.1)** ***CRIAR JSON JA CALCULADO NO GPT, INSERIR NOVA COLUNA NA DIETS E REFATORAR O DOC DA SCREEN 7.1 INCLUINDO ESTA NOVA REGRA E O LAYOUT DO JSON NOVO NA NOVA COLUNA. TELA DEVE SÓ TER O RADIO E CALCULAR X4 SE FOR MONTH***
   - Ingredient aggregation
   - Category organization
   - Checkbox functionality
@@ -3429,13 +3429,12 @@ values ('<user_id>', '<diet_id>');
 
 ## Overview
 
-The **Shopping List** screen generates a **weekly grocery list** based on the user’s currently selected diet. The list aggregates all ingredients from the diet’s meals, calculates total quantities, and allows the user to **check off items**, adjust portions, and export the list as PDF.
+The **Shopping List** screen generates a **grocery list** based on the user’s currently selected diet. The list aggregates all ingredients from the diet’s meals, calculates total quantities, and allows the user to select a time-period (quantities for a week or a month) and export the list as PDF.
 
 **Main Goals:**
 
-* Display a clear, categorized list of groceries for the week.
-* Allow **checkbox functionality** for tracking items purchased.
-* Allow **portion adjustments** (optional MVP).
+* Parse and display a list of items that is already computed in the database "see Supabase Tables section for the complete specification"
+* Allow period selection: week or month.
 * Export the list as PDF (linked to 7.2 – Export / Print PDF).
 
 ---
@@ -3447,23 +3446,26 @@ The **Shopping List** screen generates a **weekly grocery list** based on the us
   * Title: “Shopping List”
   * Back button → Minha Semana / Current Plan (6.1)
 
-* **Ingredient Categories**
+* **Main Ingredients List**
 
-  * Group items by type (e.g., Vegetables, Proteins, Grains, Dairy)
-  * Each category collapsible/expandable
+  * A placeholder for future implementation of icons, for now, print a generic food lucide-react icon for all items
+  * Name of each ingredient, from `main_items` section of the json, field `name` 
+  * Quantity, from `main_items` section of the json, field `quantity`, then multiply by 7 if users choose week period or 30 if month 
+  * Unit, from `main_items` section of the json, field `unit`
+  * Don't use collapsible/expandable. All open for PDF print later.
 
-* **Ingredient Items**
+  * **Alternative Ingredients List**
 
-  * Name of ingredient (e.g., “Chicken breast”)
-  * Quantity (sum of all meals for the week)
-  * Unit (grams, liters, pieces)
-  * Checkbox for tracking purchased items
-  * Optional: adjust quantity for family or portion scaling (MVP: can be omitted or “coming soon”)
+  * A sub-title informing the user that this diet contains this alternatives suggestions listed here so user can consider shop in small quantities for daily use
+  * A placeholder for future implementation of icons, for now, print a generic food lucide-react icon for all items
+  * Name of each ingredient, from `alt_items` section of the json, field `name` 
+  * For alternative items, we won't display quantity and unit. It is a list of possible items for user consider to buy.
+  * Don't use collapsible/expandable. All open for PDF print later.
 
 * **Actions**
 
+  * Radio button for period selection, week or month (onclick -> re-calculate sum of items times 7 or 30 as described above)
   * Export / Print PDF → navigates to 7.2
-  * Optional: Clear all checkboxes
 
 ---
 
@@ -3471,19 +3473,13 @@ The **Shopping List** screen generates a **weekly grocery list** based on the us
 
 1. **Fetch Current Diet Ingredients**
 
-   * Query `user_current_diet` to retrieve selected diet
-   * Parse `week_plan` JSONB field to extract all ingredients
-   * Aggregate ingredients by type and sum quantities across all meals
+   * Query `user_current_diet` to retrieve selected diet in the `diets` table
+   * Parse `shopping_plan` JSONB field to extract the list of ingredients and alternative items. See Supabase Tables section for the complete specification of the JSONB in the column.
+   * When user click the period radio button, multiplies all item quantities by 7 if week period or by 30 if month period. 
 
-2. **Checkbox / Completion Tracking**
+2. **Export / Print**
 
-   * Local state or persisted per user (`user_shopping_progress`)
-   * Optional: reset weekly automatically
-
-3. **Export / Print**
-
-   * Export current list to PDF (7.2)
-   * Keep layout simple for printing
+   * Export current list to PDF (implement in 7.2)
 
 ---
 
@@ -3508,17 +3504,66 @@ The **Shopping List** screen generates a **weekly grocery list** based on the us
 * **Supabase Tables**
 
   * `user_current_diet` → selected diet (simplified schema)
-  * `diets` → diet details with `week_plan` JSONB field containing ingredients
-  * Optional: `user_shopping_progress` → track checked items
+  * `diets` → diet details with `shopping_plan` JSONB field containing ingredients already calculated. See full explanation below:
+
+  ## Shopping Plan JSONB Specification
+
+  Each diet record in `diets` have a column `diets.shopping_plan` which stores a pre-computed shopping list in JSON format.
+  The JSON is divided into two sections:
+
+  1. **main\_items**
+
+    * Consolidated list of all base items from the `week_plan` JSON.
+    * Items with the same name and unit are **aggregated** (summed quantities across all meals/days).
+    * Each entry contains:
+
+      * `name`: string, item name (e.g., `"Arroz integral"`)
+      * `quantity`: number, aggregated quantity across the full week
+      * `unit`: string, measurement unit (e.g., `"grams"`, `"pcs"`)
+      * `icon`: reserved for future use, currently set to `null`
+
+  2. **alt\_items**
+
+    * Flat list of **all alternative items** (`alt_items`) that appear in the corresponding `week_plan`.
+    * No quantities or units are included (only names).
+    * Each entry contains:
+
+      * `name`: string, item name (e.g., `"Quinoa"`)
+      * `icon`: reserved for future use, currently set to `null`
+
+  ### Example `shopping_plan` JSON
+
+  ```json
+  {
+    "main_items": [
+      { "name": "Arroz integral", "quantity": 700, "unit": "grams", "icon": null },
+      { "name": "Feijão carioca", "quantity": 500, "unit": "grams", "icon": null },
+      { "name": "Tofu grelhado", "quantity": 400, "unit": "grams", "icon": null },
+      { "name": "Pão integral", "quantity": 350, "unit": "grams", "icon": null },
+      { "name": "Queijo branco", "quantity": 200, "unit": "grams", "icon": null }
+    ],
+    "alt_items": [
+      { "name": "Quinoa", "icon": null },
+      { "name": "Cuscuz marroquino", "icon": null },
+      { "name": "Grão-de-bico", "icon": null },
+      { "name": "Lentilha", "icon": null },
+      { "name": "Proteína de soja", "icon": null },
+      { "name": "Hambúrguer de grão-de-bico", "icon": null },
+      { "name": "Ricota", "icon": null },
+      { "name": "Iogurte natural", "icon": null }
+    ]
+  }
+  ```
 
 * **UI Components**
 
-  * shadcn/ui: Card, Checkbox, Button, Collapse/Accordion
+  * shadcn/ui: Card, Button, Collapse/Accordion
   * Tailwind CSS for responsive layout
+  * lucide-react for generic food icon
 
 * **Performance**
 
-  * Aggregate ingredients server-side if possible to reduce client computation
+  * N/A
 
 ---
 
@@ -3527,10 +3572,12 @@ The **Shopping List** screen generates a **weekly grocery list** based on the us
 ```tsx
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
+//import lucide-react generic icon
 
 export default function ShoppingList() {
   const supabase = useSupabaseClient();
-  const [ingredients, setIngredients] = useState([]);
+  const [mainIngredients, setMainIngredients] = useState([]);
+  const [altIngredients, setAltIngredients] = useState([]);
 
   useEffect(() => {
     async function fetchIngredients() {
@@ -3541,26 +3588,37 @@ export default function ShoppingList() {
         .eq("is_active", true)
         .single();
       
-      // Aggregate quantities by ingredient
-      const aggregated = aggregateIngredients(data);
-      setIngredients(aggregated);
+      // parse main block of items
+      const mainAgregated = aggregateMainIngredients(data);
+      setMainIngredients(mainAgregated);
+
+      // parse alternative block of items
+      const altAgregated = aggregateAltIngredients(data);
+      setAltIngredients(altAgregated);
     }
     fetchIngredients();
   }, []);
 
-  function toggleChecked(id) {
-    setIngredients(prev => prev.map(item =>
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
-  }
-
   return (
     <div className="shopping-list">
       <h1>Shopping List</h1>
-      {ingredients.map(item => (
+      <span>Select the time-period for total sum calculation:</span>
+      <!-- onclick triggers re-calculations  -->
+      <input type="radio" value="week"><label for="week">Week</label>
+      <input type="radio" value="month"><label for="month">Month</label>
+      <br />
+      <h2>Main ingredients</h2>
+      {mainIngredients.map(item => (
         <div key={item.id} className="ingredient-card">
-          <input type="checkbox" checked={item.checked} onChange={() => toggleChecked(item.id)} />
           <span>{item.name} – {item.quantity} {item.unit}</span>
+        </div>
+      ))}
+      <br />
+      <h2>Alternative ingredients</h2>
+      <h3><!-- Text here for users about alternative items in the diet --></h3>
+      {altIngredients.map(item => (
+        <div key={item.id} className="ingredient-card">
+          <span>{item.name}</span> <!-- no unit and quantity for alt items -->
         </div>
       ))}
       <button onClick={() => navigate("/export-pdf")}>Export / Print</button>
@@ -3573,9 +3631,9 @@ export default function ShoppingList() {
 
 ## Acceptance Criteria
 
-* Displays all ingredients aggregated by category
+* Displays all main and alternative ingredients
 * Shows total quantities per ingredient
-* Checkbox works for tracking purchased items
+* Period seletion with recalculation logic
 * Export button navigates to 7.2
 * Empty state and error handling present
 
@@ -3594,7 +3652,7 @@ export default function ShoppingList() {
 * Middleware:
 
   * Authenticated session required → redirect `/login`
-  * Onboarding completed → redirect `/onboarding`
+  * Onboarding uncompleted → redirect `/onboarding`
 
 ---
 
@@ -3603,14 +3661,14 @@ export default function ShoppingList() {
 ### Libraries & Helpers
 
 * `@supabase/supabase-js` → fetch diet and ingredients
-* `shadcn/ui` → Card, Checkbox, Button, Accordion
-* Optional: `jsPDF` for PDF export
+* `shadcn/ui` → Card, Button, Accordion
+* Optional: `jsPDF` for PDF export, later in 7.2
 
 ### Supabase SQL Checks
 
 ```sql
--- Fetch current diet with week_plan for ingredient aggregation
-SELECT d.week_plan
+-- Fetch current diet with shopping_plan for ingredient aggregation
+SELECT d.shopping_plan
 FROM user_current_diet u
 JOIN diets d ON d.id = u.diet_id
 WHERE u.user_id = '<user_id>' AND u.is_active = true;
