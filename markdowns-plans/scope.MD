@@ -214,12 +214,21 @@ This plan outlines the development of a complete nutrition and diet management p
   - Quick user stats and progress ✅
   - Last badges ✅
 
-- **User Hub (Screen 9.1)**
-  - Personal dashboard
-  - Quick navigation tiles
-  - Status overviews
-  - Settings access
+- **User Hub (Screen 9.1)** ✅
+  - Personal dashboard ✅
+  - Quick navigation tiles ✅
+  - Status overviews ✅
+  - Settings access ✅
 
+
+### 4.4 Refactor Navigation ***detalhar melhor os itens abaixo, quais paginas, arquivos, etc***
+  - Diet Details page, follow button vira unfollow logic quando dieta atual
+  - Do lado do follow/unfollow, adicionar o botao pra Shopping List, ai tirar shopping list do menu principal
+  - No menu principal, inves de My Week, colocar "Dieta Atual". Depois ver se podemos deletar "My Week"
+  - Remover Quick Actions no final da /Me 
+
+### 4.5 Refactor Weight Log & Profile ***detalhar melhor os itens abaixo***
+- Pensar como unir profile e weight log, pensando em UX
 ---
 
 ## Phase 5: Subscription & Payment Integration (Weeks 11-12)
@@ -3996,18 +4005,22 @@ ORDER BY rank ASC;
 
 ---
 
-# Screen ID: 9.1 – User Hub / Dashboard ("Eu")
+# Screen ID: 9.1 – User Hub ("Me")
 
 ## Overview
 
-The **User Hub / Dashboard** is the central screen for the user to **overview their progress, profile, subscription, badges, and navigation** to key features. It serves as the main entry point to personal information and engagement tools.
+The **User Hub** is the central screen for the user to access other personal sub-screens **weight log (9.2), badges (9.3), subscription (9.6), profile (9.8), security (9.9),  privacy (9.10)**. It serves as the main entry point to personal information and engagement tools.
 
 **Main Goals:**
 
-* Provide a **quick summary** of current weight, diet adherence, and badges.
-* Display **subscription status** and access to plan management.
-* Provide **shortcuts** to other core sections: My Diet, Shopping List, Rankings, Preferences, Profile.
-* Central navigation hub for the user.
+* Central navigation hub for the user to other personal pages (some already implemented, some not yet)
+  * 9.1 – User Hub: /app/me/page.tsx
+  * 9.2 - Weight log: /app/me/weight-log/page.tsx
+  * 9.3 - Badges: /app/me/badges/page.tsx
+  * 9.6 - Badges: /app/me/subscription/page.tsx
+  * 9.8 - Profile: /app/profile/page.tsx
+  * 9.9 - Security: /app/me/security/page.tsx
+  * 9.10 - Privacy: /app/me/privacy/page.tsx
 
 ---
 
@@ -4015,87 +4028,45 @@ The **User Hub / Dashboard** is the central screen for the user to **overview th
 
 * **Header**
 
-  * Title: “Dashboard” or “Eu”
-  * Small welcome message with user’s first name
+  * Title: User Hub”
 
-* **Weight Overview**
+* **Quick Navigation Tiles**
 
-  * Current weight (latest entry from 9.2)
-  * Mini line chart showing weekly or monthly progress
-  * Button/shortcut to **Registro de Peso** (9.2)
-
-* **Current Diet / Week Summary**
-
-  * Name of active diet plan (6.1)
-  * Button → **View Current Week / My Week** (6.1)
-
-* **Badges Summary**
-
-  * Display 2–3 recent badges / most important achievements
-  * Click → navigate to **Minhas Badges** (9.3)
-
-* **Subscription Status**
-
-  * Show active plan (monthly/trimestral/semestral)
-  * Next billing date
-  * Shortcut → **Assinatura & Pagamentos** (9.6)
-
-* **Quick Navigation Tiles / Shortcuts**
-
-  * Dietas (4.1 / 5.1)
-  * Shopping List (7.1)
-  * Rankings (8.1)
-  * Preferences / Onboarding revisits (2.1)
-
-* **Footer / Support**
-
-  * Link to FAQ / Contact (S2)
-  * Link to Privacy & Terms (S3)
+  * Display cards to all pages listed in the Main Goals above. Navigates to pages when cards is clicked.
+  * Desktop: display 2 column grid, big cards with large icon in the center and label below, all centered
+  * Mobile: display 1 column grid, low height cards (like a vertical list) with small icon on the left and label on right
 
 ---
 
 ## Functional Requirements
 
-1. **Fetch Data**
+1. **Navigation**
 
-   * Current user profile, weight log, active diet, badges, subscription status
-   * Fetch summary data for charts (e.g., last 4 weeks)
-
-2. **Dynamic Updates**
-
-   * Update mini-chart when a new weight entry is added
-   * Badges appear dynamically on event completion
-
-3. **Navigation**
-
-   * Each tile or button navigates to its corresponding screen
+   * Each tile / card navigates to its corresponding screen
    * Consistent back navigation to Dashboard from sub-screens
 
-4. **Responsive Layout**
+2. **Responsive Layout**
 
    * Dashboard adapts to desktop and mobile
-   * Collapsible or stacked tiles for smaller screens
 
 ---
 
 ## Error Handling
 
-* Missing data → show placeholders (e.g., “No weight data yet. Add your first entry!”)
-* Fetch fails → toast notification: “Unable to load dashboard. Retry later.”
+* N/A
 
 ---
 
 ## Navigation
 
-* From Dashboard →
+* From User Hub: /app/me/page.tsx
 
-  * My Week / Current Diet (6.1)
-  * Registro de Peso (9.2)
-  * Minhas Badges (9.3)
-  * Subscription & Payments (9.6)
-  * Diet Catalog (4.1)
-  * Shopping List (7.1)
-  * Rankings (8.1)
+  * 9.2 - Weight log: /app/me/weight-log/page.tsx
+  * 9.3 - Badges: /app/me/badges/page.tsx
+  * 9.6 - Badges: /app/me/subscription/page.tsx
+  * 9.8 - Profile: /app/profile/page.tsx
+  * 9.9 - Security: /app/me/security/page.tsx
+  * 9.10 - Privacy: /app/me/privacy/page.tsx
 
 * Back navigation → Home / Dashboard itself is the root after login
 
@@ -4103,91 +4074,40 @@ The **User Hub / Dashboard** is the central screen for the user to **overview th
 
 ## Technical Notes
 
-* **Supabase Tables**
-
-  * `users` → profile info, display name
-  * `user_current_diet` → current diet plan
-  * `user_metrics` → weight log, adherence
-  * `user_badges` → badges earned
-  * `user_subscription` → subscription details
-
 * **UI Components**
 
-  * shadcn/ui: Card, Button, Avatar, Tabs, Mini Chart
+  * shadcn/ui: Card
   * Tailwind CSS → responsive grid layout
 
 * **Performance**
 
-  * Aggregate data server-side where possible (e.g., weekly weight trends)
+  * N/A
 
 ---
 
 ## Suggested Implementation Snippet (client pseudo-code)
 
-```tsx
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
-
-export default function Dashboard() {
-  const supabase = useSupabaseClient();
-  const [userData, setUserData] = useState({});
-  const [weightData, setWeightData] = useState([]);
-  const [badges, setBadges] = useState([]);
-  const [subscription, setSubscription] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const userId = supabase.auth.user().id;
-      const { data: user } = await supabase.from("users").select("*").eq("id", userId).single();
-      const { data: weights } = await supabase.from("user_metrics").select("*").eq("user_id", userId);
-      const { data: badgesData } = await supabase.from("user_badges").select("*").eq("user_id", userId);
-      const { data: subs } = await supabase.from("user_subscription").select("*").eq("user_id", userId).single();
-
-      setUserData(user);
-      setWeightData(weights);
-      setBadges(badgesData);
-      setSubscription(subs);
-    }
-    fetchData();
-  }, []);
-
-  return (
-    <div className="dashboard grid gap-4">
-      <h1>Welcome, {userData.first_name}</h1>
-      <WeightChart data={weightData} />
-      <BadgesSummary badges={badges} />
-      <SubscriptionSummary subscription={subscription} />
-      <QuickNav tiles={["Dietas","Shopping List","Rankings","Preferences"]} />
-    </div>
-  );
-}
-```
-
----
+* use the same style as the latest pages implemented
 
 ## Acceptance Criteria
 
-* Displays current weight, mini-progress chart, badges, subscription info
-* Shows actionable navigation tiles to main app sections
-* Updates dynamically when new data is available
-* Handles empty states gracefully
+* Shows actionable navigation tiles to sub-pages
 
 ---
 
 ## Security Considerations
 
-* Users only access their own data (RLS policies on Supabase)
-* No sensitive data is exposed outside the authenticated session
+* N/A
 
 ---
 
 ## Next.js App Routing & Middleware
 
-* Route: `/dashboard` (or `/eu`)
+* Route: `/me`
 * Middleware:
 
   * Authenticated session required → redirect `/login`
-  * Onboarding completed → redirect `/onboarding`
+  * Onboarding uncompleted → redirect `/onboarding`
 
 ---
 
@@ -4195,25 +4115,8 @@ export default function Dashboard() {
 
 ### Libraries & Helpers
 
-* `@supabase/supabase-js` → fetch user profile, weights, badges, subscription
-* `shadcn/ui` → Card, Avatar, Button, Tabs, Mini Chart
+* `shadcn/ui` → Card
 * Tailwind CSS → responsive layout
-
-### Supabase SQL Checks
-
-```sql
--- Fetch latest weight entry for user
-SELECT weight, date
-FROM user_metrics
-WHERE user_id = '<user_id>'
-ORDER BY date DESC
-LIMIT 1;
-
--- Fetch badges earned
-SELECT badge_id, earned_date
-FROM user_badges
-WHERE user_id = '<user_id>';
-```
 
 ---
 
