@@ -209,10 +209,10 @@ This plan outlines the development of a complete nutrition and diet management p
 
 ### 4.3 Dashboard & Navigation
 - **Home Dashboard (Screen 3.1)**
-  - User greeting and stats
-  - Quick access to main features
-  - Progress summaries
-  - Recommended diets display
+  - annoucements panel
+  - mini-ranking display
+  - Quick user stats and progress
+  - Last badges
 
 - **User Hub (Screen 9.1)**
   - Personal dashboard
@@ -2022,9 +2022,6 @@ select * from profiles where id = '<user_id>';
 
 * Confirm onboarding\_completed = true after submission.
 
----
-
-
 
 ---
 
@@ -2032,229 +2029,185 @@ select * from profiles where id = '<user_id>';
 
 ## Overview
 
-This is the **central hub of the application** where the user accesses the main modules of the diet SaaS. It provides quick navigation, highlights relevant information, and serves as the **entry point for all major features**.
+The **Home / Dashboard** is the primary entry point for authenticated users after login. It serves as the central hub, providing quick access to relevant information, progress tracking, gamification highlights, and communication from the platform.
 
-**Main Goals**:
+The new design consolidates key features into one screen:
 
-* Display personalized greetings and summary of user’s current status.
-* Provide access to:
+* **Announcements Panel** (admin-managed messages from Supabase `announcements` table)
+* **Ranking Preview** (mini leaderboard, top users; placeholder until full module is developed)
+* **Personal Snapshot** (current weight, mini progress graph, quick diet summary)
+* **Recent Badges** (latest gamification achievements unlocked by the user)
 
-  * **Diet Catalog (4.1)**
-  * **Current Diet / My Week (6.1)**
-  * **Shopping List (7.1)**
-  * **Ranking / Leaderboards (8.1)**
-  * **User Hub / Eu (9.1)**
-* Show **quick stats**: current weight, badges, adherence, etc.
-* Optionally highlight **recommended diets** (AI-suggested) or alerts.
+The goal is to maximize user engagement and motivation immediately upon login.
 
 ---
 
 ## Components
 
-* **Header**
+### 1. Header
 
-  * Logo / App name
-  * Navigation menu (Diet Catalog, My Week, Shopping List, Rankings, Eu)
-  * User avatar / shortcut to User Hub (9.1)
+* Standard app header with app logo and navigation to main menu.
 
-* **Main Dashboard Area**
+### 2. Announcements Panel
 
-  * **Welcome message**: “Hello, \[First Name]!”
-  * **Quick Stats / Mini Cards**:
+* Card container showing **active messages** from the Supabase table `announcements`.
+* Each message contains:
 
-    * Current weight
-    * Current diet adherence (progress this week)
-    * Badges summary (number earned / total)
-    * Quick CTA to “Update Weight”
-  * **Suggested Diets Panel** (optional)
+  * `title` (short headline, e.g., "New feature released!")
+  * `body` (short description, up to 280 chars)
+  * `priority` (optional, high-priority messages can be highlighted in a different color)
+  * `created_at` and `expires_at` (messages auto-hide after expiration)
+* If multiple messages exist, render as a vertical list.
+* If no active messages exist, hide the component.
 
-    * Show 3–5 AI-recommended diets based on Onboarding Questionnaire
-    * Click → navigate to **Diet Detail (5.1)**
-  * **Shortcut Buttons / Cards**:
+### 3. Ranking Preview
 
-    * “View All Diets” → **Diet Catalog (4.1)**
-    * “My Week” → **My Week (6.1)**
-    * “Shopping List” → **Shopping List (7.1)**
-    * “Ranking” → **Ranking (8.1)**
+* Card showing **Top 3 users** (by experience, feature will be developed in pahse 6) PLUS actual user with his actual position, for example, #1 - another user A, #2 - another user B, #3 - another user C, #34 - the user logged in.
+* Each row: rank position, user avatar and alias, experience value.
+* CTA: "See full ranking" → (future route: 8.1 – Ranking screen).
+* **Until ranking is implemented**: show placeholder with text "Ranking module coming soon" and a themed illustration.
 
-* **Footer**
+### 4. Personal Snapshot
 
-  * Legal links: Terms, Privacy, FAQ
-  * Optional: Vercel analytics placeholder
+* Card with user-specific data:
+
+  * Current weight (from `weights`, latest user's row).
+  * Mini line chart with the last 7 rows of weight evolution (from `weights`).
+  * Current diet followed (diet title from `diets` table).
+  * Quick indicator if recommendations are available to refresh (disabled if under cooldown).
+
+### 5. Recent Badges
+
+* Horizontal list of the **last 3 badges unlocked** (from `user_badges`).
+* Each badge shown with icon, title, and unlock date.
+* CTA: "See all badges" → navigates to `Screen 9.3 – My Badges`.
+* If no badges yet: show motivational placeholder ("Start your journey to earn your first badge!").
 
 ---
 
 ## Functional Requirements
 
-1. **Dynamic Greeting**
-
-   * Fetch user's first name from Supabase profile.
-   * Display personalized message.
-
-2. **Quick Stats**
-
-   * Pull data from:
-
-     * `profiles` table → weight
-     * `user_diets` table → adherence / current diet
-     * `badges` table → earned badges
-   * Display in cards with minimal graphics (bar chart or numbers).
-
-3. **Navigation**
-
-   * Each card or button navigates to the appropriate screen.
-   * Suggested diets card → diet detail (5.1) via AI recommendation.
-
-4. **Responsiveness**
-
-   * Works seamlessly on mobile and desktop.
-   * Layout adjusts for cards, shortcuts, and quick stats.
-
-5. **Onboarding Redirect**
-
-   * If onboarding not completed (`profiles.onboarding_completed = false`) → redirect to **2.1 Onboarding**.
+1. Fetch **announcements** from `announcements` table: only active ones (`is_active = true` and `expires_at > NOW()`).
+2. Fetch **ranking data** (top 5). If ranking module not ready, display placeholder.
+3. Fetch **user profile data** (weight, progress, current diet).
+4. Fetch **recent badges** (last 3 by `earned_at DESC`).
+5. Components are responsive (mobile-first design).
 
 ---
 
 ## Error Handling
 
-* If fetching user data fails → show friendly error message, retry button.
-* If AI recommendation fails → hide Suggested Diets panel and log error.
-* Network issues: display offline notice.
+* If `announcements` query fails → show empty panel (do not block dashboard).
+* If `leaderboard_metrics` query fails or not implemented → show placeholder.
+* If user data fails → show “Could not load your data. Try again later.” in snapshot section.
+* If badges query fails → show motivational placeholder instead of crash.
 
 ---
 
-## Navigation
+## Navigation Flow
 
-* **Primary Navigation**:
+* **From this screen**:
 
-  * Diet Catalog → 4.1
-  * My Week → 6.1
-  * Shopping List → 7.1
-  * Rankings → 8.1
-  * Eu → 9.1
-* Optional Quick Access: Suggested Diets → 5.1
+  * Tap avatar → `Screen 9.1 – Me`.
+  * Tap "See all badges" → `Screen 9.3 – My Badges`.
+  * Tap "See full ranking" → future `Screen 8.1 – Ranking`.
+* **Back navigation**: logging out redirects back to `Screen 1.1 – Login`.
 
 ---
 
 ## Technical Notes
 
-* **Supabase Tables**:
+* **Announcements table (new)**:
 
-  * `profiles` → first name, weight
-  * `user_diets` → current diet, adherence
-  * `badges` → earned / pending
-  * `diets` → for suggested AI diets
+```sql
+create table if not exists announcements (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  body text not null,
+  priority int default 0,
+  is_active boolean default true,
+  created_at timestamptz default now(),
+  expires_at timestamptz
+);
+```
 
-* **Form State / Hooks**:
+* **Ranking preview**: until `leaderboard_metrics` logic is live, show static placeholder component.
+* **Personal snapshot**:
 
-  * React `useEffect` for data fetching on load
-  * `react-query` (optional) for caching and background refresh
+  * Query last 7 weight records from `weights`.
+  * Query current active diet from `user_current_diet` join `diets`.
+* **Badges**:
 
-* **UI Components**:
-
-  * shadcn/ui Cards, Buttons, Avatar
-  * Tailwind CSS responsive layout
+  * Query `user_badges` join `badges`, ordered by `earned_at DESC limit 3`.
 
 ---
 
 ## Suggested Implementation Snippet (client pseudo-code)
 
 ```tsx
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
+const HomeDashboard = () => {
+  const { user } = useAuth();
 
-export default function Dashboard() {
-  const supabase = useSupabaseClient();
-  const user = useUser();
-  const [profile, setProfile] = useState(null);
+  const { data: announcements } = useSupabase("announcements")
+    .select("*")
+    .eq("is_active", true)
+    .gt("expires_at", new Date());
 
-  useEffect(() => {
-    async function fetchProfile() {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-      if (!error) setProfile(data);
-    }
-    fetchProfile();
-  }, [user]);
+  const { data: snapshot } = useSupabase("weights")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(7);
 
-  if (!profile) return <div>Loading...</div>;
+  const { data: badges } = useSupabase("user_badges")
+    .select("*, badges(*)")
+    .eq("user_id", user.id)
+    .order("earned_at", { ascending: false })
+    .limit(3);
 
   return (
-    <div className="dashboard-container">
-      <h1>Hello, {profile.first_name}!</h1>
-      <div className="quick-stats">
-        <div>Weight: {profile.weight} kg</div>
-        <div>Current Diet: {profile.current_diet || "None"}</div>
-        <div>Badges: {profile.badges_count}</div>
-      </div>
-      <div className="shortcut-buttons">
-        <button onClick={() => window.location.href="/diets"}>View All Diets</button>
-        <button onClick={() => window.location.href="/my-week"}>My Week</button>
-        <button onClick={() => window.location.href="/shopping-list"}>Shopping List</button>
-        <button onClick={() => window.location.href="/ranking"}>Ranking</button>
-      </div>
-      <div className="suggested-diets">
-        <h2>Recommended for You</h2>
-        {/* Map AI-suggested diets here */}
-      </div>
+    <div className="dashboard">
+      <AnnouncementsPanel items={announcements} />
+      <RankingPreview /> {/* placeholder if not implemented */}
+      <PersonalSnapshot data={snapshot} />
+      <RecentBadges data={badges} />
     </div>
   );
-}
+};
 ```
 
 ---
 
 ## Acceptance Criteria
 
-* User sees personalized greeting.
-* Quick stats accurately reflect profile, current diet, and badges.
-* Navigation buttons take user to the correct modules.
-* Suggested diets (AI) are shown if available.
-* Responsive layout on mobile/desktop.
+* [ ] Announcements load dynamically from Supabase and respect expiration dates.
+* [ ] Ranking shows top 3 + user's position OR placeholder if not implemented.
+* [ ] Personal snapshot shows correct latest weight + mini graph + current diet.
+* [ ] Recent badges component shows last 3 unlocked.
+* [ ] Empty/error states handled gracefully without breaking layout.
 
 ---
 
 ## Security Considerations
 
-* Only logged-in user can access their dashboard.
-* Data fetched is strictly scoped to `auth.user.id` via Supabase RLS.
-* No sensitive info exposed in the front-end console.
+* Ensure queries are scoped to the logged-in user (`eq("user_id", user.id)`).
+* Do not expose other users’ personal data outside ranking (alias-only, no sensitive info).
+* Prevent expired announcements from being rendered.
 
 ---
 
-## Next.js App Routing & Middleware Interplay
+## Next.js App Routing & Middleware
 
-* Page route: `/home`
-* Middleware:
-
-  * Redirect users who haven’t completed onboarding → `/onboarding`
-  * Logged-out users → `/login`
+* Route: `/home` (protected).
+* Middleware: redirect unauthenticated users → `/login`.
 
 ---
 
 ## Integration & Server-Side Details
 
-### Libraries & Helpers
-
-* `@supabase/supabase-js` → fetch user data
-* `shadcn/ui` → Cards, Buttons, Avatar
-* `react-query` (optional) → data caching
-* Tailwind CSS → responsive layout
-
-### Supabase SQL Checks
-
-```sql
-select * from profiles where id = '<user_id>';
-select * from user_diets where user_id = '<user_id>';
-select count(*) from badges where user_id = '<user_id>';
-```
-
----
-
+* Use Supabase client for announcements, user data, badges.
+* Ranking preview: initially hardcoded placeholder until server-side logic is available.
+* Mini chart: can use a lightweight library (e.g., `recharts`) with Tailwind styling.
 
 ---
 
