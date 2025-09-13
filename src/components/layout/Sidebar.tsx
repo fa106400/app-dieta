@@ -12,7 +12,7 @@ import {
   User,
   X,
   Settings,
-  Target,
+  //Target,
 } from "lucide-react";
 
 interface SidebarProps {
