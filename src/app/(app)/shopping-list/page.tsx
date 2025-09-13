@@ -155,6 +155,40 @@ export default function ShoppingListPage() {
     return selectedPeriod === "month" ? baseQuantity * 30 : baseQuantity * 7;
   };
 
+  // Converte unidades caso passem de 1.000
+  const converteMedidas = (quantidade: number, unidade: string): string => {
+    let newQuantidade: number = quantidade;
+    let newUnidade: string = unidade;
+
+    switch (newUnidade) {
+      case "g": //converte grama pra kilo
+        if (newQuantidade > 999) {
+          newQuantidade = newQuantidade / 1000;
+          newUnidade = "kg";
+        }
+
+        break;
+      case "ml": //converte ml pra litro
+        if (newQuantidade > 999) {
+          newQuantidade = newQuantidade / 1000;
+          newUnidade = "l";
+        }
+
+        break;
+      case "unidade": //corrige plural
+        if (newQuantidade > 1) {
+          newUnidade = "unidades";
+        }
+
+        break;
+      default:
+        // não altera os valores e devolve a const
+        break;
+    }
+
+    return `${newQuantidade} ${newUnidade}`;
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -288,7 +322,11 @@ export default function ShoppingListPage() {
                     <h3 className="font-medium text-lg">{item.name}</h3>
                   </div>
                   <Badge variant="secondary" className="text-sm">
-                    {calculateQuantity(item.quantity)} {item.unit}
+                    {/* {calculateQuantity(item.quantity)} {item.unit} */}
+                    {converteMedidas(
+                      calculateQuantity(item.quantity),
+                      item.unit
+                    )}
                   </Badge>
                 </div>
               ))}
