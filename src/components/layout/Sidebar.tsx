@@ -11,7 +11,7 @@ import {
   Trophy,
   User,
   X,
-  Settings,
+  //Settings,
   //Target,
 } from "lucide-react";
 
@@ -29,10 +29,10 @@ const navigation = [
   { name: "Me", href: "/me", icon: User },
 ];
 
-const secondaryNavigation = [
+/*const secondaryNavigation = [
   //{ name: "Onboarding", href: "/onboarding", icon: Target },
   { name: "Profile", href: "/profile", icon: Settings },
-];
+];*/
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
@@ -83,6 +83,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   })}
                 </ul>
               </li>
+              {/*
               <li>
                 <div className="text-xs font-semibold leading-6 text-gray-400">
                   Account
@@ -117,6 +118,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   })}
                 </ul>
               </li>
+              */}
             </ul>
           </nav>
         </div>
@@ -178,6 +180,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               })}
             </ul>
 
+            {/*
             <div className="mt-8">
               <div className="text-xs font-semibold leading-6 text-gray-400">
                 Account
@@ -213,6 +216,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 })}
               </ul>
             </div>
+            */}
           </nav>
         </div>
       </div>

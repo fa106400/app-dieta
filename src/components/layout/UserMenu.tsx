@@ -47,10 +47,11 @@ export function UserMenu() {
               {userInitials}
             </AvatarFallback>
           </Avatar>
-          <div className="hidden md:block text-left">
+          {/*<div className="hidden md:block text-left">
             <p className="text-sm font-medium text-gray-900">{userName}</p>
-            <p className="text-xs text-gray-500">Free Plan</p>
+             <p className="text-xs text-gray-500">Free Plan</p> 
           </div>
+          */}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
@@ -63,6 +64,7 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {/*
         <DropdownMenuItem asChild>
           <Link href="/me" className="flex items-center">
             <User className="mr-2 h-4 w-4" />
@@ -82,6 +84,7 @@ export function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        */}
         <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
