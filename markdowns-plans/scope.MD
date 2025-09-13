@@ -201,11 +201,11 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Shopping List (Foundation)** ✅
   - New column `shopping_plan` in the table `diets` ✅
 
-- **Shopping List (Screen 7.1)**
-  - Ingredient aggregation
-  - Category organization
-  - Checkbox functionality
-  - PDF export preparation
+- **Shopping List (Screen 7.1)** ✅
+  - Ingredient aggregation ✅
+  - Category organization ✅
+  - Checkbox functionality ✅
+  - PDF export preparation ✅
 
 ### 4.3 Dashboard & Navigation
 - **Home Dashboard (Screen 3.1)**
