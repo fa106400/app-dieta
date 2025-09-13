@@ -405,8 +405,20 @@ LEFT JOIN diet_variants dv ON d.id = dv.diet_id
 WHERE d.is_public = TRUE
 GROUP BY d.id, d.slug, d.title, d.description, d.tags, d.category, d.difficulty, d.duration_weeks, d.popularity_score;
 
+-- 12. Announcements table (for admin-managed messages)
+create table if not exists announcements (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  body text not null,
+  priority int default 0,
+  is_active boolean default true,
+  created_at timestamptz default now(),
+  expires_at timestamptz
+);
+
 -- Grant necessary permissions
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON profiles, favorites, user_current_diet, user_meal_log, weights, user_badges, diet_recommendations, user_metrics TO authenticated;
 GRANT SELECT ON diet_catalog_view TO anon, authenticated;
+GRANT SELECT ON announcements TO anon, authenticated;

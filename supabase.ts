@@ -446,6 +446,36 @@ export type Database = {
         }
         Relationships: []
       }
+      announcements: {
+        Row: {
+          body: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          priority: number | null
+          title: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          title: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       diet_catalog_view: {
