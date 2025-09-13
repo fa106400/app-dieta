@@ -26,12 +26,12 @@ const navigation = [
   { name: "My Week", href: "/my-week", icon: Calendar },
   { name: "Shopping List", href: "/shopping-list", icon: ShoppingCart },
   { name: "Ranking", href: "/ranking", icon: Trophy },
-  { name: "Profile", href: "/me", icon: User },
+  { name: "Me", href: "/me", icon: User },
 ];
 
 const secondaryNavigation = [
-  { name: "Onboarding", href: "/onboarding", icon: Target },
-  { name: "Settings", href: "/profile", icon: Settings },
+  //{ name: "Onboarding", href: "/onboarding", icon: Target },
+  { name: "Profile", href: "/profile", icon: Settings },
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
