@@ -154,7 +154,7 @@ export default function MyWeekPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">Loading your current diet...</span>
+          <span className="text-center">Carregando seu plano atual...</span>
         </div>
       </div>
     );
@@ -166,7 +166,9 @@ export default function MyWeekPage() {
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Unable to Load Diet</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              Não foi possível carregar o plano
+            </h3>
             <p className="text-gray-600 mb-4">{error}</p>
             <Button
               onClick={() => {
@@ -175,7 +177,7 @@ export default function MyWeekPage() {
               }}
               variant="outline"
             >
-              Try Again
+              Tentar Novamente
             </Button>
           </CardContent>
         </Card>
@@ -188,22 +190,20 @@ export default function MyWeekPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Week</h1>
-          <p className="text-gray-600 mt-1">
-            Track your current diet plan and weekly progress
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">Meu plano atual</h1>
+          {/*<p className="text-gray-600 mt-1">Acompanhe seu plano atual</p>*/}
         </div>
       </div>
 
       {/* Current Diet Section */}
       {currentDiet ? (
         <div className="space-y-4">
-          <div className="flex items-center space-x-2">
+          {/*<div className="flex items-center space-x-2">
             <Target className="h-5 w-5 text-blue-600" />
             <h2 className="text-xl font-semibold text-gray-900">
-              Your Current Diet Plan
+              Seu Plano Atual
             </h2>
-          </div>
+          </div>*/}
           <CurrentDietCard
             currentDiet={currentDiet}
             onDietChange={handleDietChange}
@@ -213,17 +213,17 @@ export default function MyWeekPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Active Diet Plan</h3>
+            <h3 className="text-lg font-semibold mb-2">Nenhum Plano Ativo</h3>
             <p className="text-gray-600 mb-6">
-              You don&apos;t have an active diet plan yet. Choose a diet to
-              start your journey!
+              Você não tem um plano de dieta ativo ainda. Escolha um plano
+              nutricional para começar sua jornada!
             </p>
             <Button
               onClick={() => (window.location.href = "/diets")}
               className="flex items-center space-x-2"
             >
               <Plus className="h-4 w-4" />
-              <span>Browse Diets</span>
+              <span>Escolha um plano</span>
             </Button>
           </CardContent>
         </Card>

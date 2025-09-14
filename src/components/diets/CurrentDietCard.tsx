@@ -35,12 +35,12 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
     router.push(`/diets/${currentDiet.id}`);
   };
 
-  const handleChangeDiet = () => {
+  /*const handleChangeDiet = () => {
     router.push("/diets");
-  };
+  };*/
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("pt-BR", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -57,7 +57,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
 
   return (
     <Card className="border-2 border-blue-200 bg-blue-50/30">
-      <CardHeader>
+      {/*<CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Target className="h-5 w-5 text-blue-600" />
@@ -67,7 +67,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
             Active
           </Badge>
         </div>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent className="space-y-4">
         {/* Diet Info */}
         <div>
@@ -84,7 +84,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Flame className="h-4 w-4 text-orange-500" />
-              <span className="text-xs text-gray-600">Calories</span>
+              <span className="text-xs text-gray-600">Calorias</span>
             </div>
             <div className="text-sm font-semibold">
               {currentDiet.calories_total}
@@ -94,7 +94,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Users className="h-4 w-4 text-green-500" />
-              <span className="text-xs text-gray-600">Difficulty</span>
+              <span className="text-xs text-gray-600">Dificuldade</span>
             </div>
             <div className="text-sm font-semibold">
               {currentDiet.difficulty?.toUpperCase()}
@@ -104,7 +104,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Calendar className="h-4 w-4 text-purple-500" />
-              <span className="text-xs text-gray-600">Duration</span>
+              <span className="text-xs text-gray-600">Duração</span>
             </div>
             <div className="text-sm font-semibold">
               {currentDiet.duration_weeks}w
@@ -114,7 +114,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Star className="h-4 w-4 text-yellow-500" />
-              <span className="text-xs text-gray-600">Popularity</span>
+              <span className="text-xs text-gray-600">Popularidade</span>
             </div>
             <div className="text-sm font-semibold">
               {currentDiet.popularity_score}
@@ -125,14 +125,14 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
         {/* Progress Info */}
         <div className="bg-white rounded-lg p-3 border">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Started on</span>
+            <span className="text-gray-600">Iniciado em</span>
             <span className="font-medium">
               {formatDate(currentDiet.started_at)}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm mt-1">
-            <span className="text-gray-600">Days following</span>
-            <span className="font-medium">{getDaysSinceStart()} days</span>
+            <span className="text-gray-600">Dias seguindo</span>
+            <span className="font-medium">{getDaysSinceStart()} dia(s)</span>
           </div>
         </div>
 
@@ -146,7 +146,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
             ))}
             {currentDiet.tags.length > 3 && (
               <Badge variant="secondary" className="text-xs">
-                +{currentDiet.tags.length - 3} more
+                +{currentDiet.tags.length - 3}
               </Badge>
             )}
           </div>
@@ -160,9 +160,10 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
             onClick={handleViewDetails}
             className="flex-1"
           >
-            View Details
+            Ver Detalhes
             <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
+          {/*
           <Button
             variant="outline"
             size="sm"
@@ -171,6 +172,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           >
             Change Diet
           </Button>
+          */}
         </div>
       </CardContent>
     </Card>
