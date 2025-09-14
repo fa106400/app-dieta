@@ -23,7 +23,7 @@ interface SidebarProps {
 const navigation = [
   { name: "Home", href: "/home", icon: Home },
   { name: "Catálogo", href: "/diets", icon: Utensils },
-  { name: "Minha dieta", href: "/my-week", icon: Calendar },
+  { name: "Minha dieta", href: "/my-plan", icon: Calendar },
   //{ name: "Shopping List", href: "/shopping-list", icon: ShoppingCart },
   { name: "Ranking", href: "/ranking", icon: Trophy },
   { name: "Eu", href: "/me", icon: User },

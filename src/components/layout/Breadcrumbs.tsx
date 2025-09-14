@@ -6,12 +6,12 @@ import { ChevronRight, Home } from "lucide-react";
 
 const pathMap: Record<string, string> = {
   home: "Home",
-  diets: "Diets",
-  "my-week": "My Week",
+  diets: "Catálogo",
+  "my-plan": "Meu plano",
   "shopping-list": "Shopping List",
   ranking: "Ranking",
-  me: "Profile",
-  profile: "Settings",
+  me: "Eu",
+  profile: "Configurações",
   onboarding: "Onboarding",
 };
 

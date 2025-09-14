@@ -176,7 +176,7 @@ This plan outlines the development of a complete nutrition and diet management p
 ### 3.3 Diet Management ✅
 - **Diet Selection & Following** ✅
   - "Follow Now" functionality: Implemented in `src/app/(app)/diets/[dietId]/page.tsx`. Users can set any diet as their active plan, which deactivates previous diets and sets the new one as active in `user_current_diet` table.
-  - Current diet tracking: Implemented in `src/app/(app)/my-week/page.tsx` with `CurrentDietCard` component. Displays active diet details, progress tracking, and provides easy access to change diets.
+  - Current diet tracking: Implemented in `src/app/(app)/my-plan/page.tsx` with `CurrentDietCard` component. Displays active diet details, progress tracking, and provides easy access to change diets.
   - Diet switching capabilities: Users can switch diets through the "Change Diet" button in My Week page, which redirects to the diet catalog for selection.
 
 ---
@@ -220,13 +220,9 @@ This plan outlines the development of a complete nutrition and diet management p
   - Status overviews ✅
   - Settings access ✅
 
-***depois do item 4.4.2, eu posso retirar o sh list btn da me page.***
-***No menu principal, inves de My Week, colocar "Dieta Atual". Depois ver se podemos deletar "My Week"*** 
-***Remover Quick Actions no final da /Me***
-
-### 4.4 Refactor Navigation ***detalhar melhor os itens abaixo, quais paginas, arquivos, etc***
+### 4.4 Refactor Navigation  ✅
   4.4.1 - On `/diets/[dietId]` page, the CTA button in the bottom of the page has a logic that says "Follow Now" if it is not the actual users diet or else, it says "Currently Following" if it is the actual user's diet. Refactor that logic to be "Follow Now" if it is not the actual users diet or "Unfollow" if it is the user's actual diet. And if it is that second option, the button should stay enable for click and onClick should actually dissociate the user from the diet (update the respective user row from `user_current_diet` table where `is_active = true` and set `is_active = false`) ✅
-  4.4.2 - On `/diets/[dietId]` page, on the bottom of the page, add a "Shopping List" besides the "Follow / Unfollow" button. The new button should redirect to the `/shopping_list` page.
+  4.4.2 - On `/diets/[dietId]` page, on the bottom of the page, add a "Shopping List" besides the "Follow / Unfollow" button. The new button should redirect to the `/shopping_list` page.  ✅
 
 
 ### 4.5 Refactor Weight Log & Profile ***detalhar melhor os itens abaixo***
@@ -826,7 +822,7 @@ Detailed List of all screens in the system is in the file ./screens-chatgpt.MD
     /diets (4.1)
       /favorites (4.2)
       /[dietSlug] (5.1)
-    /my-week (6.1)
+    /my-plan (6.1)
     /shopping-list (7.1)
     /ranking (8.1)
     /me (9.1)
@@ -3167,7 +3163,7 @@ export default function CurrentWeekPlan() {
 
 ## Next.js App Routing & Middleware
 
-* Route: `/my-week`
+* Route: `/my-plan`
 * Middleware:
 
   * Authenticated session required → redirect `/login`

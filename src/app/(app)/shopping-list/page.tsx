@@ -248,7 +248,7 @@ export default function ShoppingListPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push("/my-week")}
+            onClick={() => router.push("/my-plan")}
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />

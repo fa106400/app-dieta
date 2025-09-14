@@ -243,7 +243,7 @@ export default function DietDetailPage() {
       if (error) throw error;
 
       toast.success("Diet set as your current plan!");
-      router.push("/my-week");
+      router.push("/my-plan");
     } catch (err) {
       console.error("Error setting active diet:", err);
       toast.error("Failed to set as active diet.");
@@ -688,7 +688,7 @@ export default function DietDetailPage() {
             variant="outline"
             size="lg"
             className="px-8"
-            onClick={() => router.push("/shopping_list")}
+            onClick={() => router.push("/shopping-list")}
           >
             Shopping List
           </Button>
