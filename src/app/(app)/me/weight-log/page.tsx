@@ -537,7 +537,7 @@ export default function WeightLogPage() {
                         <p className="text-sm text-gray-600">
                           {new Date(
                             entry.measured_at + "T00:00:00"
-                          ).toLocaleDateString("en-US", {
+                          ).toLocaleDateString("pt-BR", {
                             weekday: "long",
                             year: "numeric",
                             month: "long",
@@ -613,7 +613,7 @@ export default function WeightLogPage() {
                         const data = payload[0].payload as ChartData;
                         return new Date(
                           data.date + "T00:00:00"
-                        ).toLocaleDateString("en-US", {
+                        ).toLocaleDateString("pt-BR", {
                           weekday: "long",
                           year: "numeric",
                           month: "long",
