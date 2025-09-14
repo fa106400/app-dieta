@@ -7,7 +7,7 @@ import {
   Home,
   Utensils,
   Calendar,
-  ShoppingCart,
+  //ShoppingCart,
   Trophy,
   User,
   X,
@@ -22,11 +22,11 @@ interface SidebarProps {
 
 const navigation = [
   { name: "Home", href: "/home", icon: Home },
-  { name: "Diets", href: "/diets", icon: Utensils },
-  { name: "My Week", href: "/my-week", icon: Calendar },
-  { name: "Shopping List", href: "/shopping-list", icon: ShoppingCart },
+  { name: "Catálogo", href: "/diets", icon: Utensils },
+  { name: "Minha dieta", href: "/my-week", icon: Calendar },
+  //{ name: "Shopping List", href: "/shopping-list", icon: ShoppingCart },
   { name: "Ranking", href: "/ranking", icon: Trophy },
-  { name: "Me", href: "/me", icon: User },
+  { name: "Eu", href: "/me", icon: User },
 ];
 
 /*const secondaryNavigation = [
