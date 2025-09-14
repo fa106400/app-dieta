@@ -220,12 +220,14 @@ This plan outlines the development of a complete nutrition and diet management p
   - Status overviews ✅
   - Settings access ✅
 
+***depois do item 4.4.2, eu posso retirar o sh list btn da me page.***
+***No menu principal, inves de My Week, colocar "Dieta Atual". Depois ver se podemos deletar "My Week"*** 
+***Remover Quick Actions no final da /Me***
 
 ### 4.4 Refactor Navigation ***detalhar melhor os itens abaixo, quais paginas, arquivos, etc***
-  - Diet Details page, follow button vira unfollow logic quando dieta atual
-  - Do lado do follow/unfollow, adicionar o botao pra Shopping List, ai tirar shopping list do menu principal
-  - No menu principal, inves de My Week, colocar "Dieta Atual". Depois ver se podemos deletar "My Week"
-  - Remover Quick Actions no final da /Me 
+  4.4.1 - On `/diets/[dietId]` page, the CTA button in the bottom of the page has a logic that says "Follow Now" if it is not the actual users diet or else, it says "Currently Following" if it is the actual user's diet. Refactor that logic to be "Follow Now" if it is not the actual users diet or "Unfollow" if it is the user's actual diet. And if it is that second option, the button should stay enable for click and onClick should actually dissociate the user from the diet (update the respective user row from `user_current_diet` table where `is_active = true` and set `is_active = false`) ✅
+  4.4.2 - On `/diets/[dietId]` page, on the bottom of the page, add a "Shopping List" besides the "Follow / Unfollow" button. The new button should redirect to the `/shopping_list` page.
+
 
 ### 4.5 Refactor Weight Log & Profile ***detalhar melhor os itens abaixo***
 - Pensar como unir profile e weight log, pensando em UX

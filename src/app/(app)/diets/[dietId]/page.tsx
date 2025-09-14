@@ -252,6 +252,33 @@ export default function DietDetailPage() {
     }
   };
 
+  const unfollowDiet = async () => {
+    if (!user || !supabase || !diet || !diet.id) return;
+
+    setIsFollowing(true);
+
+    try {
+      // Deactivate the current diet
+      const { error } = await supabase
+        .from("user_current_diet")
+        .update({ is_active: false })
+        .eq("user_id", user.id)
+        .eq("diet_id", diet.id)
+        .eq("is_active", true);
+
+      if (error) throw error;
+
+      toast.success("Diet unfollowed successfully!");
+      // Refresh the page to update the button state
+      window.location.reload();
+    } catch (err) {
+      console.error("Error unfollowing diet:", err);
+      toast.error("Failed to unfollow diet.");
+    } finally {
+      setIsFollowing(false);
+    }
+  };
+
   // Toggle day expansion
   const toggleDay = (dayIndex: number) => {
     setExpandedDays((prev) => {
@@ -631,21 +658,23 @@ export default function DietDetailPage() {
         </Card>
       )}
 
-      {/* Follow Now Button */}
+      {/* Follow/Unfollow Button */}
       <div className="flex justify-center">
         <Button
-          onClick={followNow}
-          disabled={!diet || isFollowing || diet.is_currently_active}
+          onClick={diet.is_currently_active ? unfollowDiet : followNow}
+          disabled={!diet || isFollowing}
           size="lg"
           className="px-8"
         >
           {isFollowing ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Setting as Active...
+              {diet.is_currently_active
+                ? "Unfollowing..."
+                : "Setting as Active..."}
             </>
           ) : diet.is_currently_active ? (
-            "Currently Following"
+            "Unfollow"
           ) : (
             "Follow Now"
           )}
