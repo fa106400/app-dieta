@@ -198,7 +198,7 @@ export default function DietDetailPage() {
         if (error) throw error;
 
         setDiet((prev) => (prev ? { ...prev, is_favorited: false } : null));
-        toast.success("Removed from favorites");
+        toast.success("Removido dos favoritos");
       } else {
         // Add to favorites
         const { error } = await supabase.from("favorites").insert({
@@ -209,11 +209,11 @@ export default function DietDetailPage() {
         if (error) throw error;
 
         setDiet((prev) => (prev ? { ...prev, is_favorited: true } : null));
-        toast.success("Added to favorites");
+        toast.success("Adicionado aos favoritos");
       }
     } catch (err) {
       console.error("Error toggling favorite:", err);
-      toast.error("Action failed, please retry.");
+      toast.error("Falha ao adicionar aos favoritos, tente novamente.");
     } finally {
       setIsTogglingFavorite(false);
     }
@@ -242,11 +242,12 @@ export default function DietDetailPage() {
 
       if (error) throw error;
 
-      toast.success("Diet set as your current plan!");
-      router.push("/my-plan");
+      toast.success("Plano definido como ativo!");
+      //router.push("/my-plan");
+      window.location.reload();
     } catch (err) {
       console.error("Error setting active diet:", err);
-      toast.error("Failed to set as active diet.");
+      toast.error("Falha ao seguir plano.");
     } finally {
       setIsFollowing(false);
     }
@@ -268,12 +269,12 @@ export default function DietDetailPage() {
 
       if (error) throw error;
 
-      toast.success("Diet unfollowed successfully!");
-      // Refresh the page to update the button state
-      window.location.reload();
+      toast.success("Deixou de seguir com sucesso!");
+      // Relocate to diet catalog page
+      router.push("/diets");
     } catch (err) {
       console.error("Error unfollowing diet:", err);
-      toast.error("Failed to unfollow diet.");
+      toast.error("Falha ao deixar de seguir.");
     } finally {
       setIsFollowing(false);
     }
@@ -683,7 +684,7 @@ export default function DietDetailPage() {
         </div>
 
         {/* Shopping List Button */}
-        <div className="flex justify-center">
+        <div className="flex justify-center" hidden={!diet.is_currently_active}>
           <Button
             variant="outline"
             size="lg"
