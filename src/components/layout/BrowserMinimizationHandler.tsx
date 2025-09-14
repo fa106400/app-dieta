@@ -56,6 +56,10 @@ export function BrowserMinimizationHandler() {
   // Don't render anything if popup is not shown
   if (!showPopup) {
     return null;
+  } else {
+    //testando chamar refresh automaticamente
+    handleRefresh();
+    return null;
   }
 
   return (
