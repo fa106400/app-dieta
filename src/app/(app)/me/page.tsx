@@ -14,7 +14,7 @@ import {
   //Settings,
   Shield,
   Eye,
-  Target,
+  //Target,
 } from "lucide-react";
 
 export default function MePage() {
@@ -149,7 +149,7 @@ export default function MePage() {
         })}
       </div>
 
-      {/* Additional Quick Actions */}
+      {/* Additional Quick Actions 
       <div className="mt-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Quick Actions
@@ -231,6 +231,7 @@ export default function MePage() {
           </Card>
         </div>
       </div>
+      */}
     </div>
   );
 }

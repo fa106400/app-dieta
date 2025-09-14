@@ -658,27 +658,41 @@ export default function DietDetailPage() {
         </Card>
       )}
 
-      {/* Follow/Unfollow Button */}
-      <div className="flex justify-center">
-        <Button
-          onClick={diet.is_currently_active ? unfollowDiet : followNow}
-          disabled={!diet || isFollowing}
-          size="lg"
-          className="px-8"
-        >
-          {isFollowing ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              {diet.is_currently_active
-                ? "Unfollowing..."
-                : "Setting as Active..."}
-            </>
-          ) : diet.is_currently_active ? (
-            "Unfollow"
-          ) : (
-            "Follow Now"
-          )}
-        </Button>
+      <div className="flex items-center justify-center space-x-4">
+        {/* Follow/Unfollow Button */}
+        <div className="flex justify-center">
+          <Button
+            onClick={diet.is_currently_active ? unfollowDiet : followNow}
+            disabled={!diet || isFollowing}
+            size="lg"
+            className="px-8"
+          >
+            {isFollowing ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {diet.is_currently_active
+                  ? "Unfollowing..."
+                  : "Setting as Active..."}
+              </>
+            ) : diet.is_currently_active ? (
+              "Unfollow"
+            ) : (
+              "Follow Now"
+            )}
+          </Button>
+        </div>
+
+        {/* Shopping List Button */}
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            size="lg"
+            className="px-8"
+            onClick={() => router.push("/shopping_list")}
+          >
+            Shopping List
+          </Button>
+        </div>
       </div>
     </div>
   );
