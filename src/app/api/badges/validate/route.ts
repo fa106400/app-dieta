@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       newlyUnlocked,
-      count: newlyUnlocked.length
+      count: newlyUnlocked.length,
+      badges: newlyUnlocked // Return the actual badge data for notifications
     });
 
   } catch (error) {

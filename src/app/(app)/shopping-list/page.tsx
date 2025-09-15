@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ interface CurrentDiet {
 
 export default function ShoppingListPage() {
   const { user } = useAuthContext();
+  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
   const router = useRouter();
   const [currentDiet, setCurrentDiet] = useState<CurrentDiet | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">(
@@ -305,15 +307,8 @@ export default function ShoppingListPage() {
 
                   // Trigger badge validation for shopping export
                   try {
-                    await fetch("/api/badges/validate", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        event: "shopping_exported",
-                        payload: { period: selectedPeriod },
-                      }),
+                    await triggerBadgeValidation("shopping_exported", {
+                      period: selectedPeriod,
                     });
                   } catch (badgeError) {
                     console.error("Error validating badges:", badgeError);

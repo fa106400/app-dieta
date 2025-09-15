@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { supabase } from "@/lib/supabase";
 import type { Json } from "../../../../../supabase";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ export default function DietDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuthContext();
+  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
   const dietId = params.dietId as string;
 
   const [diet, setDiet] = useState<DietDetail | null>(null);
@@ -244,27 +246,8 @@ export default function DietDetailPage() {
 
       // Trigger badge validation for diet events
       try {
-        await fetch("/api/badges/validate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            event: "diet_chosen",
-            payload: { diet_id: diet.id },
-          }),
-        });
-
-        await fetch("/api/badges/validate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            event: "diet_switches",
-            payload: { diet_id: diet.id },
-          }),
-        });
+        await triggerBadgeValidation("diet_chosen", { diet_id: diet.id });
+        await triggerBadgeValidation("diet_switches", { diet_id: diet.id });
       } catch (badgeError) {
         console.error("Error validating badges:", badgeError);
         // Don't fail the main operation if badge validation fails
