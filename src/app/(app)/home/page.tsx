@@ -263,7 +263,7 @@ export default function HomePage() {
     return weights
       .reverse() // Show oldest to newest
       .map((weight, index) => ({
-        day: `Day ${index + 1}`,
+        day: `Dia ${index + 1}`,
         weight: weight.weight_kg,
       }));
   };
@@ -274,7 +274,7 @@ export default function HomePage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading your dashboard...</p>
+            <p className="text-gray-600">Carregando seu dashboard...</p>
           </div>
         </div>
       </div>
@@ -303,7 +303,7 @@ export default function HomePage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Bell className="h-5 w-5" />
-                  <span>Announcements</span>
+                  <span>Novidades</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -344,20 +344,15 @@ export default function HomePage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Trophy className="h-5 w-5" />
-                <span>Ranking Preview</span>
+                <span>Ranking</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  Ranking Module Coming Soon
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Compete with other users and climb the leaderboard!
-                </p>
+                <h3 className="text-lg font-semibold mb-2">Em construção</h3>
                 <Button variant="outline" disabled>
-                  See Full Ranking
+                  Ver Ranking completo
                 </Button>
               </div>
             </CardContent>
@@ -371,7 +366,7 @@ export default function HomePage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Target className="h-5 w-5" />
-                <span>Personal Snapshot</span>
+                <span>Foto atual</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -388,7 +383,7 @@ export default function HomePage() {
                     }}
                     className="mt-2"
                   >
-                    Try Again
+                    Tentar novamente
                   </Button>
                 </div>
               ) : (
@@ -397,7 +392,7 @@ export default function HomePage() {
                   {personalSnapshot?.currentWeight && (
                     <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                       <div>
-                        <p className="text-sm text-gray-600">Current Weight</p>
+                        <p className="text-sm text-gray-600">Peso atual</p>
                         <p className="text-xl font-bold">
                           {personalSnapshot.currentWeight.weight_kg} kg
                         </p>
@@ -411,7 +406,7 @@ export default function HomePage() {
                     personalSnapshot.weightHistory.length > 1 && (
                       <div className="h-32">
                         <h4 className="text-sm font-medium mb-2">
-                          Weight Progress (Last 7 entries)
+                          Progresso do peso (Últimos 7 registros)
                         </h4>
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart
@@ -436,7 +431,7 @@ export default function HomePage() {
                   {/* Current Diet */}
                   {personalSnapshot?.currentDiet && (
                     <div className="p-3 bg-green-50 rounded-lg">
-                      <p className="text-sm text-gray-600">Current Diet</p>
+                      <p className="text-sm text-gray-600">Plano atual</p>
                       <p className="font-medium">
                         {personalSnapshot.currentDiet.title}
                       </p>
@@ -474,7 +469,7 @@ export default function HomePage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Award className="h-5 w-5" />
-                <span>Recent Badges</span>
+                <span>Medalhas recentes</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -508,24 +503,24 @@ export default function HomePage() {
                     onClick={() => router.push("/me")}
                     className="w-full"
                   >
-                    See All Badges
+                    Ver todas as medalhas
                   </Button>
                 </div>
               ) : (
                 <div className="text-center py-6">
                   <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">
-                    Start Your Journey
+                    Comece sua jornada
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    Earn your first badge by completing your first week!
+                    Ganhe sua primeira medalha completando sua primeira semana!
                   </p>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => router.push("/me")}
                   >
-                    View Profile
+                    Ver perfil
                   </Button>
                 </div>
               )}
