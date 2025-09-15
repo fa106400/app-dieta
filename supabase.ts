@@ -49,6 +49,8 @@ export type Database = {
           id: string
           slug: string
           title: string
+          weight: number
+          visibility: boolean
         }
         Insert: {
           category?: string | null
@@ -59,6 +61,8 @@ export type Database = {
           id?: string
           slug: string
           title: string
+          weight?: number
+          visibility?: boolean
         }
         Update: {
           category?: string | null
@@ -69,6 +73,8 @@ export type Database = {
           id?: string
           slug?: string
           title?: string
+          weight?: number
+          visibility?: boolean
         }
         Relationships: []
       }
@@ -326,16 +332,19 @@ export type Database = {
           awarded_at: string | null
           badge_id: string
           user_id: string
+          meta: Json
         }
         Insert: {
           awarded_at?: string | null
           badge_id: string
           user_id: string
+          meta?: Json
         }
         Update: {
           awarded_at?: string | null
           badge_id?: string
           user_id?: string
+          meta?: Json
         }
         Relationships: [
           {
@@ -390,6 +399,7 @@ export type Database = {
         Row: {
           adherence_percentage: number | null
           created_at: string | null
+          exp: number
           id: string
           meals_completed: number | null
           period_end: string
@@ -401,6 +411,7 @@ export type Database = {
         Insert: {
           adherence_percentage?: number | null
           created_at?: string | null
+          exp?: number
           id?: string
           meals_completed?: number | null
           period_end: string
@@ -412,6 +423,7 @@ export type Database = {
         Update: {
           adherence_percentage?: number | null
           created_at?: string | null
+          exp?: number
           id?: string
           meals_completed?: number | null
           period_end?: string

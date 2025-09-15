@@ -43,7 +43,7 @@ export default function MePage() {
       title: "Medalhas",
       description: "Veja suas conquistas e medalhas",
       icon: Award,
-      href: "/me/badges",
+      href: "/badges",
       color: "text-yellow-600",
       bgColor: "bg-yellow-50",
       borderColor: "border-yellow-200",

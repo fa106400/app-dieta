@@ -242,6 +242,34 @@ export default function DietDetailPage() {
 
       if (error) throw error;
 
+      // Trigger badge validation for diet events
+      try {
+        await fetch("/api/badges/validate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            event: "diet_chosen",
+            payload: { diet_id: diet.id },
+          }),
+        });
+
+        await fetch("/api/badges/validate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            event: "diet_switches",
+            payload: { diet_id: diet.id },
+          }),
+        });
+      } catch (badgeError) {
+        console.error("Error validating badges:", badgeError);
+        // Don't fail the main operation if badge validation fails
+      }
+
       toast.success("Plano definido como ativo!");
       //router.push("/my-plan");
       window.location.reload();

@@ -54,6 +54,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to save weight entry" }, { status: 500 });
     }
 
+    // Trigger badge validation for weight loss
+    try {
+      const badgeResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/badges/validate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event: "weight_loss",
+          payload: { weight_kg: weight, measured_at: date }
+        }),
+      });
+
+      if (badgeResponse.ok) {
+        const badgeData = await badgeResponse.json();
+        if (badgeData.newlyUnlocked && badgeData.newlyUnlocked.length > 0) {
+          console.log(`User ${user.id} unlocked ${badgeData.newlyUnlocked.length} badges`);
+        }
+      }
+    } catch (badgeError) {
+      console.error("Error validating badges for weight loss:", badgeError);
+      // Don't fail the main operation if badge validation fails
+    }
+
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {
     console.error("Error in weight POST:", error);

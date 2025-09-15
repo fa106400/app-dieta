@@ -149,6 +149,8 @@ CREATE TABLE badges (
     icon_name TEXT,
     criteria JSONB NOT NULL, -- e.g., {streak_days: 7, weight_lost_kg: 3}
     category TEXT CHECK (category IN ('consistency', 'milestone', 'achievement')),
+    weight INT DEFAULT 0 CHECK (weight >= 0 AND weight <= 99),
+    visibility BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -157,6 +159,7 @@ CREATE TABLE user_badges (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     badge_id UUID NOT NULL REFERENCES badges(id) ON DELETE CASCADE,
     awarded_at TIMESTAMPTZ DEFAULT NOW(),
+    meta JSONB DEFAULT '{}'::jsonb,
     PRIMARY KEY (user_id, badge_id)
 );
 
@@ -192,6 +195,7 @@ CREATE TABLE user_metrics (
     weight_lost_kg NUMERIC(5,2),
     meals_completed INTEGER DEFAULT 0,
     total_meals INTEGER DEFAULT 0,
+    exp INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, period_start, period_end)
 );

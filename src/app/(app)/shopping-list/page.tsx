@@ -299,9 +299,26 @@ export default function ShoppingListPage() {
                 </span>
               </CardTitle>
               <Button
-                onClick={() => {
+                onClick={async () => {
                   // TODO: Implement PDF export (Screen 7.2)
                   toast.info("PDF export coming soon!");
+
+                  // Trigger badge validation for shopping export
+                  try {
+                    await fetch("/api/badges/validate", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        event: "shopping_exported",
+                        payload: { period: selectedPeriod },
+                      }),
+                    });
+                  } catch (badgeError) {
+                    console.error("Error validating badges:", badgeError);
+                    // Don't fail the main operation if badge validation fails
+                  }
                 }}
                 className="flex items-center space-x-2"
               >

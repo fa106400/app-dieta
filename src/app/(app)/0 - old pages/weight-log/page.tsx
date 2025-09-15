@@ -97,6 +97,7 @@ export default function WeightLogPage() {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   // Check AI cooldown
@@ -126,6 +127,7 @@ export default function WeightLogPage() {
       console.error("Error checking AI cooldown:", err);
       setAiCooldown(0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   // Check if there's already an entry for the selected date

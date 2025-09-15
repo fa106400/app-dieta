@@ -500,7 +500,7 @@ export default function HomePage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => router.push("/me")}
+                    onClick={() => router.push("/badges")}
                     className="w-full"
                   >
                     Ver todas as medalhas
@@ -513,12 +513,12 @@ export default function HomePage() {
                     Comece sua jornada
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    Ganhe sua primeira medalha completando sua primeira semana!
+                    Ganhe sua primeira medalha escolhendo um plano!
                   </p>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => router.push("/me")}
+                    onClick={() => router.push("/diets")}
                   >
                     Ver perfil
                   </Button>
