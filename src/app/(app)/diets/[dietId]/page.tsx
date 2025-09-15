@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
-  Heart,
+  //Heart,
   Loader2,
   AlertCircle,
   Users,
@@ -46,7 +46,7 @@ export default function DietDetailPage() {
   // Removed selectedVariant state - no longer needed with simplified schema
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0])); // Expand first day by default
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+  //const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   // State to track which alt_item index is currently shown for each item (dayIndex-mealIndex-itemIndex -> altIndex)
   const [itemAltIndex, setItemAltIndex] = useState<Map<string, number>>(
     new Map()
@@ -181,7 +181,7 @@ export default function DietDetailPage() {
   }, []);
 
   // Toggle favorite
-  const toggleFavorite = async () => {
+  /*const toggleFavorite = async () => {
     if (!user || !supabase || !diet || !diet.id) return;
 
     setIsTogglingFavorite(true);
@@ -217,7 +217,7 @@ export default function DietDetailPage() {
     } finally {
       setIsTogglingFavorite(false);
     }
-  };
+  };*/
 
   // Follow Now functionality
   const followNow = async () => {
@@ -367,6 +367,7 @@ export default function DietDetailPage() {
           </div>
         </div>
 
+        {/*
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
@@ -387,7 +388,7 @@ export default function DietDetailPage() {
               />
             )}
           </Button>
-        </div>
+        </div>*/}
       </div>
 
       {/* Diet Info Cards */}

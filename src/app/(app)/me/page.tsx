@@ -8,7 +8,7 @@ import {
 import { useRouter } from "next/navigation";
 import {
   User,
-  Weight,
+  //Weight,
   Award,
   CreditCard,
   //Settings,
@@ -21,7 +21,7 @@ export default function MePage() {
   const router = useRouter();
 
   const menuItems = [
-    {
+    /*{
       title: "Weight Log",
       description: "Track your weight progress over time",
       icon: Weight,
@@ -29,10 +29,19 @@ export default function MePage() {
       color: "text-blue-600",
       bgColor: "bg-blue-50",
       borderColor: "border-blue-200",
+    },*/
+    {
+      title: "Meu Perfil",
+      description: "Atualize seus dados pessoais, peso, objetivo, etc.",
+      icon: User,
+      href: "/profile",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
     },
     {
-      title: "Badges",
-      description: "View your achievements and unlocked badges",
+      title: "Medalhas",
+      description: "Veja suas conquistas e medalhas",
       icon: Award,
       href: "/me/badges",
       color: "text-yellow-600",
@@ -47,15 +56,6 @@ export default function MePage() {
       color: "text-green-600",
       bgColor: "bg-green-50",
       borderColor: "border-green-200",
-    },
-    {
-      title: "Profile",
-      description: "Manage your personal information and settings",
-      icon: User,
-      href: "/profile",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
     },
     {
       title: "Security",
@@ -81,10 +81,10 @@ export default function MePage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">User Hub</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Eu</h1>
         <p className="text-gray-600">
-          Manage your account, track your progress, and customize your
-          experience.
+          Gerencie seu perfil, acompanhe seu progresso e personalize sua
+          experiência.
         </p>
       </div>
 

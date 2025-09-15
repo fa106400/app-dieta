@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,8 +25,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, User, Settings, Activity } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Save,
+  User,
+  Settings,
+  Activity,
+  Weight,
+  //TrendingUp,
+  RefreshCw,
+  Loader2,
+  AlertCircle,
+  Plus,
+  Trash2,
+  Calendar,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { toast } from "sonner";
 
+// Interfaces
 interface ProfileData {
   age: number;
   weight_start_kg: number;
@@ -42,367 +68,610 @@ interface ProfileData {
   onboarding_completed: boolean;
 }
 
+interface WeightEntry {
+  id: string;
+  user_id: string;
+  weight_kg: number;
+  measured_at: string;
+  created_at: string | null;
+}
+
+interface ChartData {
+  date: string;
+  weight: number;
+  displayDate: string;
+}
+
 const ACTIVITY_LEVELS = {
   sedentary: {
     label: "Sedentary",
     description:
       "Little to no exercise and a job that involves sitting most of the day.",
-    examples:
-      "Office workers, receptionists, drivers, or individuals who spend most of their day in front of a computer with minimal movement",
-    multiplier: "BMR × 1.375",
+    examples: "Office worker, student, retired person",
   },
   lightly_active: {
     label: "Lightly Active",
     description: "Light exercise or sports 1-3 days per week.",
-    examples:
-      "A sedentary job with light exercise, such as a short walk or a light workout a few times a week.",
-    multiplier: "BMR × 1.375",
+    examples: "Walking, light jogging, yoga, casual cycling",
   },
   moderately_active: {
     label: "Moderately Active",
     description: "Moderate exercise or sports 3-5 days per week.",
-    examples:
-      "Someone with a job that involves standing for a significant portion of the day, like a sales assistant, along with moderate exercise a few times a week.",
-    multiplier: "BMR × 1.55",
+    examples: "Running, swimming, weight training, team sports",
   },
   very_active: {
     label: "Very Active",
     description: "Hard exercise or sports 6-7 days per week.",
-    examples: "Engaging in intense workouts for most days of the week.",
-    multiplier: "BMR × 1.725",
+    examples: "Intensive training, competitive sports, manual labor",
   },
   extra_active: {
     label: "Extra Active",
-    description:
-      "Very intense exercise and training, a physically demanding job, or training twice a day.",
-    examples:
-      "Professions such as carpenters, paramedics, or individuals with physically demanding jobs combined with frequent, intense exercise.",
-    multiplier: "BMR × 1.9",
+    description: "Very hard exercise, physical job, or training twice a day.",
+    examples: "Professional athlete, construction worker, military training",
   },
 };
 
 const DIETARY_PREFERENCES = [
-  "vegan",
   "vegetarian",
-  "lactose_intolerant",
+  "vegan",
   "gluten_free",
-  "low_carb",
+  "dairy_free",
   "keto",
   "paleo",
   "mediterranean",
+  "low_carb",
+  "low_fat",
+  "high_protein",
 ];
 
-function ProfilePageContent() {
-  const [profileData, setProfileData] = useState<ProfileData>({
-    age: 0,
-    weight_start_kg: 0,
-    height_cm: 0,
-    goal: "maintain",
-    dietary_preferences: [],
-    activity_level: "moderately_active",
-    food_dislikes: "",
-    onboarding_completed: false,
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+const GOALS = [
+  { value: "lose_weight", label: "Lose Weight" },
+  { value: "maintain", label: "Maintain Weight" },
+  { value: "gain_muscle", label: "Gain Muscle" },
+  { value: "health", label: "General Health" },
+];
 
+export default function ProfileManagePage() {
   const { user } = useAuthContext();
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  // Profile state
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
 
-  const fetchProfile = async () => {
+  // Weight state
+  const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
+  const [weightLoading, setWeightLoading] = useState(true);
+  const [weightError, setWeightError] = useState<string | null>(null);
+  const [newWeight, setNewWeight] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [isAddingWeight, setIsAddingWeight] = useState(false);
+  const [chartPeriod, setChartPeriod] = useState<"1w" | "1m" | "3m">("1m");
+
+  // AI Refresh state
+  const [aiCooldownHours, setAiCooldownHours] = useState<number | null>(null);
+  const [isRefreshingAI, setIsRefreshingAI] = useState(false);
+
+  // Active tab
+  const [activeTab, setActiveTab] = useState("personal");
+
+  // Fetch profile data
+  const fetchProfile = useCallback(async () => {
+    if (!user) return;
+
     try {
+      setProfileLoading(true);
+      setProfileError(null);
+
       const response = await fetch("/api/auth/me");
-      if (response.ok) {
-        const data = await response.json();
-        if (data.profile) {
-          setProfileData({
-            age: data.profile.age || 0,
-            weight_start_kg: data.profile.weight_start_kg || 0,
-            height_cm: data.profile.height_cm || 0,
-            goal: data.profile.goal || "maintain",
-            dietary_preferences: data.profile.dietary_preferences || [],
-            activity_level: data.profile.activity_level || "moderately_active",
-            food_dislikes: data.profile.food_dislikes || "",
-            onboarding_completed: data.profile.onboarding_completed || false,
-          });
-        }
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile");
       }
+
+      const data = await response.json();
+      setProfile(data.profile);
     } catch (err) {
       console.error("Error fetching profile:", err);
+      setProfileError("Failed to load profile data");
     } finally {
-      setIsLoading(false);
+      setProfileLoading(false);
     }
-  };
+  }, [user]);
 
-  const updateProfileData = (field: keyof ProfileData, value: unknown) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleDietaryPreferenceChange = (
-    preference: string,
-    checked: boolean
-  ) => {
-    if (checked) {
-      updateProfileData("dietary_preferences", [
-        ...profileData.dietary_preferences,
-        preference,
-      ]);
-    } else {
-      updateProfileData(
-        "dietary_preferences",
-        profileData.dietary_preferences.filter((p) => p !== preference)
-      );
-    }
-  };
-
-  const handleSave = async () => {
-    console.log("🔍 Profile - Starting profile update");
-    console.log("🔍 Profile - User state:", {
-      user: user ? "Present" : "Missing",
-      userMetadata: user?.user_metadata,
-      email: user?.email,
-    });
-    console.log("🔍 Profile - Profile data to update:", profileData);
-
-    setIsSaving(true);
-    setError(null);
-    setSuccess(null);
+  // Fetch weight entries
+  const fetchWeights = useCallback(async () => {
+    if (!user || !supabase) return;
 
     try {
-      console.log("🔍 Profile - Making API request to /api/auth/me");
+      setWeightLoading(true);
+      setWeightError(null);
+
+      const { data, error } = await supabase
+        .from("weights")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("measured_at", { ascending: true });
+
+      if (error) throw error;
+
+      setWeightEntries(data || []);
+    } catch (err) {
+      console.error("Error fetching weights:", err);
+      setWeightError("Failed to load weight data");
+    } finally {
+      setWeightLoading(false);
+    }
+  }, [user]);
+
+  // Fetch AI cooldown
+  const fetchAiCooldown = useCallback(async () => {
+    if (!user || !supabase) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("diet_recommendations")
+        .select("last_refreshed")
+        .eq("user_id", user.id)
+        .order("last_refreshed", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        console.error("Error fetching AI cooldown:", error);
+        return;
+      }
+
+      if (!data?.last_refreshed) {
+        setAiCooldownHours(0);
+      } else {
+        const hoursSince =
+          (Date.now() - new Date(data.last_refreshed).getTime()) /
+          (1000 * 60 * 60);
+        setAiCooldownHours(Math.max(0, 168 - hoursSince)); // 168 hours = 7 days
+      }
+    } catch (err) {
+      console.error("Error fetching AI cooldown:", err);
+      setAiCooldownHours(0); // Assume no cooldown on error
+    }
+  }, [user]);
+
+  // Save profile
+  const saveProfile = async (updatedProfile: Partial<ProfileData>) => {
+    if (!user) return;
+
+    try {
+      setProfileSaving(true);
+      setProfileError(null);
+
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: user?.user_metadata?.name || user?.email?.split("@")[0],
-          ...profileData,
-        }),
+        body: JSON.stringify(updatedProfile),
       });
 
-      console.log("🔍 Profile - API response status:", response.status);
-
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error("🔍 Profile - API error response:", errorData);
-        throw new Error(
-          `Failed to update profile: ${response.status} ${response.statusText}`
-        );
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to save profile");
       }
 
-      console.log("🔍 Profile - Profile updated successfully");
-      setSuccess("Profile updated successfully!");
-      setTimeout(() => setSuccess(null), 3000);
+      await fetchProfile(); // Refresh profile data
+      toast.success("Profile updated successfully!");
     } catch (err) {
-      console.error("🔍 Profile - Error during update:", err);
-      setError(err instanceof Error ? err.message : "Failed to update profile");
+      console.error("Error saving profile:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to save profile";
+      setProfileError(errorMessage);
+      toast.error(errorMessage);
     } finally {
-      setIsSaving(false);
+      setProfileSaving(false);
     }
   };
 
-  if (isLoading) {
+  // Add weight entry
+  const addWeight = async () => {
+    if (!user || !supabase || !newWeight || !selectedDate) return;
+
+    const weight = parseFloat(newWeight);
+    if (isNaN(weight) || weight < 30 || weight > 300) {
+      toast.error("Weight must be between 30 and 300 kg");
+      return;
+    }
+
+    try {
+      setIsAddingWeight(true);
+
+      const { error } = await supabase.from("weights").insert({
+        user_id: user.id,
+        weight_kg: weight,
+        measured_at: selectedDate,
+      });
+
+      if (error) {
+        if (error.code === "23505") {
+          toast.error("You already have a weight entry for this date");
+          return;
+        }
+        throw error;
+      }
+
+      setNewWeight("");
+      setSelectedDate("");
+      await fetchWeights();
+      toast.success("Weight entry added successfully!");
+    } catch (err) {
+      console.error("Error adding weight:", err);
+      toast.error("Failed to add weight entry");
+    } finally {
+      setIsAddingWeight(false);
+    }
+  };
+
+  // Delete weight entry
+  const deleteWeight = async (id: string) => {
+    if (!user || !supabase) return;
+
+    try {
+      const { error } = await supabase
+        .from("weights")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      await fetchWeights();
+      toast.success("Weight entry deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting weight:", err);
+      toast.error("Failed to delete weight entry");
+    }
+  };
+
+  // Refresh AI recommendations
+  const handleRefreshAI = async () => {
+    if (!user || (aiCooldownHours && aiCooldownHours > 0)) return;
+
+    try {
+      setIsRefreshingAI(true);
+
+      const response = await fetch("/api/ai/recommendations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to refresh recommendations");
+      }
+
+      toast.success("AI recommendations refreshed successfully!");
+      await fetchAiCooldown();
+    } catch (err) {
+      console.error("Error refreshing AI:", err);
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to refresh recommendations";
+      toast.error(errorMessage);
+    } finally {
+      setIsRefreshingAI(false);
+    }
+  };
+
+  // Format cooldown display
+  const formatCooldown = (hours: number): string => {
+    if (hours < 1) return "Available now";
+    if (hours < 24) return `${Math.ceil(hours)}h remaining`;
+    return `${Math.ceil(hours / 24)}d remaining`;
+  };
+
+  // Prepare chart data
+  const prepareChartData = (): ChartData[] => {
+    if (!weightEntries.length) return [];
+
+    const now = new Date();
+    const periodDays =
+      chartPeriod === "1w" ? 7 : chartPeriod === "1m" ? 30 : 90;
+    const startDate = new Date(
+      now.getTime() - periodDays * 24 * 60 * 60 * 1000
+    );
+
+    const filteredEntries = weightEntries.filter((entry) => {
+      const entryDate = new Date(entry.measured_at);
+      return entryDate >= startDate;
+    });
+
+    return filteredEntries.map((entry) => ({
+      date: entry.measured_at,
+      weight: entry.weight_kg,
+      displayDate: new Date(entry.measured_at).toLocaleDateString(),
+    }));
+  };
+
+  // Check if date has existing entry
+  const hasEntryForDate = (date: string): boolean => {
+    return weightEntries.some((entry) => entry.measured_at === date);
+  };
+
+  // Get local date in YYYY-MM-DD format for Brazil
+  const getLocalDateString = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Initialize data
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+      fetchWeights();
+      fetchAiCooldown();
+
+      // Set today's date as default (local Brazilian date)
+      setSelectedDate(getLocalDateString());
+    }
+  }, [user, fetchProfile, fetchWeights, fetchAiCooldown]);
+
+  if (profileLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading profile...</p>
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading profile...</p>
           </div>
         </div>
       </div>
     );
   }
 
+  if (profileError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">
+              Error Loading Profile
+            </h2>
+            <p className="text-gray-600 mb-4">{profileError}</p>
+            <Button onClick={fetchProfile} variant="outline">
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">No Profile Found</h2>
+            <p className="text-gray-600">
+              Please complete your profile setup first.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <ProtectedRoute>
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Profile & Preferences
-          </h1>
-          <p className="text-lg text-gray-600">
-            Manage your personal information and dietary preferences
-          </p>
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile</h1>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <p className="text-gray-600 mb-4 lg:mb-0">
+              Manage your personal information and track your progress
+            </p>
+
+            {/* AI Refresh Button */}
+            <div className="flex flex-row items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <Button
+                  onClick={handleRefreshAI}
+                  disabled={
+                    isRefreshingAI ||
+                    (aiCooldownHours !== null && aiCooldownHours > 0)
+                  }
+                  variant="outline"
+                  className="flex items-center space-x-2"
+                >
+                  {isRefreshingAI ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4" />
+                  )}
+                  <span>Refresh AI Recommendations</span>
+                </Button>
+              </div>
+              <div className="flex items-center space-x-2">
+                {aiCooldownHours && aiCooldownHours > 0 && (
+                  <Badge variant="secondary" className="text-sm">
+                    {formatCooldown(aiCooldownHours)}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <Tabs defaultValue="personal" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+        {/* Tabs */}
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger
               value="personal"
               className="flex items-center space-x-2"
             >
               <User className="h-4 w-4" />
-              <span>Personal</span>
+              <span className="hidden sm:inline">Personal</span>
             </TabsTrigger>
             <TabsTrigger
               value="dietary"
               className="flex items-center space-x-2"
             >
               <Settings className="h-4 w-4" />
-              <span>Dietary</span>
+              <span className="hidden sm:inline">Dietary</span>
             </TabsTrigger>
             <TabsTrigger
               value="activity"
               className="flex items-center space-x-2"
             >
               <Activity className="h-4 w-4" />
-              <span>Activity</span>
+              <span className="hidden sm:inline">Activity</span>
+            </TabsTrigger>
+            <TabsTrigger value="weight" className="flex items-center space-x-2">
+              <Weight className="h-4 w-4" />
+              <span className="hidden sm:inline">Weight & Progress</span>
             </TabsTrigger>
           </TabsList>
 
+          {/* Personal Tab */}
           <TabsContent value="personal" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Basic Information</CardTitle>
                 <CardDescription>
-                  Update your personal details and measurements
+                  Update your personal details and primary goal
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="age">Age *</Label>
+                    <Label htmlFor="age">Age:</Label>
                     <Input
                       id="age"
                       type="number"
-                      min="13"
-                      max="120"
-                      value={profileData.age || ""}
+                      value={profile.age || ""}
                       onChange={(e) =>
-                        updateProfileData("age", parseInt(e.target.value) || 0)
-                      }
-                      placeholder="Enter your age"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="weight">Weight (kg) *</Label>
-                    <Input
-                      id="weight"
-                      type="number"
-                      min="30"
-                      max="300"
-                      step="0.1"
-                      value={profileData.weight_start_kg || ""}
-                      onChange={(e) =>
-                        updateProfileData(
-                          "weight_start_kg",
-                          parseFloat(e.target.value) || 0
+                        setProfile((prev) =>
+                          prev
+                            ? { ...prev, age: parseInt(e.target.value) || 0 }
+                            : null
                         )
                       }
-                      placeholder="Enter your weight"
-                      required
                     />
                   </div>
-
                   <div className="space-y-2">
-                    <Label htmlFor="height">Height (cm) *</Label>
+                    <Label htmlFor="weight_start">Starting Weight (kg):</Label>
+                    <Input
+                      id="weight_start"
+                      type="number"
+                      step="0.1"
+                      value={profile.weight_start_kg || ""}
+                      disabled={true}
+                      onChange={(e) =>
+                        setProfile((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                weight_start_kg:
+                                  parseFloat(e.target.value) || 0,
+                              }
+                            : null
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="height">Height (cm):</Label>
                     <Input
                       id="height"
                       type="number"
-                      min="100"
-                      max="250"
-                      value={profileData.height_cm || ""}
+                      value={profile.height_cm || ""}
                       onChange={(e) =>
-                        updateProfileData(
-                          "height_cm",
-                          parseInt(e.target.value) || 0
+                        setProfile((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                height_cm: parseInt(e.target.value) || 0,
+                              }
+                            : null
                         )
                       }
-                      placeholder="Enter your height"
-                      required
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">
-                    Primary Goal *
-                  </Label>
+                <div>
+                  <Label className="text-base font-medium">Primary Goal</Label>
                   <RadioGroup
-                    value={profileData.goal}
+                    value={profile.goal}
                     onValueChange={(value) =>
-                      updateProfileData("goal", value as ProfileData["goal"])
+                      setProfile((prev) =>
+                        prev
+                          ? { ...prev, goal: value as ProfileData["goal"] }
+                          : null
+                      )
                     }
-                    className="space-y-3"
+                    className="mt-2"
                   >
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                      <RadioGroupItem value="lose_weight" id="lose_weight" />
-                      <Label
-                        htmlFor="lose_weight"
-                        className="flex-1 cursor-pointer"
+                    {GOALS.map((goal) => (
+                      <div
+                        key={goal.value}
+                        className="flex items-center space-x-2"
                       >
-                        <div className="font-medium">Lose Weight</div>
-                        <div className="text-sm text-gray-500">
-                          Reduce body weight and improve body composition
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                      <RadioGroupItem value="maintain" id="maintain" />
-                      <Label
-                        htmlFor="maintain"
-                        className="flex-1 cursor-pointer"
-                      >
-                        <div className="font-medium">Maintain Weight</div>
-                        <div className="text-sm text-gray-500">
-                          Keep current weight while improving health
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                      <RadioGroupItem value="gain_muscle" id="gain_muscle" />
-                      <Label
-                        htmlFor="gain_muscle"
-                        className="flex-1 cursor-pointer"
-                      >
-                        <div className="font-medium">Gain Muscle</div>
-                        <div className="text-sm text-gray-500">
-                          Build muscle mass and strength
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                      <RadioGroupItem value="health" id="health" />
-                      <Label htmlFor="health" className="flex-1 cursor-pointer">
-                        <div className="font-medium">Improve Health</div>
-                        <div className="text-sm text-gray-500">
-                          Focus on overall health and wellness
-                        </div>
-                      </Label>
-                    </div>
+                        <RadioGroupItem value={goal.value} id={goal.value} />
+                        <Label htmlFor={goal.value}>{goal.label}</Label>
+                      </div>
+                    ))}
                   </RadioGroup>
                 </div>
+
+                <Button
+                  onClick={() => saveProfile(profile)}
+                  disabled={profileSaving}
+                  className="w-full"
+                >
+                  {profileSaving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Dietary Tab */}
           <TabsContent value="dietary" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Dietary Preferences & Restrictions</CardTitle>
+                <CardTitle>Dietary Preferences</CardTitle>
                 <CardDescription>
-                  Customize your diet recommendations based on your preferences
+                  Select your dietary preferences and list any food dislikes
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">
-                    Dietary Preferences (Optional)
-                  </Label>
-                  <div className="grid grid-cols-2 gap-3">
+                <div>
+                  {/*<Label className="text-base font-medium">
+                    Dietary Preferences
+                  </Label>*/}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                     {DIETARY_PREFERENCES.map((preference) => (
                       <div
                         key={preference}
@@ -410,19 +679,24 @@ function ProfilePageContent() {
                       >
                         <Checkbox
                           id={preference}
-                          checked={profileData.dietary_preferences.includes(
-                            preference
-                          )}
-                          onCheckedChange={(checked) =>
-                            handleDietaryPreferenceChange(
-                              preference,
-                              checked as boolean
-                            )
+                          checked={
+                            profile.dietary_preferences?.includes(preference) ||
+                            false
                           }
+                          onCheckedChange={(checked) => {
+                            setProfile((prev) => {
+                              if (!prev) return null;
+                              const current = prev.dietary_preferences || [];
+                              const updated = checked
+                                ? [...current, preference]
+                                : current.filter((p) => p !== preference);
+                              return { ...prev, dietary_preferences: updated };
+                            });
+                          }}
                         />
                         <Label
                           htmlFor={preference}
-                          className="text-sm capitalize cursor-pointer"
+                          className="text-sm capitalize"
                         >
                           {preference.replace("_", " ")}
                         </Label>
@@ -431,48 +705,70 @@ function ProfilePageContent() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="food_dislikes">
-                    Food Dislikes (Optional)
-                  </Label>
+                <div>
+                  <Label htmlFor="food_dislikes">Food Dislikes</Label>
                   <Textarea
                     id="food_dislikes"
-                    placeholder="List any foods you dislike or can't eat..."
-                    value={profileData.food_dislikes}
+                    placeholder="List any foods you dislike or want to avoid..."
+                    value={profile.food_dislikes || ""}
                     onChange={(e) =>
-                      updateProfileData("food_dislikes", e.target.value)
+                      setProfile((prev) =>
+                        prev ? { ...prev, food_dislikes: e.target.value } : null
+                      )
                     }
-                    rows={3}
+                    className="mt-2"
                   />
                 </div>
+
+                <Button
+                  onClick={() => saveProfile(profile)}
+                  disabled={profileSaving}
+                  className="w-full"
+                >
+                  {profileSaving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Activity Tab */}
           <TabsContent value="activity" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Activity Level</CardTitle>
                 <CardDescription>
-                  Tell us about your daily activity and exercise routine
+                  Select your current activity level to help calculate your
+                  calorie needs
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">
-                    How active are you? *
-                  </Label>
-
+                <div>
+                  {/*<Label htmlFor="activity_level">Activity Level</Label>*/}
                   <Select
-                    value={profileData.activity_level}
+                    value={profile.activity_level}
                     onValueChange={(value) =>
-                      updateProfileData(
-                        "activity_level",
-                        value as ProfileData["activity_level"]
+                      setProfile((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              activity_level:
+                                value as ProfileData["activity_level"],
+                            }
+                          : null
                       )
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="mt-2">
                       <SelectValue placeholder="Select your activity level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -483,91 +779,240 @@ function ProfilePageContent() {
                       ))}
                     </SelectContent>
                   </Select>
-
-                  {profileData.activity_level && (
-                    <Card className="bg-blue-50 border-blue-200">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-blue-900 text-lg">
-                          {ACTIVITY_LEVELS[profileData.activity_level].label}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div>
-                          <div className="font-medium text-blue-800">
-                            Description:
-                          </div>
-                          <div className="text-blue-700">
-                            {
-                              ACTIVITY_LEVELS[profileData.activity_level]
-                                .description
-                            }
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-medium text-blue-800">
-                            Examples:
-                          </div>
-                          <div className="text-blue-700">
-                            {
-                              ACTIVITY_LEVELS[profileData.activity_level]
-                                .examples
-                            }
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-medium text-blue-800">
-                            Calorie Multiplier:
-                          </div>
-                          <div className="text-blue-700 font-mono">
-                            {
-                              ACTIVITY_LEVELS[profileData.activity_level]
-                                .multiplier
-                            }
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
                 </div>
+
+                {profile.activity_level && (
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold text-blue-900 mb-2">
+                        {ACTIVITY_LEVELS[profile.activity_level].label}
+                      </h4>
+                      <p className="text-blue-800 text-sm mb-2">
+                        {ACTIVITY_LEVELS[profile.activity_level].description}
+                      </p>
+                      <p className="text-blue-700 text-xs">
+                        Examples:{" "}
+                        {ACTIVITY_LEVELS[profile.activity_level].examples}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Button
+                  onClick={() => saveProfile(profile)}
+                  disabled={profileSaving}
+                  className="w-full"
+                >
+                  {profileSaving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Weight & Progress Tab */}
+          <TabsContent value="weight" className="space-y-6">
+            {/* Add Weight Form */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Add Weight Entry</CardTitle>
+                <CardDescription>
+                  Record your current weight for today
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1 space-y-2">
+                    <Label htmlFor="weight">Weight (kg):</Label>
+                    <Input
+                      id="weight"
+                      type="number"
+                      step="0.1"
+                      placeholder="Enter your weight"
+                      value={newWeight}
+                      onChange={(e) => setNewWeight(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <Label htmlFor="date">Date:</Label>
+                    <Input
+                      disabled={true}
+                      id="date"
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button
+                      onClick={addWeight}
+                      disabled={
+                        isAddingWeight ||
+                        !newWeight ||
+                        !selectedDate ||
+                        hasEntryForDate(selectedDate)
+                      }
+                      className="w-full sm:w-auto"
+                    >
+                      {isAddingWeight ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Plus className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                {selectedDate && hasEntryForDate(selectedDate) && (
+                  <p className="text-sm text-amber-600 mt-2">
+                    You already have a weight entry for this date
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Weight Chart */}
+            {weightEntries.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Weight Progress</CardTitle>
+                      <CardDescription>
+                        Track your weight changes over time
+                      </CardDescription>
+                    </div>
+                    <div className="flex space-x-2">
+                      {(["1w", "1m", "3m"] as const).map((period) => (
+                        <Button
+                          key={period}
+                          variant={
+                            chartPeriod === period ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setChartPeriod(period)}
+                        >
+                          {period === "1w"
+                            ? "1 Week"
+                            : period === "1m"
+                            ? "1 Month"
+                            : "3 Months"}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={prepareChartData()}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="displayDate"
+                          tick={{ fontSize: 12 }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis tick={{ fontSize: 12 }} />
+                        <Tooltip />
+                        <Line
+                          type="monotone"
+                          dataKey="weight"
+                          stroke="#3b82f6"
+                          strokeWidth={2}
+                          dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Weight Entries List */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Weight History</CardTitle>
+                <CardDescription>
+                  View and manage your weight entries
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {weightLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                    <span>Loading weight entries...</span>
+                  </div>
+                ) : weightError ? (
+                  <div className="text-center py-8">
+                    <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                    <p className="text-red-600 mb-4">{weightError}</p>
+                    <Button onClick={fetchWeights} variant="outline">
+                      Try Again
+                    </Button>
+                  </div>
+                ) : weightEntries.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Weight className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-600">No weight entries yet</p>
+                    <p className="text-sm text-gray-500">
+                      Add your first weight entry above to start tracking
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {weightEntries
+                      .slice()
+                      .reverse()
+                      .map((entry) => (
+                        <div
+                          key={entry.id}
+                          className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Calendar className="h-4 w-4 text-gray-500" />
+                            <div>
+                              <p className="font-medium">
+                                {entry.weight_kg} kg
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {new Date(
+                                  entry.measured_at + "T00:00:00"
+                                ).toLocaleDateString("pt-BR", {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteWeight(entry.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-
-        {/* Save Button */}
-        <div className="mt-8 text-center">
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            size="lg"
-            className="flex items-center space-x-2"
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
-
-        {/* Messages */}
-        {error && (
-          <div className="mt-6 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md text-center">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="mt-6 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md text-center">
-            {success}
-          </div>
-        )}
       </div>
-    </div>
-  );
-}
-
-export default function ProfilePage() {
-  return (
-    <ProtectedRoute>
-      <ProfilePageContent />
     </ProtectedRoute>
   );
 }

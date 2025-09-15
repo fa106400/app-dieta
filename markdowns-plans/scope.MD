@@ -228,6 +228,9 @@ This plan outlines the development of a complete nutrition and diet management p
 ### 4.5 New "Weight Log & Profile" unified screen ID 9.11 ✅
 - Implement the new screen (Screen ID 9.11). ✅
 
+***atualizar profile v2 pra rota /profile e eliminar tirar a weight log antiga do menu /eu ***
+***ver se tem mais tela protected pra criar antes de fazer integração STRIPE***
+
 ## Phase 5: Subscription & Payment Integration (Weeks 11-12)
 
 ### 5.1 Stripe Integration (Free Tier)
