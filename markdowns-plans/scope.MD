@@ -225,9 +225,8 @@ This plan outlines the development of a complete nutrition and diet management p
   4.4.2 - On `/diets/[dietId]` page, on the bottom of the page, add a "Shopping List" besides the "Follow / Unfollow" button. The new button should redirect to the `/shopping_list` page.  ✅
 
 
-### 4.5 Refactor Weight Log & Profile ***detalhar melhor os itens abaixo***
-- Pensar como unir profile e weight log, pensando em UX
----
+### 4.5 New "Weight Log & Profile" unified screen ID 9.11 ✅
+- Implement the new screen (Screen ID 9.11). ✅
 
 ## Phase 5: Subscription & Payment Integration (Weeks 11-12)
 
@@ -5818,6 +5817,305 @@ WHERE id = '<user_id>';
 
 
 ---
+
+# Screen ID: 9.11 — Profile & Weight (Unified)
+
+## Overview
+
+This new screen unifies user profile management and weight tracking into a single page so users can edit personal data and update their weight progress in one place, and — when permitted — request a refresh of AI diet recommendations. The screen is intended as a drop-in replacement for the existing two pages `/profile` and `weight-log`; it should be implemented as a **new route** for testing (`/profile/manage`) and later the legacy pages can be disabled.
+
+Key goals:
+
+* Single place for all user information entered during onboarding (age, height, goal, dietary preferences, activity level, dislikes).
+* Full weight-entry CRUD (create, edit, delete) and an interactive mini chart of the selected period.
+* A single, clearly visible control to trigger AI recommendations refresh that enforces the existing 1x/week cooldown.
+* Keep behavior consistent with current APIs and DB tables already used by the app.
+
+**Source references (for Cursor):**
+
+* Current Profile page implementation — `/profile`;
+* Current Weight Log page implementation — `weight-log`;
+
+---
+
+## Components (UI composition)
+
+Implement using shadcn/ui + Tailwind (consistent with project):
+
+1. **Header Bar**
+
+   * Title: *Profile*.
+   * Short subtitle or help text.
+   * Global CTA on the right: **Refresh AI Recommendations** button + cooldown badge.
+
+     * This button must be visible regardless of the active tab (makes it easy for users after editing profile to refresh without extra navigation).
+
+2. **Tabs** (left-to-right horizontally on wide screens; stacked/selectable on mobile)
+
+   * Tabs: `Personal` | `Dietary` | `Activity` | `Weight & Progress`
+   * Default tab: `Personal`.
+
+3. **Personal Tab**
+
+   * Card: Basic Info (age, weight\_start\_kg, height\_cm)
+   * RadioGroup: Primary Goal (lose/maintain/gain/health)
+   * Save button for profile changes (sends PUT to `/api/auth/me` as current implementation)
+
+4. **Dietary Tab**
+
+   * Checkboxes for dietary preferences
+   * Free-text `food_dislikes`
+   * Save button reuses the same profile save logic
+
+5. **Activity Tab**
+
+   * Select for activity level with explanatory card (same content as existing)
+   * Save button
+
+6. **Weight & Progress Tab**
+
+   * Add/Edit weight form (simplified crud logic compared to the original weight log screen id 9.2):
+     * Date (date input), filled with actual date, disabled, user only permitted to insert on actual date.
+     * Weight (number, step 0.1), pre-filled with last entry
+     * Submit button (always insert new registry)
+     * Duplicate-date logic: if a weight entry exists for the date, disabled submit button above)
+   * List of weight entries (reverse chronological with simple delete button action on the side of each entry)
+   * Mini chart (line chart) with period buttons: 1 week / 1 month / 3 months
+   * Inline messages/toasts for success/failure
+
+7. **Toasts & Inline Alerts**
+
+   * Use actual project toast pattern for success/fail messages.
+   * Inline error banners for connectivity issues.
+
+---
+
+## Functional Requirements
+
+### Profile / Saving
+
+* Use the existing `PUT /api/auth/me` endpoint (identical to current profile page) to persist profile edits.
+
+  * Payload: `{ name, age, weight_start_kg, height_cm, goal, dietary_preferences, activity_level, food_dislikes, onboarding_completed }`
+  * Reuse current profile fetching `/api/auth/me` GET for initial load.
+
+### Weight CRUD
+
+* Use Supabase client to operate on `weights` table:
+
+  * `GET /weights?user_id={user.id}&order=measured_at asc`
+  * `INSERT` to add a new weight entry.
+  * `DELETE` to remove an entry by `id`.
+* Prevent duplicate measured\_at per user (DB already enforces unique constraint); if duplicate occurs, present clear user feedback and allow delete flow of actual entry.
+
+### AI Recommendations Refresh (Cooldown logic)
+
+* The system must enforce **1 refresh per 7 days** per user (use "Update AI Recommendations" button from `weight-log` screen id 9.2 as reference):
+
+  * Query `diet_recommendations` table: `SELECT last_refreshed FROM diet_recommendations WHERE user_id = $1 ORDER BY last_refreshed DESC LIMIT 1;`
+  * If no row found, user may run the AI.
+  * If last\_refreshed < 7 days ago → compute remaining hours/days and **disable** the refresh button, showing a badge like `2d remaining`.
+* When refresh allowed:
+
+  * UI triggers `POST /api/ai/recommendations` (existing API used in `weight-log` screen id 9.2).
+  * Server should re-run matching logic (pull current profile and weight records for user), write/update `diet_recommendations` row with `last_refreshed` timestamp and the generated recommendations.
+  * On success, client updates cooldown UI by re-querying `diet_recommendations` or using the server response timestamp.
+
+### UX rules (keep previous business constraints)
+
+* Users can change profile data at any time, but **profile change does not automatically refresh AI**. A manual refresh action is required and subject to cooldown (1x/week).
+* The initial recommendation (post-onboarding) should remain unchanged — the onboarding flow will still call the AI automatically as before. This screen only provides manual refresh.
+* The AI refresh should always use the **most up-to-date** user profile data and weight history at the moment of the request.
+
+---
+
+## Error Handling & Edge Cases
+
+* If API for profile save fails → show inline error with suggestion to retry.
+* If Supabase `weights` queries fail → show a fallback message and a **Try Again** button.
+* If `POST /api/ai/recommendations` returns error → show toast with server message; do not change cooldown state.
+* Duplicate date insertion error → detect `23505` error client-side and present user with message: "You already have a weight entry for this date — edit it instead."
+* If chart has insufficient data → hide chart or show placeholder "Add more weight entries to see a trend."
+* If `diet_recommendations` query to compute cooldown fails → assume cooldown=0 but show a non-blocking warning in logs; do not block user. (Better: retry on background.)
+
+---
+
+## Navigation
+
+* New route: **`/profile/manage`** (protected). This route is separate from old `/profile` and `/weight-log` pages so you can test it without removing legacy pages.
+* Buttons:
+
+  * `Save Profile` → stays on page and displays success toast.
+  * `Refresh AI Recommendations` → POST to `/api/ai/recommendations`; on success refresh local `diet_recommendations` and UI.
+* After testing, you can point navigation to `/profile/manage` as main profile route and deprecate prior pages.
+
+---
+
+## Technical Notes (Backend & DB)
+
+* Tables used:
+
+  * `weights` (columns: id uuid, user\_id uuid, weight\_kg numeric, measured\_at date, created\_at timestamptz, updated\_at timestamptz)
+  * `diet_recommendations` (columns include user\_id, last\_refreshed timestamptz, recommendations jsonb)
+  * `profiles` or existing auth profile endpoint (`/api/auth/me`) — current code uses an API to update profile, so keep using it.
+* Queries must be scoped to authenticated user `user.id` — do not return or operate on other users' rows.
+* Index suggestions:
+
+  * Index on `weights(user_id, measured_at)` (for range queries).
+  * Index on `diet_recommendations(user_id, last_refreshed desc)`.
+
+**SQL snippet for cooldown check** (server-side):
+
+```sql
+SELECT last_refreshed
+FROM diet_recommendations
+WHERE user_id = $1
+ORDER BY last_refreshed DESC
+LIMIT 1;
+```
+
+**Cooldown calculation server-side**:
+
+* If `last_refreshed` exists:
+
+  * `hours_since = AGE(NOW(), last_refreshed) in hours`
+  * `remaining_hours = MAX(0, 168 - hours_since)` (168 hours = 7 days)
+  * Deny refresh if `remaining_hours > 0`.
+
+---
+
+## Suggested Client-side Pseudo-code (React / Next.js — app route)
+
+```tsx
+// new file: app/profile/manage/page.tsx
+export default function ProfileManagePage() {
+  const { user } = useAuthContext();
+  const [profile, setProfile] = useState(null);
+  const [weights, setWeights] = useState([]);
+  const [aiCooldownHours, setAiCooldownHours] = useState<number | null>(null);
+  const [isRefreshingAI, setIsRefreshingAI] = useState(false);
+
+  useEffect(() => {
+    fetchProfile();
+    fetchWeights();
+    fetchAiCooldown();
+  }, [user?.id]);
+
+  async function fetchProfile() {
+    const res = await fetch('/api/auth/me');
+    const data = await res.json();
+    setProfile(data.profile);
+  }
+
+  async function saveProfile(newProfile) {
+    await fetch('/api/auth/me', { method: 'PUT', body: JSON.stringify(newProfile) });
+    await fetchProfile(); // update UI
+    toast.success('Profile updated');
+  }
+
+  async function fetchWeights() {
+    const { data } = await supabase.from('weights').select('*').eq('user_id', user.id).order('measured_at', { ascending: true });
+    setWeights(data);
+  }
+
+  async function addWeight(entry) { /* uses supabase insert */ }
+
+  async function deleteWeight(id) { /* supabase delete */ fetchWeights(); }
+
+  async function fetchAiCooldown() {
+    const { data } = await supabase
+      .from('diet_recommendations')
+      .select('last_refreshed')
+      .eq('user_id', user.id)
+      .order('last_refreshed', { ascending: false})
+      .limit(1)
+      .single();
+    if (!data?.last_refreshed) setAiCooldownHours(0);
+    else {
+      const hoursSince = (Date.now() - new Date(data.last_refreshed).getTime()) / (1000*60*60);
+      setAiCooldownHours(Math.max(0, 168 - hoursSince));
+    }
+  }
+
+  async function handleRefreshAI() {
+    if (aiCooldownHours && aiCooldownHours > 0) return;
+    setIsRefreshingAI(true);
+    const res = await fetch('/api/ai/recommendations', { method: 'POST' });
+    if (res.ok) {
+      toast.success('AI recommendations refreshed');
+      await fetchAiCooldown();
+    } else {
+      const err = await res.json();
+      toast.error(err?.error || 'Failed to refresh');
+    }
+    setIsRefreshingAI(false);
+  }
+
+  // render Tabs with forms, list, chart
+  // use /profile/page.tsx for main page render reference and add a new weight tab
+  // use /weight-log/page.tsx for reference of the new tab with weight list, chart
+  // in the header, show the refresh ai button and the cooldown badge as already implemented in the weight log screen id 9.2
+}
+```
+
+
+```js
+// GET user_id from session
+// check cooldown
+// if ok: run matching, persist to diet_recommendations (insert or update), respond 200
+// else respond 403 with { remaining_hours }
+```
+
+---
+
+## Acceptance Criteria
+
+* [ ] New page reachable at `/profile/manage` and protected for authenticated users.
+* [ ] Profile fields load from `/api/auth/me` and can be updated with PUT; success feedback appears.
+* [ ] Weight entries list loads and reflects inserts/deletes made in the UI.
+* [ ] Chart displays correct aggregated data for 1w/1m/3m ranges.
+* [ ] Add weight form enforces validation (weight 30–300 kg; date valid, only insert on actual date).
+* [ ] Duplicate date insertion blocked.
+* [ ] Refresh AI Recommendations button:
+
+  * disabled and shows countdown while cooldown > 0
+  * when available, triggers `POST /api/ai/recommendations`
+  * on success the cooldown updates immediately
+* [ ] All DB queries operate only on the logged-in user's rows.
+* [ ] Error states handled gracefully (toasts / inline banners), no layout breakage.
+
+---
+
+## Security Considerations
+
+* Ensure all API routes are protected and read user id from server sessions — **never** accept `user_id` from the client.
+* All queries must include `eq('user_id', user.id)` (or server-side session binding).
+* For the ranking/announcements UI (if visible), ensure no sensitive PII leaks.
+* Rate-limit the endpoint that launches AI calls to protect costs/abuse (cooldown + server-side rate limits).
+
+---
+
+## Integration Notes / Migration Path
+
+1. **Implement new page** at `/profile/manage`. Use ProtectedRoute wrapper like existing pages.
+2. **Port UI forms and weight logic** from the two current files:
+
+   * Profile logic and API call: copy from `/profile/page.tsx` (profile);
+   * Weight listing, chart and AI refresh logic: copy from `/weight-log/page.tsx` (weight log);
+
+---
+
+## Developer Hints & Small Implementation Details
+
+* Reuse the same components and form validation rules you already use in the two files.
+* Keep the AI refresh button as a single source-of-truth (one handler in parent component) but present its UI in header so it's always visible while working in any tab.
+* For cooldown display convert hours to human-friendly: `if hours<1 => "Available now"; if hours < 24 => "Xh remaining"; else "Xd remaining"`.
+* Use the existing toast + loader patterns used in weight log & profile pages.
+
+---
+
+
+
 
 # Screen ID: 10.1 – Plans & Pricing
 
