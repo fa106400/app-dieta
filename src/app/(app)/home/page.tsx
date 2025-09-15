@@ -444,21 +444,21 @@ export default function HomePage() {
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                     <div>
                       <p className="text-sm text-gray-600">
-                        AI Recommendations
+                        Recomendações da IA
                       </p>
                       <p className="text-sm">
                         {personalSnapshot?.canRefreshRecommendations
-                          ? "Ready to refresh"
-                          : "Cooldown active"}
+                          ? "Atualize seus dados para uma nova recomendação!"
+                          : "Você está indo bem, continue assim!"}
                       </p>
                     </div>
                     <Button
                       size="sm"
-                      onClick={handleRefreshRecommendations}
+                      onClick={() => (window.location.href = "/profile")}
                       disabled={!personalSnapshot?.canRefreshRecommendations}
                     >
                       <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh
+                      Atualizar
                     </Button>
                   </div>
                 </div>
