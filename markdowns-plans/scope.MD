@@ -228,49 +228,10 @@ This plan outlines the development of a complete nutrition and diet management p
 ### 4.5 New "Weight Log & Profile" unified screen ID 9.11 ✅
 - Implement the new screen (Screen ID 9.11). ✅
 
-***atualizar profile v2 pra rota /profile e eliminar tirar a weight log antiga do menu /eu ***
-***ver se tem mais tela protected pra criar antes de fazer integração STRIPE***
 
-## Phase 5: Subscription & Payment Integration (Weeks 11-12)
+## Phase 5: Gamification & Advanced Features (Weeks 11-12)
 
-### 5.1 Stripe Integration (Free Tier)
-- **Payment Setup**
-  - Stripe account configuration
-  - Product and price creation
-  - Webhook endpoint setup
-  - Test mode configuration
-
-- **Subscription Plans**
-  - Monthly (R$ 29.90)
-  - Quarterly (R$ 74.70)
-  - Semiannual (R$ 119.40)
-  - Plan comparison and selection
-
-### 5.2 Subscription Management
-- **Plans & Pricing (Screen 10.1)**
-  - Plan display and comparison
-  - Stripe Checkout integration
-  - Success/failure handling
-  - Subscription status display
-
-- **Payment Processing**
-  - Stripe webhook handling
-  - Subscription status updates
-  - Payment failure handling
-  - Customer portal integration
-
-### 5.3 Access Control
-- **Paywall Implementation**
-  - Route protection based on subscription
-  - Feature gating
-  - Upgrade prompts
-  - Subscription expiration handling
-
----
-
-## Phase 6: Gamification & Advanced Features (Weeks 13-14)
-
-### 6.1 Badge System
+### 5.1 Badge System
 - **Badge Implementation (Screen 9.3)**
   - Badge catalog and criteria
   - Achievement tracking
@@ -283,33 +244,72 @@ This plan outlines the development of a complete nutrition and diet management p
   - Badge awarding system
   - Progress celebrations
 
-### 6.2 Leaderboards & Social Features
-- **Ranking System (Screen 8.1)**
+### 5.2 Leaderboards & Social Features
+- **5.2.1 Ranking System (Screen 8.1)**
   - Leaderboard implementation
   - Metric calculations
   - Privacy controls
   - User positioning
 
-- **Social Elements**
+- **5.2.2 Social Elements**
   - User aliases and avatars
   - Privacy settings
   - Achievement sharing
   - Community engagement
 
-### 6.3 Advanced Features
-- **PDF Export (Screen 7.2)**
+### 5.3 Advanced Features
+- **5.3.1 PDF Export (Screen 7.2)**
   - Shopping list PDF generation
   - Print-friendly layouts
   - Customizable templates
   - Download functionality
 
-- **Data Analytics**
+- **5.3.2 Data Analytics**
   - Progress insights
   - Trend analysis
   - Goal tracking
   - Performance metrics
 
 ---
+
+
+## Phase 6: Subscription & Payment Integration (Weeks 13-14)
+
+### 6.1 Stripe Integration (Free Tier)
+- **Payment Setup**
+  - Stripe account configuration
+  - Product and price creation
+  - Webhook endpoint setup
+  - Test mode configuration
+
+- **Subscription Plans**
+  - Monthly (R$ 29.90)
+  - Quarterly (R$ 74.70)
+  - Semiannual (R$ 119.40)
+  - Plan comparison and selection
+
+### 6.2 Subscription Management
+- **Plans & Pricing (Screen 10.1)**
+  - Plan display and comparison
+  - Stripe Checkout integration
+  - Success/failure handling
+  - Subscription status display
+
+- **Payment Processing**
+  - Stripe webhook handling
+  - Subscription status updates
+  - Payment failure handling
+  - Customer portal integration
+
+### 6.3 Access Control
+- **Paywall Implementation**
+  - Route protection based on subscription
+  - Feature gating
+  - Upgrade prompts
+  - Subscription expiration handling
+
+---
+
 
 ## Phase 7: Testing, Polish & Deployment (Weeks 15-16)
 
@@ -349,6 +349,7 @@ This plan outlines the development of a complete nutrition and diet management p
 - **User Documentation**
   - User guides
   - FAQ content
+  - Terms of agreement
   - Support documentation
   - Feature explanations
 
@@ -4347,216 +4348,464 @@ SELECT * FROM user_metrics WHERE user_id = '<user_id>' ORDER BY date ASC;
 ---
 
 
----
+# Screen ID: 9.3 — My Badges (Full spec)
 
-# Screen ID: 9.3 – User Badges ("Minhas Badges")
+### Overview
 
-## Overview
+**Purpose:** display the badges the user has earned and allow the user to inspect badge details (criteria, earned\_at, progress). Also provide a backend badge-validation engine (server-side) that is *generic* and uses the `badges.criteria` JSON to decide whether a badge is unlocked.
 
-The **User Badges screen** allows users to **view all badges they have earned** and see the **progress toward upcoming badges**. It gamifies adherence to diet plans and motivates continued engagement.
-
-**Main Goals:**
-
-* Display badges already earned and badges yet to be earned
-* Provide **detailed descriptions** of each badge
-* Show progress toward each badge (streaks, weight lost, diet adherence)
-* Encourage engagement by making achievements visible
+**Goal:** make badge configuration data-driven (no code change to add a new JSON-implementable badge) and make validations run on relevant events.
 
 ---
 
-## Components
+### Components (UI)
 
-* **Header**
+* **Page Header**: Title "My Badges" and short subtitle.
+* **Earned Badges Grid**:
 
-  * Title: “My Badges” or “Minhas Badges”
-  * Back button → Dashboard (9.1)
+  * For each unlocked badge show: icon (generic in MVP), title, short description, `awarded_at`.
+  * Order by `badges.weight` (descending) and then `awarded_at` (most recent first).
+* **All Badges Grid (explore)**:
 
-* **Earned Badges Section**
+  * Shows badges, even if not earned.
+  * Ordering: `weight` desc.
+* **Badge Detail Modal**:
 
-  * Grid or list layout of badges earned
-  * Badge icon (color or filled)
-  * Badge title
-  * Tooltip / expandable description
-  * Optional: date earned
+  * On click show full description, criteria summary, and if earned show `awarded_at`.
+* **Empty state**:
 
-* **Upcoming / Locked Badges Section**
-
-  * Greyed-out or locked icons
-  * Display criteria to earn
-  * Progress bar if applicable (e.g., 3/7 days streak)
-
-* **Badge Detail Modal**
-
-  * Opens on click of any badge
-  * Shows full description, earned date, and progress
-  * Close button → returns to Minhas Badges screen
-
-* **Empty / Placeholder State**
-
-  * “No badges earned yet. Start your first week to earn badges!”
+  * Motivational copy and CTA to encourage first actions (choose a diet, export shopping list, add weight).
 
 ---
 
-## Functional Requirements
+### Data model (relevant tables)
 
-1. **Fetch Data**
-
-   * Query `user_badges` table for earned badges
-   * Query `badges_catalog` table for all possible badges and criteria
-   * Calculate progress for unearned badges dynamically
-
-2. **Dynamic Updates**
-
-   * Badges unlocked should appear in real-time if criteria met
-   * Optional animation / toast on new badge
-
-3. **Navigation**
-
-   * Back → Dashboard (9.1)
-   * Badge click → Badge Detail Modal (9.5)
-
-4. **Responsive Layout**
-
-   * Grid adapts to desktop and mobile
-   * Scrollable for large number of badges
+* `badges (id, slug, title, description, criteria jsonb, weight int, visibility boolean, icon_name, created_at)`
+* `user_badges (user_id, badge_id, awarded_at timestamptz)`
+* `user_current_diet (id, user_id, diet_id, started_at, is_active)`
+* `weights` (user\_id, weight\_kg, measured\_at)
+* `user_metrics (user_id, exp, ...)`
 
 ---
 
-## Error Handling
+### MVP badge list
 
-* Badge fetch fails → toast: “Unable to load badges. Retry later.”
-* Empty badge list → show placeholder text
+* **First Diet Chosen** — *"Descobridor"*
 
----
+  * Event: user selected their first diet (user\_diets count >= 1)
+* **Third Diet Switch** — *"Bon Vivant!"*
 
-## Navigation
+  * Event: user has switched diets at least 3 times (count of user\_diets entries or count of changes)
+* **7-days on same diet** — *"Mestre da Resiliência"*
 
-* From Badges →
+  * Event: user\_current\_diet.started\_at ≤ now − 7 days
+* **Shopping List Export (1st time)** — *"Estrategista"*
 
-  * Dashboard (9.1)
-  * Badge Detail Modal (9.5)
+  * Event: user triggered shopping list export (front sends event)
+* **Weight-loss milestones** — multiple badges:
 
----
+  * 1 kg lost, 2 kg, 3 kg, 5 kg, 7 kg, 10 kg — event: weight\_loss ≥ threshold (kg)
+* **Experience milestones** — multiple badges:
 
-## Technical Notes
+  * 1000, 2000, 3000, 5000, 10000, 50000, 100000 exp — event: experience ≥ threshold
 
-* **Supabase Tables**
+**Removed (NOT in MVP):**
 
-  * `user_badges` → `id`, `user_id`, `badge_id`, `earned_date`
-  * `badges_catalog` → `id`, `title`, `description`, `criteria`
-
-* **UI Components**
-
-  * shadcn/ui: Card, Badge, Grid, Modal, Progress Bar
-  * Tailwind CSS → responsive layout
-
-* **Performance**
-
-  * Fetch all badges at once, compute progress client-side or via Supabase RPC if needed
+* Streak-based badges (daily check-ins) — removed per your instruction.
+* Consistency/meal-check badges (requires check-in feature) — removed.
 
 ---
 
-## Suggested Implementation Snippet (client pseudo-code)
+### Badge Criteria JSON spec (template + examples)
 
-```tsx
-import { useState, useEffect } from "react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+This section defines the JSON schema that will be stored in `badges.criteria` (jsonb). The backend validation engine (server-side) must parse this and evaluate conditions for each candidate badge. Keep the engine generic — it should support evaluation of the events below based on these keys.
 
-export default function MyBadges() {
-  const supabase = useSupabaseClient();
-  const [earnedBadges, setEarnedBadges] = useState([]);
-  const [allBadges, setAllBadges] = useState([]);
+#### Allowed top-level keys (all optional except `event`)
 
-  const userId = supabase.auth.user().id;
-
-  useEffect(() => {
-    async function fetchBadges() {
-      const { data: earned } = await supabase
-        .from("user_badges")
-        .select("*")
-        .eq("user_id", userId);
-      const { data: all } = await supabase.from("badges_catalog").select("*");
-      setEarnedBadges(earned);
-      setAllBadges(all);
-    }
-    fetchBadges();
-  }, []);
-
-  return (
-    <div className="my-badges grid gap-4">
-      <h1>My Badges</h1>
-      <div className="earned-badges grid grid-cols-3 gap-2">
-        {earnedBadges.map(b => (
-          <BadgeCard key={b.badge_id} badge={b} />
-        ))}
-      </div>
-      <div className="locked-badges grid grid-cols-3 gap-2">
-        {allBadges
-          .filter(b => !earnedBadges.some(eb => eb.badge_id === b.id))
-          .map(b => (
-            <BadgeCard key={b.id} badge={b} locked />
-          ))}
-      </div>
-    </div>
-  );
+```json
+{
+  "event": "<string>",            // required. event name the badge listens to (see allowed events)
+  "operator": "<string>",         // optional. default: "gte" (>=). other: "gt","eq","lte","lt"
+  "count": <integer>,             // optional. when the rule is based on counts (number of occurrences)
+  "distinct": <boolean>,          // optional. for count: count distinct values (e.g., distinct diet ids)
+  "threshold": <number>,          // optional. numeric threshold (kg, exp etc.)
+  "unit": "<string>",             // optional. semantic unit: "kg", "exp", "days"
+  "duration_days": <integer>,     // optional. used for duration checks (e.g. 7 days)
+  "window_days": <integer>,       // optional. time-window for counts (e.g. last 30 days)
+  "target": "<string|int|null>",  // optional. target id or scope (e.g. diet_id) or "any"
+  "description": "<string>",      // optional human-readable note
+  "meta": { }                     // optional free-form meta to help custom rules
 }
 ```
 
----
+##### Allowed `event` values and how to evaluate them
 
-## Acceptance Criteria
-
-* Displays all earned badges with date earned
-* Displays locked/unearned badges with progress and criteria
-* Opens badge detail modal on click
-* Handles empty states gracefully
-* Updates dynamically when new badges are earned
+Below each `event` includes the recommended canonical SQL metric and an example criteria JSON.
 
 ---
 
-## Security Considerations
+#### `event`: `"diet_chosen"`
 
-* Users only access **their own badge data** (RLS policies on Supabase)
-* Badge unlocking logic verified server-side if needed
+**Meaning:** user has chosen/followed at least `count` diets (or the first diet).
+**Evaluation metric:** `SELECT COUNT(*) FROM user_diets WHERE user_id = $1` (optionally distinct by `diet_id` if `distinct=true`).
+**Example** (first diet):
 
----
-
-## Next.js App Routing & Middleware
-
-* Route: `/eu/badges`
-* Middleware:
-
-  * Authenticated session required → redirect `/login`
-  * Onboarding completed → redirect `/onboarding`
-
----
-
-## Integration & Server-Side Details
-
-### Libraries & Helpers
-
-* `@supabase/supabase-js` → fetch user badges and catalog
-* shadcn/ui → Card, Badge, Grid, Modal, Progress Bar
-* Tailwind CSS → responsive layout
-
-### Supabase SQL Checks
-
-```sql
--- Fetch earned badges for user
-SELECT * FROM user_badges WHERE user_id = '<user_id>';
-
--- Fetch all badges from catalog
-SELECT * FROM badges_catalog;
-
--- Insert newly earned badge
-INSERT INTO user_badges (user_id, badge_id, earned_date)
-VALUES ('<user_id>', '<badge_id>', NOW());
+```json
+{ "event": "diet_chosen", "operator": "gte", "count": 1, "description": "User chose a diet for the first time" }
 ```
 
 ---
 
+#### `event`: `"diet_switches"`
+
+**Meaning:** number of times user changed diet (or number of user\_current\_diet rows).
+**Evaluation metric:** `SELECT COUNT(*) FROM user_current_diet WHERE user_id = $1`
+**Example** (>= 3 switches):
+
+```json
+{ "event": "diet_switches", "operator": "gte", "count": 3, "distinct": false }
+```
 
 ---
+
+#### `event`: `"diet_duration"`
+
+**Meaning:** the user has been following current diet for at least N days.
+**Evaluation metric:** `SELECT started_at FROM user_current_diet WHERE is_active = true AND user_id = $1` then `now() - started_at >= interval 'duration_days days'`.
+**Example** (7 days):
+
+```json
+{ "event": "diet_duration", "duration_days": 7, "operator": "gte", "description": "User kept same diet for 7 days" }
+```
+
+---
+
+#### `event`: `"shopping_exported"`
+
+**Meaning:** user exported the shopping list. The front-end server must call validation when export action happens.
+**Evaluation metric:** trigger check on the export function.
+**Example** (first export):
+
+```json
+{ "event": "shopping_exported", "operator": "gte", "count": 1, "description": "Exported shopping list once" }
+```
+
+---
+
+#### `event`: `"weight_loss"`
+
+**Meaning:** user lost ≥ `threshold` (kg) relative to initial weight (onboarding weight) or relative to highest earlier weight. We define it as `initial_weight - min(weights.weight_kg) >= threshold`.
+**Evaluation metric:**
+
+```sql
+SELECT (p.weight_start_kg - (SELECT MIN(weight_kg) FROM weights WHERE user_id = $1)) AS kg_loss
+FROM profiles p WHERE p.user_id = $1;
+```
+
+**Example** (5 kg milestone):
+
+```json
+{ "event": "weight_loss", "operator": "gte", "threshold": 5, "unit": "kg", "description": "Lose 5 kg" }
+```
+
+---
+
+#### `event`: `"experience"`
+
+**Meaning:** user total experience reaches threshold (value stored in `user_metrics.exp`).
+**Evaluation metric:** `SELECT exp FROM user_metrics WHERE user_id = $1`
+**Example** (2,000 exp):
+
+```json
+{ "event": "experience", "operator": "gte", "threshold": 2000, "unit": "exp", "description": "Reach 2000 exp" }
+```
+
+---
+
+#### Notes / parsing rules
+
+* `operator` default is `"gte"` (≥). If `operator` is missing, assume `>=`.
+* `count` is an integer used for counting events/rows.
+* `distinct:true` indicates counting *distinct* values (e.g., distinct `diet_id`).
+* `duration_days` used for `diet_duration` checks where you read `user_current_diet.started_at`.
+* `target` may be used for badges that are tied to a *specific* diet id (not used in MVP but supported).
+* `window_days` allows restricting counts to a recent period (e.g., last 30 days).
+* `meta` is opaque and may be used by advanced rules later.
+
+---
+
+#### Example `badges.criteria` entries (SQL-friendly JSON strings)
+
+* **First diet chosen (Descobridor)**
+
+```sql
+'{"event":"diet_chosen","count":1,"operator":"gte"}'::jsonb
+```
+
+* **Third diet switch (Bon Vivant!)**
+
+```sql
+'{"event":"diet_switches","count":3,"operator":"gte"}'::jsonb
+```
+
+* **7 days same diet (Mestre da Resiliência)**
+
+```sql
+'{"event":"diet_duration","duration_days":7,"operator":"gte"}'::jsonb
+```
+
+* **Export Shopping List first time (Estrategista)**
+
+```sql
+'{"event":"shopping_exported","count":1,"operator":"gte"}'::jsonb
+```
+
+* **Weight loss 1kg milestone**
+
+```sql
+'{"event":"weight_loss","threshold":1,"unit":"kg","operator":"gte"}'::jsonb
+```
+
+* **Experience 1000 milestone**
+
+```sql
+'{"event":"experience","threshold":1000,"unit":"exp","operator":"gte"}'::jsonb
+```
+
+---
+
+### Functional requirements (UI + validation engine)
+
+**UI:**
+
+1. Fetch unlocked badges:
+
+   ```sql
+   SELECT b.*, ub.awarded_at
+   FROM badges b
+   LEFT JOIN user_badges ub ON ub.badge_id = b.id AND ub.user_id = $1
+   WHERE ub.user_id = $1
+   ORDER BY b.weight DESC, ub.awarded_at DESC;
+   ```
+2. Fetch badges (to display badges):
+
+   ```sql
+   SELECT * FROM badges ORDER BY weight DESC;
+   ```
+**Validation engine (server):**
+
+* Implement a server function `validateBadgesForUser(user_id, event, payload)` that:
+
+  1. Loads candidate badges: `SELECT id, criteria FROM badges WHERE criteria->>'event' = event`.
+  2. For each candidate parse `criteria` and run the corresponding evaluator (SQL metric). See "Validation SQL examples" below.
+  3. If criteria satisfied AND user does not already have `user_badges.badge_id`, then `INSERT INTO user_badges (user_id,badge_id,awarded_at,meta) VALUES (...)`.
+  4. Return list of newly earned badges so front-end can display a animated pop-up
+
+---
+
+### Validation SQL examples (server-side helpers)
+
+Below are canonical SQL snippets to evaluate conditions for each `event`. Cursor should implement these checks server-side in Node/TS or plpgsql. They are written as parameterized queries (replace `$1` with user\_id).
+
+#### diet\_chosen (count)
+
+```sql
+SELECT COUNT(*)::int AS cnt
+FROM user_diets
+WHERE user_id = $1;
+-- evaluate cnt operator count
+```
+
+#### diet\_switches (count)
+
+If `user_current_diet` records each follow with timestamp, switches ≈ number of rows (or distinct diet ids):
+
+```sql
+SELECT COUNT(*)::int AS switches
+FROM user_diets
+WHERE user_id = $1;
+```
+
+#### diet\_duration (duration\_days)
+
+```sql
+SELECT (now() - ucd.started_at) >= (interval '1 day' * (criteria->>'duration_days')::int) AS meets
+FROM user_current_diet ucd
+WHERE ucd.user_id = $1 and ucd.is_active = TRUE;
+```
+
+Or just compute server-side and compare.
+
+#### shopping\_exported (count)
+
+Validate immediately on the export CTA onclick (call validateBadgesForUser on export action).
+
+#### weight\_loss (threshold kg)
+
+Compute loss since onboarding:
+
+```sql
+SELECT (p.weight_start_kg - sub.min_weight) AS kg_loss
+FROM profiles p
+CROSS JOIN (
+  SELECT MIN(weight_kg) AS min_weight
+  FROM weights
+  WHERE user_id = $1
+) sub
+WHERE p.user_id = $1;
+```
+
+Then compare `kg_loss` with `criteria.threshold`.
+
+#### experience (threshold)
+
+```sql
+SELECT exp FROM user_metrics WHERE user_id = $1;
+-- compare exp >= threshold
+```
+
+---
+
+### When to run validation (exact moments)
+
+Run validation for relevant event types immediately after the referenced action completes successfully:
+
+* **After user chooses / follows a diet** → run `validateBadgesForUser(user_id, 'diet_chosen')` and `validateBadgesForUser(user_id, 'diet_switches')`.
+* **When user exports shopping list** (server-side export handler) → run `validateBadgesForUser(user_id, 'shopping_exported')`.
+* **After weight log `INSERT`** → run `validateBadgesForUser(user_id, 'weight_loss')`.
+* **After EVERY user\_metrics.exp updated** → run `validateBadgesForUser(user_id, 'experience')`. (implement later when we create the exp mechanism)
+* **Imediately after login** → run `validateBadgesForUser(user_id, 'diet_duration')`
+
+---
+
+### Badge awarding algorithm (pseudo-code)
+
+```js
+async function validateBadgesForUser(userId, event, payload = {}) {
+  // 1) Fetch candidate badges
+  const badges = await db.query(
+    `SELECT id, criteria FROM badges WHERE criteria->>'event' = $1`, [event]
+  );
+
+  const newlyUnlocked = [];
+
+  for (const badge of badges) {
+    const criteria = badge.criteria;
+    const meets = await evaluateCriteria(userId, criteria, payload);
+    if (meets) {
+      const exists = await db.oneOrNone(
+        `SELECT 1 FROM user_badges WHERE user_id=$1 AND badge_id=$2`, [userId, badge.id]
+      );
+      if (!exists) {
+        await db.none(
+          `INSERT INTO user_badges (user_id, badge_id, awarded_at, meta) VALUES ($1,$2,now(),$3)`,
+          [userId, badge.id, JSON.stringify({ method: event })]
+        );
+        newlyUnlocked.push(badge);
+      }
+    }
+  }
+
+  return newlyUnlocked;
+}
+```
+
+`evaluateCriteria(userId, criteria, payload)` will implement the SQL checks listed earlier for the given `criteria.event`.
+
+---
+
+### Acceptance Criteria (features)
+
+* [ ] The `badges` table stores `criteria` JSON following the template above. Cursor must add the new `weight INT` and `visibility BOOLEAN` columns (already created in supabase) in the typescript classes and schema files.
+* [ ] The app UI shows earned badges ordered by `weight` then `awarded_at`.
+* [ ] On every relevant event (login, experience update, diet selection, switch, shopping export, weight log insert, user\_metrics update), the server calls `validateBadgesForUser` and awards badges accordingly.
+* [ ] The server ensures idempotence — awarding a badge once only.
+
+---
+
+### Security considerations
+
+* Badge awarding must be server-side only. Never let the client directly insert into `user_badges`.
+* All badge checks must be performed using server-validated SQL queries; do not trust client payloads.
+
+---
+
+### Migration / SQL (schema changes)
+
+Add columns to `badges` (weight and visibility), a new column `exp` to `user_metrics` (if not present) and a new column `meta` to `user_badges`:
+
+```sql
+ALTER TABLE badges
+  ADD COLUMN IF NOT EXISTS weight INT DEFAULT 0 CHECK (weight >= 0 AND weight <= 99),
+  ADD COLUMN IF NOT EXISTS visibility BOOLEAN DEFAULT true;
+
+ALTER TABLE user_metrics
+  ADD COLUMN IF NOT EXISTS exp INT DEFAULT 0;
+
+ALTER TABLE user_badges
+ADD COLUMN IF NOT EXISTS meta JSONB DEFAULT '{}'::jsonb;
+```
+
+(Columns already added in supabase. IMPORTANT: CURSOR MUST ADD THESE TO THE TYPESCRIPT CLASSES AND SCHEMA FILES)
+
+---
+
+### Implementation notes for Cursor.AI
+
+* **Where to implement:** server code (Node.js / Next API route) — not in client — so that badge awarding is secure and authoritative.
+* **Corner-case:** For `diet_switches` be clear which DB field counts as a "switch". Count `user_current_diet` rows or count distinct `diet_id` values in `user_current_diet`.
+* **Progress calculation:** For `weight_loss`, compute `progress = min(100, (kg_loss / threshold) * 100)`.
+* **Logging:** When awarding a badge insert `meta` with `{ "method":"event", "event":"diet_chosen", "value":... }` in table `user_badges` to help debug later.
+
+---
+
+### Example `badges` rows (SQL inserts)
+
+Below are sample `badges` rows ready for insertion (you can adapt titles/weights):
+
+```sql
+INSERT INTO badges (slug, title, description, criteria, weight, visibility)
+VALUES
+('diet_first', 'Descobridor', 'Escolheu uma dieta pela primeira vez', '{"event":"diet_chosen","count":1}', 1, false),
+('diet_switch_3', 'Bon Vivant!', 'Mudou de dieta 3 vezes', '{"event":"diet_switches","count":3}', 2, false),
+('diet_7days', 'Mestre da Resiliência', 'Ficou na mesma dieta por 7 dias', '{"event":"diet_duration","duration_days":7}', 3, false),
+('shopping_export_1', 'Estrategista', 'Exportou a lista de compras (primeira vez)', '{"event":"shopping_exported","count":1}', 4, false),
+('loss_1kg', 'Mais Leve 1kg', 'Perdeu 1kg', '{"event":"weight_loss","threshold":1,"unit":"kg"}', 5, false),
+('loss_2kg', 'Menos é Mais 2kg', 'Perdeu 2kg', '{"event":"weight_loss","threshold":2,"unit":"kg"}', 6, false),
+('loss_3kg', 'Guerreiro Leve 3kg', 'Perdeu 3kg', '{"event":"weight_loss","threshold":3,"unit":"kg"}', 7, false),
+('loss_5kg', 'Quebrador de Barriga 5kg', 'Perdeu 5kg', '{"event":"weight_loss","threshold":5,"unit":"kg"}', 8, false),
+('loss_7kg', 'Atleta Oculto 7kg', 'Perdeu 7kg', '{"event":"weight_loss","threshold":7,"unit":"kg"}', 8, false),
+('loss_10kg', 'Transformação Épica 10kg', 'Perdeu 10kg', '{"event":"weight_loss","threshold":10,"unit":"kg"}', 10, false),
+('exp_1000', 'Aprendiz - 1K XP', 'Alcançou 1.000 de xp', '{"event":"experience","threshold":1000,"unit":"exp"}', 11, false),
+('exp_2000', 'Praticante - 2K XP', 'Alcançou 2.000 de xp', '{"event":"experience","threshold":2000,"unit":"exp"}', 12, false),
+('exp_3000', 'Entusiasta - 3K XP', 'Alcançou 3.000 de xp', '{"event":"experience","threshold":3000,"unit":"exp"}', 13, false),
+('exp_5000', 'Veterano - 5K XP', 'Alcançou 5.000 de xp', '{"event":"experience","threshold":5000,"unit":"exp"}', 14, false),
+('exp_10000', 'Mestre - 10K XP', 'Alcançou 10.000 de xp', '{"event":"experience","threshold":10000,"unit":"exp"}', 15, false),
+('exp_50000', 'Lenda - 50K XP', 'Alcançou 50.000 de xp', '{"event":"experience","threshold":50000,"unit":"exp"}', 16, false),
+('exp_100000', 'Imortal - 100K XP', 'Alcançou 100.000 de xp', '{"event":"experience","threshold":100000,"unit":"exp"}', 17, false)
+;
+```
+
+---
+
+### Final notes & recommended next steps
+
+1. **Implement `validateBadgesForUser` server-side** (Node/TS) that:
+
+   * loads candidate badges by `criteria->>'event'`
+   * executes a small set of SQL checks (examples above) depending on `event`
+   * inserts into `user_badges` if not already present
+2. **Wire event triggers** in these server endpoints:
+
+   * diet selection endpoint
+   * user\_current\_diet update
+   * shopping export CTA trigger
+   * weight log insert
+   * user\_metrics update
+4. **Cursor deliverables**: implement server function, add DB migration (weight/visibility/exp) and implement `GET /api/badges` and `POST /api/badges/validate` endpoints.
+
+---
+
 
 # Screen ID: 9.4 – Achievement Toast ("Toast de Conquista")
 
