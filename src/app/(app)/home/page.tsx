@@ -6,8 +6,8 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Badge } from "@/components/ui/badge";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Bell,
   Trophy,
@@ -15,13 +15,13 @@ import {
   Target,
   Award,
   RefreshCw,
-  Calendar,
-  Users,
+  // Calendar,
+  // Users,
   Star,
   AlertCircle,
   Loader2,
 } from "lucide-react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 // Interfaces
@@ -151,6 +151,11 @@ export default function HomePage() {
         .limit(1)
         .single();
 
+      if (refreshError) {
+        console.error("Error fetching last refresh:", refreshError);
+        // Don't throw, just continue without last refresh
+      }
+
       const canRefreshRecommendations =
         !lastRefresh ||
         new Date().getTime() -
@@ -209,10 +214,8 @@ export default function HomePage() {
   }, [user]);
 
   // Refresh AI recommendations
-  //TO-DO, inves de atualizar recomendações daqui, mostrar CTA pra
-  // levar pra profile, atualuzar peso dps update recommendations????
-  const handleRefreshRecommendations = async () => {
-    /*if (!personalSnapshot?.canRefreshRecommendations) return;
+  /*const handleRefreshRecommendations = async () => {
+    if (!personalSnapshot?.canRefreshRecommendations) return;
 
     try {
       const response = await fetch("/api/ai/recommendations", {
@@ -233,9 +236,9 @@ export default function HomePage() {
     } catch (err) {
       console.error("Error refreshing recommendations:", err);
       toast.error("Failed to refresh recommendations. Please try again later.");
-    }*/
+    }
     alert("ver TO-DO no comentario do codigo");
-  };
+  };*/
 
   // Initial data fetch
   useEffect(() => {
