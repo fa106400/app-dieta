@@ -20,11 +20,27 @@ type Badge = Database["public"]["Tables"]["badges"]["Row"];
 
 export async function POST(request: NextRequest) {
   try {
-    const { event, payload = {} } = await request.json();
+    const requestBody = await request.json();
     
-    if (!event) {
+    // Handle both single event and batch events
+    let events: Array<{ event: string; payload: Record<string, unknown> }>;
+    
+    if (requestBody.events && Array.isArray(requestBody.events)) {
+      // Batch mode: multiple events
+      events = requestBody.events;
+    } else if (requestBody.event) {
+      // Single event mode (backward compatibility)
+      events = [{ event: requestBody.event, payload: requestBody.payload || {} }];
+    } else {
       return NextResponse.json(
-        { error: "Event is required" },
+        { error: "Event or events array is required" },
+        { status: 400 }
+      );
+    }
+    
+    if (events.length === 0) {
+      return NextResponse.json(
+        { error: "At least one event is required" },
         { status: 400 }
       );
     }
@@ -48,13 +64,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newlyUnlocked = await validateBadgesForUser(supabase, user.id, event, payload);
+    // Process all events and collect all newly unlocked badges
+    const allNewlyUnlocked: Badge[] = [];
+    
+    for (const { event, payload } of events) {
+      const eventBadges = await validateBadgesForUser(supabase, user.id, event, payload);
+      allNewlyUnlocked.push(...eventBadges);
+    }
+    
+    // Remove duplicates based on badge ID
+    const uniqueNewlyUnlocked = allNewlyUnlocked.filter((badge, index, self) => 
+      index === self.findIndex(b => b.id === badge.id)
+    );
     
     return NextResponse.json({
       success: true,
-      newlyUnlocked,
-      count: newlyUnlocked.length,
-      badges: newlyUnlocked // Return the actual badge data for notifications
+      newlyUnlocked: uniqueNewlyUnlocked.length,
+      count: uniqueNewlyUnlocked.length,
+      badges: uniqueNewlyUnlocked // Return the actual badge data for notifications
     });
 
   } catch (error) {

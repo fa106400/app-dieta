@@ -32,12 +32,18 @@ interface BadgeValidationResponse {
   }>;
 }
 
+type DeferredAction = {
+  type: 'reload' | 'redirect' | 'callback';
+  payload?: string | (() => void);
+};
+
 export function useBadgeNotificationTrigger() {
   const { showBadgeNotification } = useBadgeNotification();
 
   const triggerBadgeValidation = useCallback(async (
     event: string,
-    payload: Record<string, unknown> = {}
+    payload: Record<string, unknown> = {},
+    deferredAction?: DeferredAction
   ) => {
     try {
       const response = await fetch("/api/badges/validate", {
@@ -58,14 +64,83 @@ export function useBadgeNotificationTrigger() {
 
       const data: BadgeValidationResponse = await response.json();
 
-      // If new badges were unlocked, show the notification
+      // If new badges were unlocked, show the notification with deferred action
       if (data.success && data.badges && data.badges.length > 0) {
-        showBadgeNotification(data.badges);
+        showBadgeNotification(data.badges, deferredAction);
+      } else if (deferredAction) {
+        // If no badges but there's a deferred action, execute it immediately
+        setTimeout(() => {
+          switch (deferredAction.type) {
+            case 'reload':
+              window.location.reload();
+              break;
+            case 'redirect':
+              if (typeof deferredAction.payload === 'string') {
+                window.location.href = deferredAction.payload;
+              }
+              break;
+            case 'callback':
+              if (typeof deferredAction.payload === 'function') {
+                deferredAction.payload();
+              }
+              break;
+          }
+        }, 100);
       }
     } catch (error) {
       console.error("Error triggering badge validation:", error);
     }
   }, [showBadgeNotification]);
 
-  return { triggerBadgeValidation };
+  const triggerBatchBadgeValidation = useCallback(async (
+    events: Array<{ event: string; payload: Record<string, unknown> }>,
+    deferredAction?: DeferredAction
+  ) => {
+    try {
+      const response = await fetch("/api/badges/validate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          events, // Send array of events instead of single event
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Batch badge validation failed:", response.statusText);
+        return;
+      }
+
+      const data: BadgeValidationResponse = await response.json();
+
+      // If new badges were unlocked, show the notification with deferred action
+      if (data.success && data.badges && data.badges.length > 0) {
+        showBadgeNotification(data.badges, deferredAction);
+      } else if (deferredAction) {
+        // If no badges but there's a deferred action, execute it immediately
+        setTimeout(() => {
+          switch (deferredAction.type) {
+            case 'reload':
+              window.location.reload();
+              break;
+            case 'redirect':
+              if (typeof deferredAction.payload === 'string') {
+                window.location.href = deferredAction.payload;
+              }
+              break;
+            case 'callback':
+              if (typeof deferredAction.payload === 'function') {
+                deferredAction.payload();
+              }
+              break;
+          }
+        }, 100);
+      }
+    } catch (error) {
+      console.error("Error triggering batch badge validation:", error);
+    }
+  }, [showBadgeNotification]);
+
+  return { triggerBadgeValidation, triggerBatchBadgeValidation };
 }

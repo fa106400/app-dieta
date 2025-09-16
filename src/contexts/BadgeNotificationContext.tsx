@@ -29,11 +29,20 @@ interface BadgeData {
   }[];
 }
 
+type DeferredAction = {
+  type: "reload" | "redirect" | "callback";
+  payload?: string | (() => void);
+};
+
 interface BadgeNotificationContextType {
-  showBadgeNotification: (badges: BadgeData[]) => void;
+  showBadgeNotification: (
+    badges: BadgeData[],
+    deferredAction?: DeferredAction
+  ) => void;
   hideBadgeNotification: () => void;
   pendingBadges: BadgeData[];
   isNotificationVisible: boolean;
+  deferredAction: DeferredAction | null;
 }
 
 const BadgeNotificationContext = createContext<
@@ -47,16 +56,47 @@ export function BadgeNotificationProvider({
 }) {
   const [pendingBadges, setPendingBadges] = useState<BadgeData[]>([]);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const [deferredAction, setDeferredAction] = useState<DeferredAction | null>(
+    null
+  );
 
-  const showBadgeNotification = useCallback((badges: BadgeData[]) => {
-    setPendingBadges(badges);
-    setIsNotificationVisible(true);
-  }, []);
+  const showBadgeNotification = useCallback(
+    (badges: BadgeData[], deferredAction?: DeferredAction) => {
+      setPendingBadges(badges);
+      setIsNotificationVisible(true);
+      if (deferredAction) {
+        setDeferredAction(deferredAction);
+      }
+    },
+    []
+  );
 
   const hideBadgeNotification = useCallback(() => {
     setIsNotificationVisible(false);
     setPendingBadges([]);
-  }, []);
+
+    // Execute deferred action after modal closes
+    if (deferredAction) {
+      setTimeout(() => {
+        switch (deferredAction.type) {
+          case "reload":
+            window.location.reload();
+            break;
+          case "redirect":
+            if (typeof deferredAction.payload === "string") {
+              window.location.href = deferredAction.payload;
+            }
+            break;
+          case "callback":
+            if (typeof deferredAction.payload === "function") {
+              deferredAction.payload();
+            }
+            break;
+        }
+        setDeferredAction(null);
+      }, 100); // Small delay to ensure modal is fully closed
+    }
+  }, [deferredAction]);
 
   return (
     <BadgeNotificationContext.Provider
@@ -65,6 +105,7 @@ export function BadgeNotificationProvider({
         hideBadgeNotification,
         pendingBadges,
         isNotificationVisible,
+        deferredAction,
       }}
     >
       {children}

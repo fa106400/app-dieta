@@ -252,16 +252,17 @@ This plan outlines the development of a complete nutrition and diet management p
 
 ### 5.2 Leaderboards & Social Features
 - **5.2.1 Ranking System (Screen 8.1)**
-  - Leaderboard implementation
+  - Leaderboard implementation ***by exp***
   - Metric calculations
-  - Privacy controls
+  - Privacy controls ***include nickname on onboarding (profile registry creation)***
   - User positioning
 
 - **5.2.2 Social Elements**
   - User aliases and avatars
   - Privacy settings
   - Achievement sharing
-  - Community engagement
+  - Community engagement  ***public message board. earns exp when submit btn (once a day)***
+                          ***incluir mecanismo que proprio app do user insere 2 novas msg randomica ao login. permitir disable com FT***
 
 ### 5.3 Advanced Features
 - **5.3.1 PDF Export (Screen 7.2)**

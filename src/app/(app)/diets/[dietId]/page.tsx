@@ -39,7 +39,7 @@ export default function DietDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuthContext();
-  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
+  const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
   const dietId = params.dietId as string;
 
   const [diet, setDiet] = useState<DietDetail | null>(null);
@@ -244,18 +244,24 @@ export default function DietDetailPage() {
 
       if (error) throw error;
 
-      // Trigger badge validation for diet events
+      toast.success("Plano definido como ativo!");
+
+      // Trigger batch badge validation for diet events with deferred reload
       try {
-        await triggerBadgeValidation("diet_chosen", { diet_id: diet.id });
-        await triggerBadgeValidation("diet_switches", { diet_id: diet.id });
+        await triggerBatchBadgeValidation(
+          [
+            { event: "diet_chosen", payload: { diet_id: diet.id } },
+            { event: "diet_switches", payload: { diet_id: diet.id } },
+          ],
+          {
+            type: "reload",
+          }
+        );
       } catch (badgeError) {
         console.error("Error validating badges:", badgeError);
-        // Don't fail the main operation if badge validation fails
+        // If badge validation fails, still reload the page
+        window.location.reload();
       }
-
-      toast.success("Plano definido como ativo!");
-      //router.push("/my-plan");
-      window.location.reload();
     } catch (err) {
       console.error("Error setting active diet:", err);
       toast.error("Falha ao seguir plano.");
