@@ -155,6 +155,10 @@ export default function BadgesPage() {
         return `Exportar lista de compras ${criteria.count || 1} vez${
           (criteria.count || 1) > 1 ? "es" : ""
         }`;
+      case "onboarding_completed":
+        return `Completar o onboarding ${criteria.count || 1} vez${
+          (criteria.count || 1) > 1 ? "es" : ""
+        }`;
       case "weight_loss":
         return `Perder ${criteria.threshold || 1}kg`;
       case "experience":

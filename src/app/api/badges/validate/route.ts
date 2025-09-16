@@ -190,6 +190,9 @@ async function evaluateCriteria(
       case "shopping_exported":
         return await evaluateShoppingExported(supabase, userId, criteria, operator);
       
+      case "onboarding_completed":
+        return await evaluateOnboardingCompleted(supabase, userId, criteria, operator);
+      
       case "weight_loss":
         return await evaluateWeightLoss(supabase, userId, criteria, operator);
       
@@ -285,6 +288,23 @@ async function evaluateShoppingExported(
   // This is a simplified implementation - in reality you'd track exports separately
   return true; // For MVP, we'll award this badge when the validation is called
 }
+
+async function evaluateOnboardingCompleted(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _supabase: NonNullable<ReturnType<typeof createRouteSupabaseClient>>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _userId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _criteria: BadgeCriteria,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _operator: string
+): Promise<boolean> {
+  // For now, we'll use a simple count from user_badges meta
+  // In a real implementation, you might have a separate table for tracking exports
+  // This is a simplified implementation - in reality you'd track exports separately
+  return true; // For MVP, we'll award this badge when the validation is called
+}
+
 
 async function evaluateWeightLoss(
   supabase: NonNullable<ReturnType<typeof createRouteSupabaseClient>>,

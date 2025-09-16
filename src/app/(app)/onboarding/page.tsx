@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,7 +101,8 @@ function OnboardingPageContent() {
   });
 
   const { user } = useAuthContext();
-  const router = useRouter();
+  // const router = useRouter();
+  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
 
   const totalSteps = 4;
   const progress = (currentStep / totalSteps) * 100;
@@ -256,8 +258,20 @@ function OnboardingPageContent() {
         // Don't fail the onboarding process if recommendations fail
       }
 
-      // Redirect to home page after successful onboarding
-      router.push("/home");
+      // Trigger badge validation for onboarding completed
+      try {
+        await triggerBadgeValidation(
+          "onboarding_completed",
+          {}, //no payload
+          {
+            type: "redirect",
+            payload: "/home",
+          }
+        );
+      } catch (err) {
+        console.error("Error triggering badge validation:", err);
+        // Don't fail the main operation if badge validation fails
+      }
     } catch (err) {
       console.error("🔍 Onboarding - Error during submission:", err);
       setError(err instanceof Error ? err.message : "Failed to save profile");

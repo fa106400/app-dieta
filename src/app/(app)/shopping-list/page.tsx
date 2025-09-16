@@ -307,9 +307,7 @@ export default function ShoppingListPage() {
 
                   // Trigger badge validation for shopping export
                   try {
-                    await triggerBadgeValidation("shopping_exported", {
-                      period: selectedPeriod,
-                    });
+                    await triggerBadgeValidation("shopping_exported");
                   } catch (badgeError) {
                     console.error("Error validating badges:", badgeError);
                     // Don't fail the main operation if badge validation fails
