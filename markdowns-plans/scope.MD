@@ -243,10 +243,6 @@ This plan outlines the development of a complete nutrition and diet management p
   - Badge awarding system ✅
   - Progress celebrations with popup animations ✅
 
-  ***tambem implementei popup de notificação e funcionou: ***
-  ***testei com troca de dieta e com shopping list, ok***
-  ***com troca de dieta, ganhei 2 conquistas ao mesmo tempo, mas popup sumiu rapido pq app redirecionou a tela dps do submit do follow***
-  ***perguntar pro cursor se dá pra resolver isso (repllicar primeiro pra ter certeza)***
   ***testei tmb se ia desbloquear conquista ao registrar novo peso, nao ganhei a conquista nem vi o popup. perguntar pro cursor pq nao esta implementado na tela de troca de peso tmb, oq faltou implementar la?***
   ***por ultimo, tentar implementar conquista ao terminar onboarding e testar fluxo com novo usuario***
 

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,6 +134,7 @@ const GOALS = [
 
 export default function ProfileManagePage() {
   const { user } = useAuthContext();
+  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
 
   // Profile state
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -301,6 +303,17 @@ export default function ProfileManagePage() {
       setSelectedDate("");
       await fetchWeights();
       toast.success("Weight entry added successfully!");
+
+      // Trigger badge validation for weight loss
+      try {
+        await triggerBadgeValidation("weight_loss", {
+          weight_kg: weight,
+          measured_at: selectedDate,
+        });
+      } catch (badgeError) {
+        console.error("Error validating weight loss badges:", badgeError);
+        // Don't show error to user - badge validation is not critical
+      }
     } catch (err) {
       console.error("Error adding weight:", err);
       toast.error("Failed to add weight entry");
