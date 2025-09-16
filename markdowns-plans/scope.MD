@@ -245,18 +245,18 @@ This plan outlines the development of a complete nutrition and diet management p
 
 ### 5.2 Leaderboards & Social Features
 - **5.2.1 Ranking System (Screen 8.1)**
-  - Leaderboard implementation ***by exp***
+  - Experience points system
+  - Leaderboard implementation
   - Metric calculations
-  - Privacy controls ***include nickname on onboarding (profile registry creation)***
+  - Privacy controls 
   - User positioning
 
 - **5.2.2 Social Elements**
-  - User aliases and avatars
+  - User aliases and avatars ***include nickname on onboarding (profile registry creation)***
   - Privacy settings
   - Achievement sharing
-  - Community engagement  ***public message board. earns exp when submit btn (once a day)***
-                          ***incluir mecanismo que proprio app do user insere 2 novas msg randomica ao login. permitir disable com FT***
-
+  - Community engagement  
+  
 ### 5.3 Advanced Features
 - **5.3.1 PDF Export (Screen 7.2)**
   - Shopping list PDF generation
@@ -3814,197 +3814,502 @@ export default function ExportPDF({ items, weekLabel }: { items: ShoppingItem[],
 
 ---
 
-# Screen ID: 8.1 – Ranking
+---
+
+# Screen ID: 8.1 — Leaderboard / Ranking (REVISED)
 
 ## Overview
 
-The **Ranking** screen displays **leaderboards of users** based on engagement and progress metrics. The goal is to **motivate users** through social comparison while maintaining privacy.
+The Ranking screen shows a simple leaderboard **based exclusively on experience points (exp)**. Privacy is preserved: only the user's alias (`profiles.user_alias`) and avatar are shown (never real name or email). The leaderboard is intentionally simple for the MVP: no filters, no multiple metrics — just one global ranking by `exp`.
 
-**Main Goals:**
+**Key goals**
 
-* Show rankings by **consistency** (e.g., weekly adherence)
-* Show rankings by **weight lost** (absolute and relative)
-* Enable users to **see their own position**
-* Maintain **privacy**: users can set display alias/avatar in `Eu > Privacy & Display`
-
----
-
-## Components
-
-* **Header**
-
-  * Title: “Leaderboard / Rankings”
-  * Back button → Home (3.1)
-
-* **Filter / Tabs**
-
-  * Period filter: Week, Month
-  * Metric filter: Consistency, Weight Lost (absolute/relative)
-
-* **Leaderboard List**
-
-  * User rank (1, 2, 3…)
-  * User display name / alias
-  * Optional avatar
-  * Metric value (e.g., % adherence, kg lost)
-  * Highlight **current user** in a different style
-
-* **Empty / Placeholder State**
-
-  * CTA: “Start your first diet to appear in rankings!”
+* Motivate users via social comparison using experience points.
+* Show top positions (1..3) with trophy icons (gold/silver/bronze).
+* Make it easy for a user to find themselves in the ranking.
+* Respect privacy (show alias and avatar only).
 
 ---
 
-## Functional Requirements
+## New / Modified DB objects (reminder)
 
-1. **Fetch Leaderboard Data**
-
-   * Query `leaderboard_metrics` table (or dummy data initially)
-   * Sort by selected metric and period
-
-2. **Filter / Tab Change**
-
-   * User selects a different period or metric → leaderboard refresh
-
-3. **Highlight Current User**
-
-   * Always show current user at bottom/top with a highlight even if not in top rankings
+* `user_metrics`: removed `adherence_percentage`, `meals_completed`, `total_meals` and period fields, and removed `user_metrics_adherence_percentage_check` constraint.
+* `profiles`: added `user_alias TEXT DEFAULT 'alias_temp'`.
+* `leaderboard_metrics`: **dropped**.
+* `users_metrics_view`: a view that shows the `user_metrics` rows joined with `profiles.user_alias`. This view is the *source of truth* for leaderboard queries.
 
 ---
 
-## Error Handling
+## Database changes
 
-* Fetch fails → toast: “Unable to load rankings. Try again later.”
-* No users yet → show placeholder leaderboard with explanatory text
+### **IMPORTANT:** Cursor, please address the necessary changes to supabase schema classes in the application!
 
----
+```sql
 
-## Navigation
+-- 1) Create a view users_metrics_view that exposes users metrics
+-- The view returns: id (uuid), user_id (uuid), exp (int), user_alias (text)
+CREATE OR REPLACE VIEW public.users_metrics_view AS
+SELECT
+  um_latest.id,
+  um_latest.user_id,
+  um_latest.exp,
+  p.user_alias
+FROM (
+  SELECT 
+    um.user_id,
+    um.id,
+    um.exp
+  FROM public.user_metrics um
+  WHERE um.exp IS NOT NULL
+) AS um_latest
+JOIN public.profiles p
+  ON p.user_id = um_latest.user_id;
 
-* From Ranking →
-
-  * Back → Home (3.1)
-  * Filter changes update same screen
-
----
-
-## Technical Notes
-
-* **Supabase Tables**
-
-  * `user_metrics` → adherence %, weight lost
-  * `leaderboard_metrics` → precomputed weekly/monthly leaderboard
-
-* **UI Components**
-
-  * shadcn/ui: Table, Tabs, Badge, Avatar
-  * Tailwind CSS for responsive layout
-
-* **Performance**
-
-  * Precompute leaderboard weekly on server side to minimize client computation
+```
 
 ---
 
-## Suggested Implementation Snippet (client pseudo-code)
+## Components (UI)
 
-```tsx
-import { useState, useEffect } from "react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+1. **Header**
 
-export default function Leaderboard() {
-  const supabase = useSupabaseClient();
-  const [metric, setMetric] = useState("consistency");
-  const [period, setPeriod] = useState("week");
-  const [leaderboard, setLeaderboard] = useState([]);
+   * Title: "Leaderboard"
+   * Small subtitle: "Top users by experience"
+   * Avatar + exp display remain in the global app header (see technical notes).
 
-  useEffect(() => {
-    async function fetchLeaderboard() {
-      const { data } = await supabase
-        .from("leaderboard_metrics")
-        .select("*")
-        .eq("metric", metric)
-        .eq("period", period)
-        .order("rank", { ascending: true });
-      setLeaderboard(data);
-    }
-    fetchLeaderboard();
-  }, [metric, period]);
+2. **Leaderboard list area**
 
-  return (
-    <div className="leaderboard">
-      <h1>Leaderboard</h1>
-      <Tabs value={period} onChange={setPeriod}>
-        <Tab value="week">Week</Tab>
-        <Tab value="month">Month</Tab>
-      </Tabs>
-      <Tabs value={metric} onChange={setMetric}>
-        <Tab value="consistency">Consistency</Tab>
-        <Tab value="weight_lost">Weight Lost</Tab>
-      </Tabs>
-      {leaderboard.map(user => (
-        <div key={user.user_id} className={`leaderboard-row ${user.is_current ? "highlight" : ""}`}>
-          <span>{user.rank}</span>
-          <span>{user.display_name}</span>
-          <span>{user.metric_value}</span>
-        </div>
-      ))}
-    </div>
-  );
+   * Visual layout (desktop): large vertical list/card.
+   * Each row displays:
+
+     * Rank number (1,2,3...)
+     * Trophy icon for positions 1..3 (gold, silver, bronze)
+     * Avatar (user's avatar URL — the app already manages avatars in profiles)
+     * Alias (`user_alias`) — ALWAYS shown, never real name/email
+     * Experience points (exp) — integer
+   * Row style: highlight current user (distinct background or border).
+
+4. **Composition of the list**
+
+   * The rendered list is constructed as:
+
+     1. Top 5 users (ranks 1..5)
+     2. Current user row (the current user's rank and row)
+     3. Next 4 users immediately after current user's rank (if any)
+   * If current user is in top 5, then show ranks 1..9 (first five already include current user) — apply logic below for duplicates and bounds.
+
+5. **Empty / placeholder state**
+
+   * If fewer than 1 users exist, show CTA encouraging onboarding.
+
+---
+
+## Functional Requirements (detailed)
+
+### Source of data
+
+* Use the **view** `public.users_metrics_view` as the source for all ranking queries. The view exposes the latest `user_metrics` row per user and the `user_alias`.
+
+### Primary queries & logic
+
+When the page loads perform the following steps server-side or client-side via Supabase:
+
+1. **Fetch Top 5**
+
+   ```sql
+   SELECT id, user_id, exp, user_alias
+   FROM public.users_metrics_view
+   ORDER BY exp DESC NULLS LAST
+   LIMIT 5;
+   ```
+
+2. **Fetch the current user's rank and row**
+
+   * Determine the current user's rank via counting number of users with higher exp:
+
+   ```sql
+   SELECT COUNT(*) + 1 AS rank, u.*
+   FROM public.users_metrics_view u
+   WHERE u.exp > (SELECT exp FROM public.users_metrics_view WHERE user_id = :current_user_id)
+   ;
+   -- plus fetch current user's row separately:
+   SELECT id, user_id, exp, user_alias
+   FROM public.users_metrics_view
+   WHERE user_id = :current_user_id;
+   ```
+
+   Or a single query using window functions:
+
+   ```sql
+   SELECT user_id, exp, user_alias, rank
+   FROM (
+     SELECT user_id, exp, user_alias,
+       ROW_NUMBER() OVER (ORDER BY exp DESC NULLS LAST) AS rank
+     FROM public.users_metrics_view
+   ) t
+   WHERE user_id = :current_user_id;
+   ```
+
+3. **Fetch the next 4 after current user (tail)**
+
+   * If current user's rank = R, fetch ranks R+1..R+4:
+
+   ```sql
+   WITH ranked AS (
+     SELECT user_id, exp, user_alias,
+       ROW_NUMBER() OVER (ORDER BY exp DESC NULLS LAST) AS rank
+     FROM public.users_metrics_view
+   )
+   SELECT user_id, exp, user_alias, rank
+   FROM ranked
+   WHERE rank BETWEEN (:current_rank + 1) AND (:current_rank + 4)
+   ORDER BY rank;
+   ```
+
+4. **Compose final display array (client-side)**
+
+   * Concatenate top5 (deduplicated) + current user row (if not already in top5) + next4.
+   * Edge rules:
+
+     * If current user is within top5, show top9 (top5 + next4).
+     * If there are less than required rows, show what exists.
+     * Always highlight current user visually.
+
+### UI behavior
+
+* No filters or period toggles are supported in MVP.
+
+---
+
+## Error handling
+
+* If `users_metrics_view` query fails → show toast "Unable to load leaderboard. Try again later."
+* If `exp` is null for many users → treat as 0 (sort behavior should handle NULLS LAST).
+* If current user not found in view → show "You are not ranked yet — start by gaining experience!" and show top5.
+
+---
+
+## Security & Privacy
+
+* Use RLS so that the app cannot leak other sensitive columns (but view only exposes safe fields).
+* Only `user_alias` and `avatar_url` and `exp` should be used in the list.
+* Ensure any server-side queries do not expose emails or real names.
+
+---
+
+## Acceptance criteria
+
+* [ ] Ranking renders top5 users by `exp` from `users_metrics_view`.
+* [ ] Current user row is computed and inserted into the list between the top5 and next4 correctly.
+* [ ] Shows trophy icons for positions 1/2/3 (gold/silver/bronze).
+* [ ] Shows alias and avatar (never real name/email).
+* [ ] "Show my position" button scrolls to user row and highlights it.
+* [ ] On DB changes to `user_metrics` (exp updated), a refresh of the view data updates the leaderboard.
+
+---
+
+## Suggested client pseudo-code (React / Next.js)
+
+```ts
+// high-level flow: fetch top5, fetch current user rank, fetch next4; compose array
+async function fetchLeaderboard(userId) {
+  // 1) top 5
+  const top5 = await supabase
+    .from('users_metrics_view')
+    .select('id,user_id,exp,user_alias,avatar_url')
+    .order('exp', { ascending: false })
+    .limit(5);
+
+  // 2) current user row + rank (using window function endpoint or computed server-side)
+  const { data: current } = await supabase.rpc('get_user_rank_and_row', { p_user_id: userId });
+
+  // 3) next 4 after current rank (if any)
+  const next4 = await supabase.rpc('get_users_by_rank_range', { start_rank: current.rank + 1, end_rank: current.rank + 4 });
+
+  // Compose array respecting duplicates
+  let rows = top5.rows;
+  if (!rows.some(r => r.user_id === current.user_id)) {
+    rows = rows.concat([current.row]);
+  }
+  rows = rows.concat(next4.rows);
+
+  return rows;
 }
 ```
 
----
-
-## Acceptance Criteria
-
-* Displays leaderboard with ranks, names/alias, avatar, and metric
-* Supports period and metric filtering
-* Highlights current user
-* Handles empty states and errors gracefully
+> Note: We suggested `rpc` functions for convenience (optional). You may instead implement the queries directly in the API route.
 
 ---
 
-## Security Considerations
+## Integration & Implementation notes (Cursor / Dev instructions)
 
-* Users only see **display name / alias** for privacy
-* No sensitive user data exposed
-* Ensure RLS on `user_metrics` / `leaderboard_metrics` tables
+1. **Data source**: use `public.users_metrics_view`. Do not reference `leaderboard_metrics` (dropped).
+2. **Rank calculation**:
+
+   * Implement either:
+
+     * SQL window functions on the view to compute ranks, or
+     * Server-side rank calculation by counting users with greater `exp`.
+   * Using window functions simplifies fetching surrounding rows in one query.
+3. **Avatar**: if `users_metrics_view` doesn't include avatar\_url, join `profiles.avatar_url` as needed. The view currently contains `user_alias`; expand the view to include `avatar_url` if convenient:
+
+   ```sql
+   -- optional alter of view to include avatar_url
+   CREATE OR REPLACE VIEW public.users_metrics_view AS
+   SELECT
+     um_latest.id,
+     um_latest.user_id,
+     um_latest.exp,
+     p.user_alias,
+     p.avatar_url
+   FROM ( ... ) um_latest
+   JOIN public.profiles p ON p.user_id = um_latest.user_id;
+   ```
+4. **Server endpoints**:
+
+   * Create a protected endpoint (GET `/api/leaderboard`) that:
+
+     * Accepts `current_user_id`.
+     * Returns the composed array (top5 + current + next4) in one response for simpler client rendering.
+5. **UX**:
+
+   * Add trophy icons for ranks 1..3.
+6. **Testing**:
+
+   * After changing `user_metrics` values, refresh view results.
+   * If you later switch to materialized view for performance, refresh strategy must be scheduled.
 
 ---
 
-## Next.js App Routing & Middleware
+## Example server-side SQL using window function (single query to get rank & rows)
 
-* Route: `/leaderboard`
-* Middleware:
-
-  * Authenticated session required → redirect `/login`
-  * Onboarding completed → redirect `/onboarding`
-
----
-
-## Integration & Server-Side Details
-
-### Libraries & Helpers
-
-* `@supabase/supabase-js` → fetch leaderboard data
-* `shadcn/ui` → Tabs, Table, Avatar, Badge
-* Tailwind CSS → layout
-
-### Supabase SQL Checks
+This query builds ranks for all users; for production with many users you may optimize, but it is fine for MVP:
 
 ```sql
--- Fetch leaderboard for selected metric & period
-SELECT rank, user_id, display_name, avatar_url, metric_value
-FROM leaderboard_metrics
-WHERE metric = 'consistency' AND period = 'week'
-ORDER BY rank ASC;
+WITH ranked AS (
+  SELECT
+    user_id,
+    exp,
+    user_alias,
+    avatar_url,
+    ROW_NUMBER() OVER (ORDER BY exp DESC NULLS LAST) AS rank
+  FROM public.users_metrics_view
+)
+SELECT * FROM ranked
+ORDER BY rank
+LIMIT 1000; -- or limit as needed, then client composes the final array
+```
+
+**To get top 5**:
+
+```sql
+SELECT * FROM (
+  SELECT user_id, exp, user_alias, avatar_url, ROW_NUMBER() OVER (ORDER BY exp DESC NULLS LAST) AS rank
+  FROM public.users_metrics_view
+) t
+WHERE rank <= 5
+ORDER BY rank;
+```
+
+**To get current user row with rank** (single query):
+
+```sql
+SELECT * FROM (
+  SELECT user_id, exp, user_alias, avatar_url, ROW_NUMBER() OVER (ORDER BY exp DESC NULLS LAST) AS rank
+  FROM public.users_metrics_view
+) t
+WHERE user_id = :current_user_id;
+```
+
+**To get next 4 after current user's rank**:
+
+```sql
+WITH ranked AS (
+  SELECT user_id, exp, user_alias, avatar_url, ROW_NUMBER() OVER (ORDER BY exp DESC NULLS LAST) AS rank
+  FROM public.users_metrics_view
+)
+SELECT * FROM ranked WHERE rank BETWEEN (:current_rank + 1) AND (:current_rank + 4);
 ```
 
 ---
 
+## Migration notes summary (what changed)
+
+* Dropped columns from `user_metrics`: `adherence_percentage`, `meals_completed`, `total_meals`.
+* Dropped constraint `user_metrics_adherence_percentage_check`.
+* Added `profiles.user_alias` (TEXT default `'alias_temp'`).
+* Dropped table `leaderboard_metrics`.
+* Created view `users_metrics_view` to support ranking queries.
 
 ---
+
+
+
+---
+
+# Experience Points System (XP)
+
+### Overview
+
+The **Experience Points (XP)** system is the foundation of user progression and gamification in the app. XP is stored in the `exp` column of the `user_metrics` table and is updated whenever the user performs specific actions. The XP system directly feeds into the leaderboard (Screen 8.1) and is also displayed persistently in the global header, next to the user avatar.
+
+---
+
+## New / Modified DB objects (reminder)
+
+* `user_metrics`: removed `adherence_percentage`, `meals_completed`, `total_meals` and period fields, and removed `user_metrics_adherence_percentage_check` constraint.
+* `profiles`: added `user_alias TEXT DEFAULT 'alias_temp'`.
+* `leaderboard_metrics`: **dropped**.
+
+---
+
+## Database changes
+
+### **IMPORTANT:** Cursor, please address the necessary changes to supabase schema classes in the application!
+
+```sql
+-- 1) Drop adherence constraint (if exists) and remove unused columns from user_metrics
+ALTER TABLE public.user_metrics
+  DROP CONSTRAINT IF EXISTS user_metrics_adherence_percentage_check;
+
+ALTER TABLE public.user_metrics
+  DROP COLUMN IF EXISTS adherence_percentage,
+  DROP COLUMN IF EXISTS meals_completed,
+  DROP COLUMN IF EXISTS total_meals;
+  DROP COLUMN IF EXISTS period_start;
+  DROP COLUMN IF EXISTS period_end;
+
+-- 2) Add user_alias column to profiles
+-- Assumes a table named "profiles" exists in "public" schema.
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS user_alias TEXT DEFAULT 'alias_temp';
+
+-- 3) Drop table leaderboard_metrics (no longer used)
+DROP TABLE IF EXISTS public.leaderboard_metrics;
+
+```
+
+---
+
+### Core requirements
+
+1. **Database persistence**
+
+   * Field: `exp` (integer) in `user_metrics`.
+   * The application must always read and update XP in this column.
+   * First user row should be inserted after user completes the onboarding process.
+
+2. **Global header display**
+
+   * Next to the user's avatar in the top navigation bar, always display:
+
+     * `user_alias`
+     * Current `exp`
+   * Must update in real-time whenever XP is increased (e.g., after inserting a new weight log).
+
+3. **Experience Service**
+
+   * Create a dedicated service class/module: `ExperienceService`.
+   * Methods:
+
+     * `getCurrentXP(userId: UUID): number`
+
+       * Fetches current XP from `user_metrics`.
+     * `increaseXP(userId: UUID, amount: number): number`
+
+       * Increments XP in the database.
+       * Updates client global state (React Context/Store).
+       * Returns the new total XP.
+   * Implementation details:
+
+     * Server: secured Supabase call to update `user_metrics.exp`.
+     * Client: after successful server update, refresh local state and re-render the header XP value.
+
+4. **Integration point for first uses of the service**
+
+   * When user **completes the onboard process** in the `/onboarding` page:
+
+     * Call `ExperienceService.increaseXP(userId, 100)`
+     * This increments the XP by 100 points.
+     * The global header should immediately reflect the updated XP.
+   
+   * Whenever a user **inserts a new weight log record** in the `/profiles` page:
+
+     * Call `ExperienceService.increaseXP(userId, 100)`
+     * This increments the XP by 100 points.
+     * The global header should immediately reflect the updated XP.
+
+---
+
+### Pseudo-code
+
+```ts
+// experienceService.ts
+import { supabase } from "@/lib/supabaseClient";
+
+export async function getCurrentXP(userId: string) {
+  const { data, error } = await supabase
+    .from("user_metrics")
+    .select("exp")
+    .eq("user_id", userId)
+    .limit(1)
+    .single();
+
+  if (error) throw error;
+  return data.exp || 0;
+}
+
+export async function increaseXP(userId: string, amount: number) {
+  // Get current XP
+  const currentXP = await getCurrentXP(userId);
+  const newXP = currentXP + amount;
+
+  // Update DB
+  const { error } = await supabase
+    .from("user_metrics")
+    .update({ exp: newXP })
+    .eq("user_id", userId);
+
+  if (error) throw error;
+
+  // Update global state (React Context / Store)
+  updateGlobalXPState(newXP);
+
+  return newXP;
+}
+```
+
+**Example integration inside `/profiles` when inserting new weight log:**
+
+```ts
+async function handleAddWeightLog(newWeight) {
+  await supabase.from("weight_logs").insert({
+    user_id: currentUser.id,
+    weight: newWeight,
+    created_at: new Date().toISOString()
+  });
+
+  // Award XP
+  await increaseXP(currentUser.id, 100);
+}
+
+```
+**Use the example above and add integration to the /onboarding page too**
+
+---
+
+### Acceptance criteria
+
+* [ ] The header always shows the correct `exp` for the logged-in user.
+* [ ] `ExperienceService.increaseXP` updates both the database and the client-side global state.
+* [ ] Finishing onboarding in `/onboarding` page increases XP by **+100**.
+* [ ] Adding a new weight record on `/profiles` increases XP by **+100**.
+* [ ] Leaderboard reflects XP changes after refresh (Screen 8.1).
+* [ ] No sensitive data (emails, names) exposed — only `user_alias`, avatar, and XP are used.
+
+---
+
+
 
 # Screen ID: 9.1 – User Hub ("Me")
 
