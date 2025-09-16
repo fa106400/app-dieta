@@ -4,6 +4,7 @@ import { useState } from "react";
 // import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
+import { ExperienceService } from "@/lib/experience-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -179,6 +180,20 @@ function OnboardingPageContent() {
       console.log(
         "🔍 Onboarding - Profile saved successfully, onboarding_completed set to true"
       );
+
+      // Initialize user metrics with XP
+      try {
+        console.log("🔍 Onboarding - Initializing user metrics with XP...");
+        if (user?.id) {
+          await ExperienceService.initializeUserMetrics(user.id, 100);
+          console.log("🔍 Onboarding - User metrics initialized with 100 XP");
+        }
+      } catch (xpError) {
+        console.warn("🔍 Onboarding - Error initializing XP:", xpError);
+        // Don't fail the onboarding process if XP initialization fails
+      }
+
+      // TODO: Trigger badge validation for EXP too
 
       // Insert initial weight entry
       try {

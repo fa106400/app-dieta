@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
+import { ExperienceService } from "@/lib/experience-service";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -304,7 +305,16 @@ export default function ProfileManagePage() {
       await fetchWeights();
       toast.success("Weight entry added successfully!");
 
-      // Trigger badge validation for weight loss
+      // Increase XP for weight logging
+      try {
+        await ExperienceService.increaseXP(user.id, 100);
+        console.log("XP increased by 100 for weight logging");
+      } catch (xpError) {
+        console.warn("Error increasing XP:", xpError);
+        // Don't show error to user - XP increase is not critical
+      }
+
+      // Trigger badge validation for weight loss TODO: trigger batch validation for EXP too
       try {
         await triggerBadgeValidation("weight_loss", {
           weight_kg: weight,

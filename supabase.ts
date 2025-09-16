@@ -244,6 +244,7 @@ export type Database = {
         Row: {
           activity_level: string | null
           age: number
+          avatar_url: string | null
           created_at: string | null
           dietary_preferences: string[] | null
           food_dislikes: string | null
@@ -252,12 +253,14 @@ export type Database = {
           name: string
           onboarding_completed: boolean | null
           updated_at: string | null
+          user_alias: string | null
           user_id: string
           weight_start_kg: number
         }
         Insert: {
           activity_level?: string | null
           age: number
+          avatar_url?: string | null
           created_at?: string | null
           dietary_preferences?: string[] | null
           food_dislikes?: string | null
@@ -266,12 +269,14 @@ export type Database = {
           name: string
           onboarding_completed?: boolean | null
           updated_at?: string | null
+          user_alias?: string | null
           user_id: string
           weight_start_kg: number
         }
         Update: {
           activity_level?: string | null
           age?: number
+          avatar_url?: string | null
           created_at?: string | null
           dietary_preferences?: string[] | null
           food_dislikes?: string | null
@@ -280,6 +285,7 @@ export type Database = {
           name?: string
           onboarding_completed?: boolean | null
           updated_at?: string | null
+          user_alias?: string | null
           user_id?: string
           weight_start_kg?: number
         }
@@ -397,40 +403,25 @@ export type Database = {
       }
       user_metrics: {
         Row: {
-          adherence_percentage: number | null
           created_at: string | null
           exp: number
           id: string
-          meals_completed: number | null
-          period_end: string
-          period_start: string
-          total_meals: number | null
+          updated_at: string | null
           user_id: string
-          weight_lost_kg: number | null
         }
         Insert: {
-          adherence_percentage?: number | null
           created_at?: string | null
           exp?: number
           id?: string
-          meals_completed?: number | null
-          period_end: string
-          period_start: string
-          total_meals?: number | null
+          updated_at?: string | null
           user_id: string
-          weight_lost_kg?: number | null
         }
         Update: {
-          adherence_percentage?: number | null
           created_at?: string | null
           exp?: number
           id?: string
-          meals_completed?: number | null
-          period_end?: string
-          period_start?: string
-          total_meals?: number | null
+          updated_at?: string | null
           user_id?: string
-          weight_lost_kg?: number | null
         }
         Relationships: []
       }
@@ -532,6 +523,30 @@ export type Database = {
           tags?: string[] | null
           title?: string | null
           week_plan?: Json | null
+        }
+        Relationships: []
+      }
+      users_metrics_view: {
+        Row: {
+          avatar_url: string | null
+          exp: number | null
+          id: string | null
+          user_alias: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          exp?: number | null
+          id?: string | null
+          user_alias?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          exp?: number | null
+          id?: string | null
+          user_alias?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

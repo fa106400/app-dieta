@@ -18,6 +18,8 @@ CREATE TABLE profiles (
     activity_level TEXT CHECK (activity_level IN ('sedentary', 'lightly_active', 'moderately_active', 'very_active')),
     food_dislikes TEXT,
     onboarding_completed BOOLEAN DEFAULT FALSE,
+    user_alias TEXT DEFAULT 'alias_temp',
+    avatar_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -185,20 +187,34 @@ CREATE TABLE leaderboard_metrics (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 14. User metrics table (for calculations)
+-- 14. User metrics table (for experience points)
 CREATE TABLE user_metrics (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    period_start DATE NOT NULL,
-    period_end DATE NOT NULL,
-    adherence_percentage NUMERIC(5,2) CHECK (adherence_percentage >= 0 AND adherence_percentage <= 100),
-    weight_lost_kg NUMERIC(5,2),
-    meals_completed INTEGER DEFAULT 0,
-    total_meals INTEGER DEFAULT 0,
     exp INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, period_start, period_end)
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id)
 );
+
+-- 15. Users metrics view (for leaderboard)
+CREATE OR REPLACE VIEW public.users_metrics_view AS
+SELECT
+  um_latest.id,
+  um_latest.user_id,
+  um_latest.exp,
+  p.user_alias,
+  p.avatar_url
+FROM (
+  SELECT 
+    um.user_id,
+    um.id,
+    um.exp
+  FROM public.user_metrics um
+  WHERE um.exp IS NOT NULL
+) AS um_latest
+JOIN public.profiles p
+  ON p.user_id = um_latest.user_id;
 
 -- Indexes for performance
 CREATE INDEX idx_profiles_user_id ON profiles(user_id);
@@ -216,7 +232,7 @@ CREATE INDEX idx_weights_user_date ON weights(user_id, measured_at DESC);
 CREATE INDEX idx_user_badges_user_id ON user_badges(user_id);
 CREATE INDEX idx_diet_recommendations_user_id ON diet_recommendations(user_id);
 CREATE INDEX idx_leaderboard_metrics_period_metric ON leaderboard_metrics(period, metric);
-CREATE INDEX idx_user_metrics_user_period ON user_metrics(user_id, period_start);
+CREATE INDEX idx_user_metrics_user_id ON user_metrics(user_id);
 
 -- Row Level Security (RLS) Policies
 
@@ -273,8 +289,18 @@ CREATE POLICY "Users can view own recommendations" ON diet_recommendations
 CREATE POLICY "Users can view own metrics" ON user_metrics
     FOR SELECT USING (auth.uid() = user_id);
 
+CREATE POLICY "Users can insert own metrics" ON user_metrics
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own metrics" ON user_metrics
+    FOR UPDATE USING (auth.uid() = user_id);
+
 -- Public read access for catalog tables (no RLS needed)
 -- diets, diet_variants, meals, badges, leaderboard_metrics are publicly readable
+
+-- Users metrics view policies (public read for leaderboard)
+CREATE POLICY "Public can view users metrics for leaderboard" ON users_metrics_view
+    FOR SELECT USING (true);
 
 -- Functions and Triggers
 
@@ -424,5 +450,6 @@ create table if not exists announcements (
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON profiles, favorites, user_current_diet, user_meal_log, weights, user_badges, diet_recommendations, user_metrics TO authenticated;
+GRANT SELECT ON users_metrics_view TO anon, authenticated;
 GRANT SELECT ON diet_catalog_view TO anon, authenticated;
 GRANT SELECT ON announcements TO anon, authenticated;

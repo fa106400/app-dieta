@@ -244,9 +244,9 @@ This plan outlines the development of a complete nutrition and diet management p
   - Progress celebrations with popup animations ✅
 
 ### 5.2 Leaderboards & Social Features
-- **5.2.1 Ranking System (Screen 8.1)**
-  - Experience points system
-  - Leaderboard implementation
+- **5.2.1 Ranking System (Screen 8.1)** ✅ COMPLETED
+  - Experience points system - full docs from line 4150 to line 4313
+  - Leaderboard implementation - full docs from line 3819 to line 4149
   - Metric calculations
   - Privacy controls 
   - User positioning
