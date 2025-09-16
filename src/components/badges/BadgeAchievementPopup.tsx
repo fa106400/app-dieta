@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useBadgeNotification } from "@/contexts/BadgeNotificationContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -63,7 +63,7 @@ export function BadgeAchievementPopup({
   isVisible,
   onClose,
 }: BadgeAchievementPopupProps) {
-  const router = useRouter();
+  // const router = useRouter();
   const { hideBadgeNotification, deferredAction } = useBadgeNotification();
   const [currentBadgeIndex, setCurrentBadgeIndex] = React.useState(0);
 
@@ -133,11 +133,11 @@ export function BadgeAchievementPopup({
     onClose();
   };
 
-  const handleGoToBadges = () => {
-    hideBadgeNotification();
-    onClose();
-    router.push("/badges");
-  };
+  // const handleGoToBadges = () => {
+  //   hideBadgeNotification();
+  //   onClose();
+  //   router.push("/badges");
+  // };
 
   const getBadgeIcon = (badge: BadgeData) => {
     if (badge.icon_name) {
@@ -319,12 +319,12 @@ export function BadgeAchievementPopup({
                   >
                     Continuar
                   </Button>
-                  <Button
+                  {/* <Button
                     onClick={handleGoToBadges}
                     className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
                   >
                     Ver Todas as Conquistas
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </div>
