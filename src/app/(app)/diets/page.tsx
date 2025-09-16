@@ -298,7 +298,7 @@ export default function DietCatalogPage() {
   }, [applyFiltersAndSearch]);
 
   // Handle browser visibility changes to prevent unnecessary re-fetches
-  useEffect(() => {
+  /*useEffect(() => {
     const handleVisibilityChange = () => {
       // Don't refetch when tab becomes visible again
       // The data should still be valid
@@ -308,7 +308,7 @@ export default function DietCatalogPage() {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, []);*/
 
   const handleFilterChange = (newFilters: DietFilters) => {
     setFilters(newFilters);

@@ -115,7 +115,7 @@ export default function FavoritesPage() {
   }, [fetchFavorites]);
 
   // Handle browser visibility changes to prevent unnecessary re-fetches
-  useEffect(() => {
+  /*useEffect(() => {
     const handleVisibilityChange = () => {
       // Don't refetch when tab becomes visible again
       // The data should still be valid
@@ -125,7 +125,7 @@ export default function FavoritesPage() {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, []);*/
 
   // Toggle favorite status
   const toggleFavorite = async (dietId: string) => {

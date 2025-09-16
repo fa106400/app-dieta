@@ -170,7 +170,7 @@ export default function DietDetailPage() {
   }, [fetchDiet]);
 
   // Handle browser visibility changes to prevent unnecessary re-fetches
-  useEffect(() => {
+  /*useEffect(() => {
     const handleVisibilityChange = () => {
       // Don't refetch when tab becomes visible again
       // The data should still be valid
@@ -180,7 +180,7 @@ export default function DietDetailPage() {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, []);*/
 
   // Toggle favorite
   /*const toggleFavorite = async () => {
