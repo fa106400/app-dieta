@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
+import { useExperience } from "@/contexts/ExperienceContext";
 import { ExperienceService } from "@/lib/experience-service";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -136,6 +137,7 @@ const GOALS = [
 export default function ProfileManagePage() {
   const { user } = useAuthContext();
   const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
+  const { refreshXP } = useExperience();
 
   // Profile state
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -309,6 +311,8 @@ export default function ProfileManagePage() {
       try {
         await ExperienceService.increaseXP(user.id, 100);
         console.log("XP increased by 100 for weight logging");
+        // Refresh XP in the global context
+        await refreshXP();
       } catch (xpError) {
         console.warn("Error increasing XP:", xpError);
         // Don't show error to user - XP increase is not critical

@@ -250,10 +250,9 @@ This plan outlines the development of a complete nutrition and diet management p
   - Metric calculations ✅
   - Privacy controls  ✅
   - User positioning ✅
+  - Global header XP display ✅
 
-  ***FALTOU INCLUIR XP NO HEADER AO LADO DO AVATAR***
-
-- **5.2.2 Social Elements**
+- **5.2.2 Social Elements** ***write user story for all these features bellow***
   - User aliases and avatars ***include nickname on onboarding (profile registry creation)***
   - Privacy settings
   - Achievement sharing

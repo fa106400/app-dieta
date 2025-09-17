@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 //import Link from "next/link";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useExperience } from "@/contexts/ExperienceContext";
+import { supabase } from "@/lib/supabase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,11 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut /*, User, Settings, Crown*/ } from "lucide-react";
+import { LogOut, Star /*, User, Settings, Crown*/ } from "lucide-react";
 
 export function UserMenu() {
   const { user, signOut } = useAuthContext();
+  const { userXP, loading: xpLoading } = useExperience();
   const [isOpen, setIsOpen] = useState(false);
+  const [userAlias, setUserAlias] = useState<string>("");
+  const [aliasLoading, setAliasLoading] = useState(true);
 
   const userInitials = user?.user_metadata?.name
     ? user.user_metadata.name
@@ -28,6 +33,40 @@ export function UserMenu() {
 
   const userName =
     user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
+
+  // Fetch user alias from profiles table
+  useEffect(() => {
+    const fetchUserAlias = async () => {
+      if (!user?.id || !supabase) {
+        setUserAlias(userName);
+        setAliasLoading(false);
+        return;
+      }
+
+      try {
+        setAliasLoading(true);
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_alias")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching user alias:", error);
+          setUserAlias(userName);
+        } else {
+          setUserAlias(data?.user_alias || userName);
+        }
+      } catch (error) {
+        console.error("Error fetching user alias:", error);
+        setUserAlias(userName);
+      } finally {
+        setAliasLoading(false);
+      }
+    };
+
+    fetchUserAlias();
+  }, [user?.id, userName]);
 
   const handleSignOut = async () => {
     try {
@@ -47,20 +86,34 @@ export function UserMenu() {
               {userInitials}
             </AvatarFallback>
           </Avatar>
-          {/*<div className="hidden md:block text-left">
-            <p className="text-sm font-medium text-gray-900">{userName}</p>
-             <p className="text-xs text-gray-500">Free Plan</p> 
+          <div className="hidden md:block text-left">
+            <p className="text-sm font-medium text-gray-900">
+              {aliasLoading ? "Loading..." : userAlias}
+            </p>
+            <div className="flex items-center space-x-1">
+              <Star className="h-3 w-3 text-yellow-500" />
+              <span className="text-xs text-gray-600">
+                {xpLoading ? "..." : `${userXP.toLocaleString()} XP`}
+              </span>
+            </div>
           </div>
-          */}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{userName}</p>
+            <p className="text-sm font-medium leading-none">
+              {aliasLoading ? "Loading..." : userAlias}
+            </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user?.email}
             </p>
+            <div className="flex items-center space-x-1 mt-1">
+              <Star className="h-3 w-3 text-yellow-500" />
+              <span className="text-xs text-muted-foreground">
+                {xpLoading ? "..." : `${userXP.toLocaleString()} XP`}
+              </span>
+            </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

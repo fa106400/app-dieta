@@ -4,6 +4,7 @@ import { useState } from "react";
 // import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
+import { useExperience } from "@/contexts/ExperienceContext";
 import { ExperienceService } from "@/lib/experience-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,6 +105,7 @@ function OnboardingPageContent() {
   const { user } = useAuthContext();
   // const router = useRouter();
   const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
+  const { refreshXP } = useExperience();
 
   const totalSteps = 4;
   const progress = (currentStep / totalSteps) * 100;
@@ -187,6 +189,8 @@ function OnboardingPageContent() {
         if (user?.id) {
           await ExperienceService.initializeUserMetrics(user.id, 100);
           console.log("🔍 Onboarding - User metrics initialized with 100 XP");
+          // Refresh XP in the global context
+          await refreshXP();
         }
       } catch (xpError) {
         console.warn("🔍 Onboarding - Error initializing XP:", xpError);

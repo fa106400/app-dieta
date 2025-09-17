@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { BrowserMinimizationHandler } from "@/components/layout/BrowserMinimizationHandler";
 import { BadgeNotificationProvider } from "@/contexts/BadgeNotificationContext";
 import { BadgeNotificationManager } from "@/components/badges/BadgeNotificationManager";
+import { ExperienceProvider } from "@/contexts/ExperienceContext";
 
 export default function AppLayoutWrapper({
   children,
@@ -15,11 +16,13 @@ export default function AppLayoutWrapper({
   return (
     <ProtectedRoute>
       <OnboardingGuard>
-        <BadgeNotificationProvider>
-          <AppLayout>{children}</AppLayout>
-          <BrowserMinimizationHandler />
-          <BadgeNotificationManager />
-        </BadgeNotificationProvider>
+        <ExperienceProvider>
+          <BadgeNotificationProvider>
+            <AppLayout>{children}</AppLayout>
+            <BrowserMinimizationHandler />
+            <BadgeNotificationManager />
+          </BadgeNotificationProvider>
+        </ExperienceProvider>
       </OnboardingGuard>
     </ProtectedRoute>
   );
