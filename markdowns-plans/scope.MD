@@ -243,13 +243,15 @@ This plan outlines the development of a complete nutrition and diet management p
   - Badge awarding system ✅
   - Progress celebrations with popup animations ✅
 
-### 5.2 Leaderboards & Social Features
-- **5.2.1 Ranking System (Screen 8.1)** ✅ COMPLETED
-  - Experience points system - full docs from line 4150 to line 4313
-  - Leaderboard implementation - full docs from line 3819 to line 4149
-  - Metric calculations
-  - Privacy controls 
-  - User positioning
+### 5.2 Leaderboards & Social Features ✅
+- **5.2.1 Ranking System (Screen 8.1)** ✅
+  - Experience points system - full docs from line 4150 to line 4313 ✅
+  - Leaderboard implementation - full docs from line 3819 to line 4149 ✅
+  - Metric calculations ✅
+  - Privacy controls  ✅
+  - User positioning ✅
+
+  ***FALTOU INCLUIR XP NO HEADER AO LADO DO AVATAR***
 
 - **5.2.2 Social Elements**
   - User aliases and avatars ***include nickname on onboarding (profile registry creation)***

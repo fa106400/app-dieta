@@ -135,7 +135,7 @@ const GOALS = [
 
 export default function ProfileManagePage() {
   const { user } = useAuthContext();
-  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
+  const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
 
   // Profile state
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -314,15 +314,21 @@ export default function ProfileManagePage() {
         // Don't show error to user - XP increase is not critical
       }
 
-      // Trigger badge validation for weight loss TODO: trigger batch validation for EXP too
+      // Batch multiple badge events with single deferred action
       try {
-        await triggerBadgeValidation("weight_loss", {
-          weight_kg: weight,
-          measured_at: selectedDate,
-        });
-      } catch (badgeError) {
-        console.error("Error validating weight loss badges:", badgeError);
-        // Don't show error to user - badge validation is not critical
+        await triggerBatchBadgeValidation([
+          {
+            event: "weight_loss",
+            payload: {
+              weight_kg: weight,
+              measured_at: selectedDate,
+            },
+          },
+          { event: "experience", payload: { points: 100 } },
+        ]);
+      } catch (err) {
+        console.error("Error triggering badge validation:", err);
+        // Don't fail the main operation if badge validation fails
       }
     } catch (err) {
       console.error("Error adding weight:", err);

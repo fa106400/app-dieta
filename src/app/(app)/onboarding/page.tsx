@@ -103,7 +103,7 @@ function OnboardingPageContent() {
 
   const { user } = useAuthContext();
   // const router = useRouter();
-  const { triggerBadgeValidation } = useBadgeNotificationTrigger();
+  const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
 
   const totalSteps = 4;
   const progress = (currentStep / totalSteps) * 100;
@@ -193,8 +193,6 @@ function OnboardingPageContent() {
         // Don't fail the onboarding process if XP initialization fails
       }
 
-      // TODO: Trigger badge validation for EXP too
-
       // Insert initial weight entry
       try {
         console.log("🔍 Onboarding - Inserting initial weight entry...");
@@ -273,11 +271,13 @@ function OnboardingPageContent() {
         // Don't fail the onboarding process if recommendations fail
       }
 
-      // Trigger badge validation for onboarding completed
+      // Batch multiple badge events with single deferred action
       try {
-        await triggerBadgeValidation(
-          "onboarding_completed",
-          {}, //no payload
+        await triggerBatchBadgeValidation(
+          [
+            { event: "onboarding_completed", payload: {} }, //no payload
+            { event: "experience", payload: { points: 100 } },
+          ],
           {
             type: "redirect",
             payload: "/home",
