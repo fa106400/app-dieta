@@ -253,16 +253,12 @@ This plan outlines the development of a complete nutrition and diet management p
   - Global header XP display ✅
 
 - **5.2.2 Social Elements A** ✅
-  - User aliases and avatars (screen 9.10) ***line 6150 until line 6346*** ✅
-  
-- **5.2.3 Social Elements B** ***write user story for all these features bellow*** 
-  - Achievement sharing
+  - User aliases and avatars (screen 9.10) ✅
   
 ### 5.3 Advanced Features
 - **5.3.1 PDF Export (Screen 7.2)**
   - Shopping list PDF generation
   - Print-friendly layouts
-  - Customizable templates
   - Download functionality
 
 - **5.3.2 Data Analytics**
@@ -3651,40 +3647,31 @@ WHERE u.user_id = '<user_id>' AND u.is_active = true;
 
 ## Overview
 
-The **Export / Print PDF** screen is responsible for generating a downloadable or printable version of the user’s **weekly shopping list**. This includes all items aggregated from their selected diet(s), grouped by market categories, with quantities adjusted to servings/family size.
+This is NOT a new page/screen. It should be a model or popup or just the trigger to PDF download. The shopping list has already been formated by the screen 7.1 (see lines 3392 to line 3640).
+The **Export / Print PDF** component is responsible for generating a downloadable version of the user’s **shopping list**.
 
 **Main Goals:**
 
 * Provide a clear, printable shopping list for offline use
-* Allow users to download or print directly
-* Ensure data matches the weekly diet selection (7.1 – Lista de Compras)
+* Allow users to download
+* Ensure data matches the shopping list generated (7.1 – Shopping List)
 * Maintain a simple, responsive layout
 
 ---
 
-## Components
+## Components of PDF content
 
 1. **Header**
 
-   * Title: “Your Shopping List”
-   * Optional subtitle: “Based on your diet plan for this week”
+   * Title: "Shopping List”
 
 2. **Shopping List Table / Card**
 
-   * Grouped by category (e.g., Vegetables, Proteins, Grains)
-   * Columns: Item, Quantity, Unit (e.g., grams, pieces, liters)
-   * Optional: checkbox for each item (to mark purchased, non-functional in PDF but useful on-screen preview)
+   * All ingredients as displayed in /shopping-list page AND mandatory to keep quantities as calculated by the user in screen. The /shopping-list page let's user choose quantities calculated for a week or a month. Must be stored for printing the PDF.
 
 3. **Controls / Actions**
 
-   * **Download PDF** → triggers PDF generation & download
-   * **Print PDF** → triggers browser print dialog
-   * **Back Button** → returns to 7.1 Lista de Compras
-
-4. **Preview Section (optional)**
-
-   * Show a preview of how the PDF will look
-   * Allows user to review before export
+   * **Export PDF (button in page 7.1 /shopping-list)** → triggers PDF generation & download
 
 ---
 
@@ -3695,49 +3682,17 @@ The **Export / Print PDF** screen is responsible for generating a downloadable o
    * Use **client-side library** like **jsPDF** or **pdf-lib**
    * Include:
 
-     * Header with week and diet name(s)
-     * Table of items with quantities
-     * Optional footnotes (e.g., substitutions, notes)
+     * All content in the /shopping-list screen
    * Generate **well-formatted, paginated PDF** if list is long
 
-2. **Print**
+2. **Dynamic Data**
 
-   * Use browser `window.print()` with custom print stylesheet
-   * Ensure table fits within page width, repeated header for multi-page
-
-3. **Dynamic Data**
-
-   * Aggregate shopping list from **7.1 – Lista de Compras**
-   * Adjust quantities if the user changed servings/family size
-   * Sort items by market category
-
-4. **Responsive**
-
-   * On mobile: show simplified table with essential columns
-   * On desktop: show full table preview
+   * Aggregate shopping list from **7.1 – Shopping List**
+   * Maintain quantities displayed on page
 
 ---
 
 ## Technical Notes
-
-* **Supabase Queries**
-
-  * Fetch selected diet and recipes for the week:
-
-  ```sql
-  SELECT * FROM user_weekly_diet
-  WHERE user_id = '<USER_ID>' AND week_start = '<CURRENT_WEEK>';
-  ```
-
-  * Aggregate ingredients from recipes:
-
-  ```sql
-  SELECT ingredient, SUM(quantity) as total_quantity, unit, category
-  FROM recipe_ingredients
-  WHERE recipe_id IN (<USER_WEEK_RECIPE_IDS>)
-  GROUP BY ingredient, unit, category
-  ORDER BY category, ingredient;
-  ```
 
 * **Libraries / Helpers**
 
@@ -3748,7 +3703,7 @@ The **Export / Print PDF** screen is responsible for generating a downloadable o
 
 * **Routing**
 
-  * 7.1 Lista de Compras → click **Export PDF** → navigate to 7.2 Export screen (can be modal or separate route `/shopping-list/export`)
+  * 7.1 Shopping List → click **Export PDF** → triggers generation & PDF file opening for download
 
 ---
 
@@ -3774,14 +3729,9 @@ export default function ExportPDF({ items, weekLabel }: { items: ShoppingItem[],
     doc.save(`shopping-list-${weekLabel}.pdf`);
   };
 
-  return (
-    <div className="p-4 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-4">Export Your Shopping List</h1>
-      <Button onClick={generatePDF}>Download PDF</Button>
-      <Button className="mt-2" onClick={() => window.print()}>Print</Button>
-      <Button className="mt-2" variant="secondary" onClick={() => history.back()}>Back</Button>
-    </div>
   );
+
+  {"<!-- Check /shopping-list page for the actual implementation and plug new function above inside onClick of export button -->"}
 }
 ```
 
@@ -3790,8 +3740,6 @@ export default function ExportPDF({ items, weekLabel }: { items: ShoppingItem[],
 ## Acceptance Criteria
 
 * Users can download a PDF containing all items from the weekly diet
-* PDF is properly formatted, with categories, quantities, and units
-* Users can print directly from the browser
 * PDF generation works on desktop and mobile
 * Data in PDF matches the aggregated shopping list on 7.1
 
@@ -3806,14 +3754,13 @@ export default function ExportPDF({ items, weekLabel }: { items: ShoppingItem[],
 
 ## Next.js App Routing & Middleware
 
-* Route: `/shopping-list/export`
+* Route: `/shopping-list/`
 * Middleware checks authentication via Supabase session
 * Redirect to `/login` if unauthenticated
 
 ---
 
 
----
 
 ---
 

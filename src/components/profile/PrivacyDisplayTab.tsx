@@ -26,7 +26,6 @@ const PREDEFINED_AVATARS = [
 
 export function PrivacyDisplayTab({
   onBack,
-  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   isOnboarding: _isOnboarding = false,
   initialAlias = "",
   initialAvatar = "",
@@ -257,7 +256,7 @@ export function PrivacyDisplayTab({
                   className="w-full h-24 object-cover"
                 />
                 {selectedAvatar === avatar.id && (
-                  <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center">
+                  <div className="absolute opacity-70 inset-0 bg-blue-500 flex items-center justify-center">
                     <Check className="h-6 w-6 text-blue-600" />
                   </div>
                 )}
@@ -267,8 +266,8 @@ export function PrivacyDisplayTab({
         </CardContent>
       </Card>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
+      {/* Save Button - esconde se for onboarding */}
+      <div className="flex justify-end" hidden={_isOnboarding}>
         <Button
           onClick={handleSave}
           disabled={!canSave || isSaving}
