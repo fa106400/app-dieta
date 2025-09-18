@@ -13,7 +13,7 @@ import {
   CreditCard,
   //Settings,
   Shield,
-  Eye,
+  // Eye,
   //Target,
 } from "lucide-react";
 
@@ -66,7 +66,7 @@ export default function MePage() {
       bgColor: "bg-red-50",
       borderColor: "border-red-200",
     },
-    {
+    /*{
       title: "Privacy",
       description: "Control your privacy settings and data",
       icon: Eye,
@@ -74,7 +74,7 @@ export default function MePage() {
       color: "text-indigo-600",
       bgColor: "bg-indigo-50",
       borderColor: "border-indigo-200",
-    },
+    },*/
   ];
 
   return (
