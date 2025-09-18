@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { PrivacyDisplayTab } from "@/components/profile/PrivacyDisplayTab";
 
 interface OnboardingData {
   age: number;
@@ -36,6 +37,8 @@ interface OnboardingData {
     | "very_active"
     | "extra_active";
   food_dislikes: string;
+  user_alias: string;
+  avatar_url: string;
 }
 
 const ACTIVITY_LEVELS = {
@@ -100,6 +103,8 @@ function OnboardingPageContent() {
     dietary_preferences: [],
     activity_level: "moderately_active",
     food_dislikes: "",
+    user_alias: "",
+    avatar_url: "",
   });
 
   const { user } = useAuthContext();
@@ -107,7 +112,7 @@ function OnboardingPageContent() {
   const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
   const { refreshXP } = useExperience();
 
-  const totalSteps = 4;
+  const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
 
   const updateFormData = (field: keyof OnboardingData, value: unknown) => {
@@ -313,6 +318,8 @@ function OnboardingPageContent() {
         return formData.activity_level !== undefined;
       case 4:
         return true; // Food dislikes is optional
+      case 5:
+        return formData.user_alias && formData.avatar_url; // Privacy & Display required
       default:
         return false;
     }
@@ -557,6 +564,18 @@ function OnboardingPageContent() {
     </div>
   );
 
+  const renderStep5 = () => (
+    <PrivacyDisplayTab
+      isOnboarding={true}
+      initialAlias={formData.user_alias}
+      initialAvatar={formData.avatar_url}
+      onSave={(data) => {
+        updateFormData("user_alias", data.user_alias);
+        updateFormData("avatar_url", data.avatar_url);
+      }}
+    />
+  );
+
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
@@ -567,6 +586,8 @@ function OnboardingPageContent() {
         return renderStep3();
       case 4:
         return renderStep4();
+      case 5:
+        return renderStep5();
       default:
         return null;
     }

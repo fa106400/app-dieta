@@ -252,11 +252,11 @@ This plan outlines the development of a complete nutrition and diet management p
   - User positioning ✅
   - Global header XP display ✅
 
-- **5.2.2 Social Elements** ***write user story for all these features bellow***
-  - User aliases and avatars ***include nickname on onboarding (profile registry creation)***
-  - Privacy settings
+- **5.2.2 Social Elements A** ✅
+  - User aliases and avatars (screen 9.10) ***line 6150 until line 6346*** ✅
+  
+- **5.2.3 Social Elements B** ***write user story for all these features bellow*** 
   - Achievement sharing
-  - Community engagement  
   
 ### 5.3 Advanced Features
 - **5.3.1 PDF Export (Screen 7.2)**
@@ -6151,7 +6151,8 @@ export default function ChangePassword() {
 
 ## Overview
 
-The **Privacy & Display screen** allows users to manage how they appear to other users on public areas of the application, such as the **Ranking / Leaderboards**. Users can set a public alias (nickname) and optionally select an avatar. This ensures privacy while still enabling engagement in social features.
+This is NOT a new screen/page, it is a new tab inside /onboarding/ page and /profiles/ page. So, plan both implementations.
+The **Privacy & Display tab** allows users to manage how they appear to other users on public areas of the application, such as the **Ranking / Leaderboards**. Users can set a public alias (nickname) and select an avatar. This ensures privacy while still enabling engagement in social features.
 
 **Main Goals:**
 
@@ -6163,32 +6164,32 @@ The **Privacy & Display screen** allows users to manage how they appear to other
 
 ## Components
 
-* **Header**
+* **Header of tab**
 
-  * Title: "Privacy & Display"
-  * Back button → returns to “Eu” hub (9.1)
+  * Title: "Privacidade & Exibição"
+  * Previous button → returns to previous tab
 
 * **Public Alias Section**
 
-  * Input field: "Public Alias"
-  * Validation: unique across all users (optional for MVP, but preferred)
+  * Input field: "escolha um nome de usuário"
+  * Validation: MUST be unique across all users (check against `profiles` table, column `user_alias`)
+  * Display unique validation response realtime next to the input filed, red or green message
   * Inline feedback: min/max character limits, invalid characters
 
 * **Avatar Selection Section**
 
-  * Predefined avatars grid
+  * Predefined avatars grid (there are PNG images in `/public/imgs/` folder, name pattern `avatar_1.png` to `avatar_4.png`)
   * User can select one avatar
   * Selected avatar highlighted
+  * Persist avatar file name in `profiles` table, column `avatar_url`)
 
 * **Buttons**
 
-  * Save → persists changes to Supabase `users` table
-  * Cancel → discards changes, returns to “Eu” hub
+  * Save → persists changes to Supabase `profiles` table, alias in `user_alias` and avatar in `avatar_url` columns.
 
 * **Validation & Feedback**
 
   * Inline validation for alias
-  * Toast notification on success/failure
 
 ---
 
@@ -6196,11 +6197,14 @@ The **Privacy & Display screen** allows users to manage how they appear to other
 
 1. **Fetch Data**
 
-   * Fetch current user alias and avatar from Supabase `users` table on component mount
+   * IF on /onbarding/ page:
+     ** User profile registry don't exist yet. It will be persisted in the final of the onboarding process.
+   * ELSE IF on /profiles/ page:
+     ** Fetch current user alias and avatar from Supabase `profiles` table on component mount
 
 2. **Actions**
 
-   * Edit alias inline
+   * Alias can be edited in the /profiles/ page, under this new tab. Unique validation must be enforced again. 
    * Select avatar from predefined options
    * Save → update Supabase
 
@@ -6210,7 +6214,7 @@ The **Privacy & Display screen** allows users to manage how they appear to other
 
 4. **Navigation**
 
-   * Back → “Eu” hub (9.1)
+   * Back → Previous tab
 
 5. **Responsive Layout**
 
@@ -6230,10 +6234,10 @@ The **Privacy & Display screen** allows users to manage how they appear to other
 
 * Entry points:
 
-  * From “Eu” hub (9.1)
+  * Aditional tab inside /onboarding/ and /profiles/ pages
 * Exit points:
 
-  * Back → “Eu” hub (9.1)
+  * Back → Previous tab
 
 ---
 
@@ -6241,7 +6245,7 @@ The **Privacy & Display screen** allows users to manage how they appear to other
 
 * **Supabase Table**
 
-  * `users` → `public_alias`, `avatar_id` (integer referencing predefined avatars)
+  * `profiles` → `user_alias`, `avatar_url` (filename referencing predefined avatars, example `avatar_1.png`)
 
 * **UI Components**
 
@@ -6250,59 +6254,41 @@ The **Privacy & Display screen** allows users to manage how they appear to other
 
 * **Avatar Options**
 
-  * MVP: 8–12 predefined avatar images
+  * MVP: 4 predefined avatar images
   * No user uploads
 
 ---
 
-## Suggested Implementation Snippet (client pseudo-code)
+## Suggested Implementation Snippets (client pseudo-code)
+
 
 ```tsx
-import { useState, useEffect } from "react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Input, Button, Toast } from "@shadcn/ui";
 
+//user arrays for avatars pre loading
 const predefinedAvatars = [
-  "/avatars/avatar1.png",
-  "/avatars/avatar2.png",
-  "/avatars/avatar3.png",
-  // ...more avatars
+  "/imgs/avatars/avatar1.png",
+  "/imgs/avatars/avatar2.png",
+  // ...4 total files
 ];
 
-export default function PrivacyDisplay() {
-  const supabase = useSupabaseClient();
-  const userId = supabase.auth.user().id;
 
-  const [alias, setAlias] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState(predefinedAvatars[0]);
-  const [loading, setLoading] = useState(true);
+//use states for avatar and alias changes
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, error } = await supabase.from("users").select("public_alias, avatar_id").eq("id", userId).single();
-      if (error) Toast.error("Failed to load privacy settings.");
-      else {
-        setAlias(data.public_alias || "");
-        setSelectedAvatar(predefinedAvatars[data.avatar_id] || predefinedAvatars[0]);
-      }
-      setLoading(false);
-    }
-    fetchData();
-  }, [userId]);
+/*/*Database
+- If on /onboarding page, increment the final insert to consider new fields alias and avatar in `profiles` table, columns "user_alias, avatar_url"
+- If on /profiles page, use:
+--- supabase.from("profiles").select("user_alias, avatar_url").eq("id", userId).single(); //for fetching data
+--- supabase.from("profiles").update({ user_alias: alias, avatar_url: avatarFileName }).eq("id", userId); //for updates
+*/
 
-  const handleSave = async () => {
-    const avatarIndex = predefinedAvatars.indexOf(selectedAvatar);
-    const { error } = await supabase.from("users").update({ public_alias: alias, avatar_id: avatarIndex }).eq("id", userId);
-    if (error) Toast.error("Failed to save settings.");
-    else Toast.success("Privacy settings updated!");
-  };
 
+//For UI/UX, consider something like this:
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Privacy & Display</h2>
-      <Input label="Public Alias" value={alias} onChange={e => setAlias(e.target.value)} />
+      <Input label="Public Alias" value={alias} onChange={e => setAlias(e.target.value)} /> {"<!-- MUST VALIDATE UNIQUENESS -->"}
       <div className="mt-4 grid grid-cols-4 gap-2">
         {predefinedAvatars.map((avatar, idx) => (
           <img
@@ -6327,11 +6313,10 @@ export default function PrivacyDisplay() {
 ## Acceptance Criteria
 
 * Displays current public alias and selected avatar
-* Allows editing alias and selecting avatar
+* Allows editing alias and selecting avatar //ONLY ON PROFILES PAGE, NOT ON ONBOARDING
 * Validation prevents invalid alias
 * Saves changes successfully to Supabase
 * Changes reflected immediately in leaderboard/social features
-* Navigation back to “Eu” hub works
 
 ---
 
@@ -6345,7 +6330,7 @@ export default function PrivacyDisplay() {
 
 ## Next.js App Routing & Middleware
 
-* Route: `/eu/privacy-display`
+* Route: new tab on `/onboarding` and `/profiles`
 * Authenticated session required → redirect `/login` if unauthenticated
 
 ---
@@ -6354,23 +6339,9 @@ export default function PrivacyDisplay() {
 
 ### Libraries & Helpers
 
-* `@supabase/supabase-js` → fetch/update `public_alias` and `avatar_id`
+* `@supabase/supabase-js` → insert/fetch/update `user_alias` and `avatar_url`
 * shadcn/ui → Input, Button, Toast, Grid
 * Tailwind CSS → styling
-
-### Supabase SQL Checks
-
-```sql
--- Fetch current privacy settings
-SELECT public_alias, avatar_id FROM users WHERE id = '<user_id>';
-
--- Update privacy settings
-UPDATE users
-SET public_alias = '<alias>', avatar_id = <avatar_index>
-WHERE id = '<user_id>';
-```
-
----
 
 
 

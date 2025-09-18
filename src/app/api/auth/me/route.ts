@@ -126,14 +126,15 @@ export async function PUT(_request: NextRequest) {
 
     // Parse request body
     const body = await _request.json()
+    console.log('🔍 PUT /api/auth/me - Request body:', body)
     const { name, avatar_url, ...otherProfileData } = body
+    console.log('🔍 PUT /api/auth/me - Extracted fields:', { name, avatar_url, otherProfileData })
 
-    // Update user metadata if name or avatar_url provided
-    if (name || avatar_url) {
+    // Update user metadata if name provided (avatar_url goes to profile table)
+    if (name) {
       const { error: updateError } = await supabase.auth.updateUser({
         data: {
-          name: name || user.user_metadata?.name,
-          avatar_url: avatar_url || user.user_metadata?.avatar_url
+          name: name || user.user_metadata?.name
         }
       })
 
@@ -155,6 +156,8 @@ export async function PUT(_request: NextRequest) {
       activity_level: otherProfileData.activity_level,
       food_dislikes: otherProfileData.food_dislikes,
       onboarding_completed: otherProfileData.onboarding_completed,
+      user_alias: otherProfileData.user_alias,
+      avatar_url: avatar_url, // Use avatar_url from main body, not otherProfileData
       updated_at: new Date().toISOString()
     }
 
@@ -162,6 +165,7 @@ export async function PUT(_request: NextRequest) {
     const updateData = Object.fromEntries(
       Object.entries(validProfileFields).filter(([, value]) => value !== undefined)
     )
+    console.log('🔍 PUT /api/auth/me - Update data for profiles table:', updateData)
 
     const { data: updatedProfile, error: profileError } = await supabase
       .from('profiles')
@@ -176,6 +180,8 @@ export async function PUT(_request: NextRequest) {
         error: 'Failed to update profile'
       }, { status: 400 })
     }
+
+    console.log('🔍 PUT /api/auth/me - Updated profile:', updatedProfile);
 
     return NextResponse.json({
       user: {

@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { PrivacyDisplayTab } from "@/components/profile/PrivacyDisplayTab";
 import {
   Save,
   User,
@@ -42,6 +43,7 @@ import {
   Plus,
   Trash2,
   Calendar,
+  Shield,
 } from "lucide-react";
 import {
   LineChart,
@@ -69,6 +71,8 @@ interface ProfileData {
     | "extra_active";
   food_dislikes: string;
   onboarding_completed: boolean;
+  user_alias?: string;
+  avatar_url?: string;
 }
 
 interface WeightEntry {
@@ -549,7 +553,7 @@ export default function ProfileManagePage() {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger
               value="personal"
               className="flex items-center space-x-2"
@@ -574,6 +578,13 @@ export default function ProfileManagePage() {
             <TabsTrigger value="weight" className="flex items-center space-x-2">
               <Weight className="h-4 w-4" />
               <span className="hidden sm:inline">Weight & Progress</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="privacy"
+              className="flex items-center space-x-2"
+            >
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline">Privacy & Display</span>
             </TabsTrigger>
           </TabsList>
 
@@ -1043,6 +1054,14 @@ export default function ProfileManagePage() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Privacy & Display Tab */}
+          <TabsContent value="privacy" className="space-y-6">
+            <PrivacyDisplayTab
+              initialAlias={profile.user_alias || ""}
+              initialAvatar={profile.avatar_url || ""}
+            />
           </TabsContent>
         </Tabs>
       </div>
