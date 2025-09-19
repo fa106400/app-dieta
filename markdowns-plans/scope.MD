@@ -255,13 +255,14 @@ This plan outlines the development of a complete nutrition and diet management p
 - **5.2.2 Social Elements A** ✅
   - User aliases and avatars (screen 9.10) ✅
   
-### 5.3 Advanced Features ***user story ready, just execute ready msg in npp++***
-- **5.3.1 PDF Export (Screen 7.2)**
-  - Shopping list PDF generation
-  - Print-friendly layouts
-  - Download functionality
+### 5.3 Advanced Features
+- **5.3.1 PDF Export (Screen 7.2)** ✅
+  - Shopping list PDF generation ✅
+  - Print-friendly layouts ✅
+  - Download functionality ✅
 
-- **5.3.2 Reset Password screen** ***Screen ID: 9.9, review documentation before***
+- **5.3.2 Reset Password screen** ✅
+  - Screen ID: 9.9 (from line 5910 to line 6100) ✅
 
 - **5.3.3 Data Analytics** ***ask cursor if he knows what this could be????***
   - Progress insights
@@ -5946,6 +5947,7 @@ The **Security screen** allows the user to **update their password** while logge
 
     * Current password matches Supabase credentials
     * New password meets minimum requirements (e.g., 8 characters, at least one number)
+    * New password must be different from current password
     * Confirm password matches new password
   * Toast notification on success or failure
 
@@ -5965,7 +5967,7 @@ The **Security screen** allows the user to **update their password** while logge
 
 3. **Dynamic Updates**
 
-   * After password change, optionally force re-login or refresh session
+   * After password change, refresh session
    * Ensure no other session data is affected
 
 4. **Navigation**
@@ -5983,6 +5985,7 @@ The **Security screen** allows the user to **update their password** while logge
 * Current password incorrect → show error toast
 * New password too weak → show inline validation
 * Confirm password mismatch → show inline validation
+* Confirm password equals current password → show inline validation
 * Supabase API error → show toast: “Password change failed. Try again.”
 
 ---
@@ -6028,6 +6031,10 @@ export default function ChangePassword() {
   const handleSave = async () => {
     if (newPassword !== confirmPassword) {
       return Toast.error("New password and confirmation do not match.");
+    }
+
+    if (newPassword == currentPassword) {
+      return Toast.error("New password must be different from old password.");
     }
 
     const { error } = await supabase.auth.updateUser({ password: newPassword });
