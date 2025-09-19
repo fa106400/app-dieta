@@ -24,6 +24,7 @@ interface PasswordValidation {
 
 export default function SecurityPage() {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user: _user } = useAuthContext();
   const [formData, setFormData] = useState<PasswordFormData>({
     newPassword: "",
