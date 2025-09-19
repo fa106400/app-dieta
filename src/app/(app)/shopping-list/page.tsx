@@ -18,6 +18,7 @@ import {
   Utensils,
 } from "lucide-react";
 import { toast } from "sonner";
+import { generateShoppingListPDF } from "@/lib/pdf-export";
 
 // Shopping Plan JSONB Structure Interfaces
 interface ShoppingItem {
@@ -302,15 +303,27 @@ export default function ShoppingListPage() {
               </CardTitle>
               <Button
                 onClick={async () => {
-                  // TODO: Implement PDF export (Screen 7.2)
-                  toast.info("PDF export coming soon!");
-
-                  // Trigger badge validation for shopping export
                   try {
-                    await triggerBadgeValidation("shopping_exported");
-                  } catch (badgeError) {
-                    console.error("Error validating badges:", badgeError);
-                    // Don't fail the main operation if badge validation fails
+                    // Generate PDF with current shopping list data
+                    generateShoppingListPDF({
+                      diet: currentDiet,
+                      selectedPeriod,
+                      calculateQuantity,
+                      converteMedidas,
+                    });
+
+                    toast.success("PDF exported successfully!");
+
+                    // Trigger badge validation for shopping export
+                    try {
+                      await triggerBadgeValidation("shopping_exported");
+                    } catch (badgeError) {
+                      console.error("Error validating badges:", badgeError);
+                      // Don't fail the main operation if badge validation fails
+                    }
+                  } catch (error) {
+                    console.error("Error generating PDF:", error);
+                    toast.error("Failed to generate PDF. Please try again.");
                   }
                 }}
                 className="flex items-center space-x-2"

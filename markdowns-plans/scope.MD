@@ -255,26 +255,28 @@ This plan outlines the development of a complete nutrition and diet management p
 - **5.2.2 Social Elements A** ✅
   - User aliases and avatars (screen 9.10) ✅
   
-### 5.3 Advanced Features
+### 5.3 Advanced Features ***user story ready, just execute ready msg in npp++***
 - **5.3.1 PDF Export (Screen 7.2)**
   - Shopping list PDF generation
   - Print-friendly layouts
   - Download functionality
 
-- **5.3.2 Data Analytics**
+- **5.3.2 Reset Password screen** ***Screen ID: 9.9, review documentation before***
+
+- **5.3.3 Data Analytics** ***ask cursor if he knows what this could be????***
   - Progress insights
   - Trend analysis
   - Goal tracking
   - Performance metrics
 
----
+--- ***add here the new styles modification? sticky footer menu, etc???*** ***also, review tickets in kanban***
 
 
 ## Phase 6: Subscription & Payment Integration (Weeks 13-14)
 
 ### 6.1 Stripe Integration (Free Tier)
 - **Payment Setup**
-  - Stripe account configuration
+  - Stripe account configuration ***research about discount cupons***
   - Product and price creation
   - Webhook endpoint setup
   - Test mode configuration
