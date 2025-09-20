@@ -42,7 +42,7 @@ function LoginPageContent() {
         "Erro ao entrar. Por favor, verifique suas credenciais.";
       const errorMessage =
         error instanceof Error ? error.message : humanReadableError;
-      // setError(errorMessage);
+      setError(errorMessage);
       // console.error("Erro ao entrar:", errorMessage);
       toast.error(humanReadableError);
     } finally {
