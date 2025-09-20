@@ -264,14 +264,31 @@ This plan outlines the development of a complete nutrition and diet management p
 - **5.3.2 Reset Password screen** ✅
   - Screen ID: 9.9 (from line 5910 to line 6100) ✅
 
-- **5.3.3 Data Analytics** ***ask cursor if he knows what this could be????***
-  - Progress insights
-  - Trend analysis
-  - Goal tracking
-  - Performance metrics
 
---- ***add here the new styles modification? sticky footer menu, etc???*** ***also, review tickets in kanban***
+## Phase 5.5: Styling
 
+### 5.5.1 Menu Refactoring
+- **Sticky Footer Menu on Mobile**
+  - Create sticky footer menu for mobile only (hide side menu button)
+  - Logo on Header and EXP outside header menu
+
+### 5.5.2 Translation
+- **Translate every page and service classes to pt-BR**
+
+### 5.5.3 Visual Identity
+- **Logo**
+- **Nunito font**
+- **App colors**
+- **App icons**
+
+### 5.5.y Parking lot items on Kanban
+- **Basics cards**
+- **Login cards**
+- **Ranking cards**
+- **Mkt cards**
+- **Diet cards**
+- **PDF cards**
+- **AI Diet matching cards**
 
 ## Phase 6: Subscription & Payment Integration (Weeks 13-14)
 
@@ -449,6 +466,14 @@ This plan outlines the development of a complete nutrition and diet management p
 - **White-label solutions**
 - **Advanced reporting**
 - **API for third-party integrations**
+
+(Moved here - progress charts and analytics for users tracking there own progress)
+### Phase 5:
+- **5.3.3 Data Analytics**
+  - Progress insights
+  - Trend analysis
+  - Goal tracking
+  - Performance metrics
 
 ---
 
