@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 function SignupPageContent() {
   const [name, setName] = useState("");
@@ -35,12 +36,16 @@ function SignupPageContent() {
     console.log("Form submitted!", { email, name, password: "***" });
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match. Please try again.");
+      const errorMsg = "As senhas não coincidem. Por favor, tente novamente.";
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+      const errorMsg = "A senha deve ter pelo menos 6 caracteres.";
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
@@ -53,9 +58,9 @@ function SignupPageContent() {
       console.log("Calling signUp function...");
       await signUp({ email, password, name });
       console.log("Signup successful!");
-      setSuccess(
-        "Account created successfully! Please check your email to verify your account."
-      );
+      const successMsg = "Conta criada com sucesso!";
+      setSuccess(successMsg);
+      toast.success(successMsg);
 
       // Clear form
       setName("");
@@ -68,12 +73,13 @@ function SignupPageContent() {
         router.push("/login");
       }, 3000);
     } catch (error: unknown) {
-      console.error("Signup error:", error);
+      console.error("Erro ao criar conta:", error);
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to create account. Please try again.";
+          : "Falha ao criar conta. Por favor, tente novamente.";
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       console.log("Setting loading to false");
       setIsLoading(false);
@@ -84,29 +90,28 @@ function SignupPageContent() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Join us and start your health journey today
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">[LOGO]</h1>
+          {/* <p className="mt-2 text-sm text-gray-600">
+            Junte-se a nós e comece sua jornada de saúde hoje
+          </p>*/}
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">Sign Up</CardTitle>
+            <CardTitle className="text-center">Criar Conta</CardTitle>
             <CardDescription className="text-center">
-              Fill in your details to create your account
+              Preencha seus detalhes para criar sua conta
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Nome Completo</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Enter your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -116,13 +121,12 @@ function SignupPageContent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">Endereço de Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -132,13 +136,12 @@ function SignupPageContent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -157,18 +160,17 @@ function SignupPageContent() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Password must be at least 6 characters long
+                  A senha deve ter pelo menos 6 caracteres
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
@@ -201,18 +203,18 @@ function SignupPageContent() {
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating Account..." : "Create Account"}
+                {isLoading ? "Criando Conta..." : "Criar Conta"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <div className="text-sm text-gray-600">
-                Already have an account?{" "}
+                Já tem uma conta?{" "}
                 <Link
                   href="/login"
                   className="text-blue-600 hover:text-blue-500 font-medium"
                 >
-                  Sign in
+                  Entrar
                 </Link>
               </div>
             </div>

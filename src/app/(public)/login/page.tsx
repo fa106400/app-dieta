@@ -13,9 +13,10 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  // CardTitle,
 } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 function LoginPageContent() {
   const [email, setEmail] = useState("");
@@ -33,14 +34,17 @@ function LoginPageContent() {
 
     try {
       await signIn({ email, password });
+      toast.success("Login realizado com sucesso!");
       // Redirect to home page after successful login
       router.push("/home");
     } catch (error: unknown) {
+      const humanReadableError =
+        "Erro ao entrar. Por favor, verifique suas credenciais.";
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to sign in. Please check your credentials.";
-      setError(errorMessage);
+        error instanceof Error ? error.message : humanReadableError;
+      // setError(errorMessage);
+      // console.error("Erro ao entrar:", errorMessage);
+      toast.error(humanReadableError);
     } finally {
       setIsLoading(false);
     }
@@ -50,29 +54,25 @@ function LoginPageContent() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account to continue
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">[LOGO]</h1>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">Sign In</CardTitle>
+            {/* <CardTitle className="text-center">Acessar sua conta</CardTitle> */}
             <CardDescription className="text-center">
-              Enter your credentials to access your account
+              Digite suas credenciais para acessar sua conta
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">Endereço de Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -82,13 +82,12 @@ function LoginPageContent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -115,7 +114,7 @@ function LoginPageContent() {
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing In..." : "Sign In"}
+                {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
 
@@ -125,17 +124,17 @@ function LoginPageContent() {
                   href="/forgot-password"
                   className="text-sm text-blue-600 hover:text-blue-500"
                 >
-                  Forgot your password?
+                  Esqueceu sua senha?
                 </Link>
               </div>
 
               <div className="text-sm text-gray-600">
-                Don&apos;t have an account?{" "}
+                Não tem uma conta?{" "}
                 <Link
                   href="/signup"
                   className="text-blue-600 hover:text-blue-500 font-medium"
                 >
-                  Sign up
+                  Criar conta
                 </Link>
               </div>
             </div>
