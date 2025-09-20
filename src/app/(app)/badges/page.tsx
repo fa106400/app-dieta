@@ -62,10 +62,14 @@ export default function BadgesPage() {
   const [badges, setBadges] = useState<BadgeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("earned");
+  const [activeTab, setActiveTab] = useState("recebidas");
+
+  // Stats that remain constant regardless of active tab
+  const [totalBadgesCount, setTotalBadgesCount] = useState(0);
+  const [earnedBadgesCount, setEarnedBadgesCount] = useState(0);
 
   // Fetch badges
-  const fetchBadges = async (type: "earned" | "all" = "all") => {
+  const fetchBadges = async (type: "recebidas" | "todas" = "todas") => {
     if (!user) return;
 
     try {
@@ -74,14 +78,25 @@ export default function BadgesPage() {
 
       const response = await fetch(`/api/badges?type=${type}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch badges");
+        throw new Error("Falha ao carregar badges");
       }
 
       const data = await response.json();
       setBadges(data.badges || []);
+
+      // Update stats if this is the first load or if we're fetching all badges
+      if (type === "todas") {
+        setTotalBadgesCount(data.badges?.length || 0);
+        const earnedCount =
+          data.badges?.filter(
+            (badge: BadgeData) =>
+              badge.user_badges && badge.user_badges.length > 0
+          ).length || 0;
+        setEarnedBadgesCount(earnedCount);
+      }
     } catch (err) {
-      console.error("Error fetching badges:", err);
-      setError("Failed to load badges");
+      console.error("Falha ao carregar badges:", err);
+      setError("Falha ao carregar badges");
     } finally {
       setLoading(false);
     }
@@ -90,7 +105,10 @@ export default function BadgesPage() {
   // Initialize data
   useEffect(() => {
     if (user) {
-      fetchBadges("earned"); // Start with earned badges since that's the default tab
+      // First fetch all badges to get correct stats, then switch to earned badges view
+      fetchBadges("todas").then(() => {
+        fetchBadges("recebidas");
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -98,7 +116,7 @@ export default function BadgesPage() {
   // Handle tab change
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    fetchBadges(value as "earned" | "all");
+    fetchBadges(value as "recebidas" | "todas");
   };
 
   // Get badge icon
@@ -138,7 +156,7 @@ export default function BadgesPage() {
 
   // Get criteria description
   const getCriteriaDescription = (criteria: BadgeCriteria) => {
-    if (!criteria) return "No criteria available";
+    if (!criteria) return "Nenhum critério disponível";
 
     switch (criteria.event) {
       case "diet_chosen":
@@ -175,7 +193,7 @@ export default function BadgesPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Loading badges...</p>
+              <p className="text-gray-600">Carregando medalhas...</p>
             </div>
           </div>
         </div>
@@ -191,11 +209,11 @@ export default function BadgesPage() {
             <CardContent className="p-8 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">
-                Error Loading Badges
+                Falha ao carregar medalhas
               </h2>
               <p className="text-gray-600 mb-4">{error}</p>
-              <Button onClick={() => fetchBadges("all")} variant="outline">
-                Try Again
+              <Button onClick={() => fetchBadges("todas")} variant="outline">
+                Tentar novamente
               </Button>
             </CardContent>
           </Card>
@@ -214,9 +232,12 @@ export default function BadgesPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Badges</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Minhas Medalhas
+          </h1>
           <p className="text-gray-600">
-            Track your achievements and unlock new badges as you progress
+            Acompanhe suas conquistas e desbloqueie novas medalhas à medida que
+            avança
           </p>
         </div>
 
@@ -227,8 +248,8 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <Trophy className="h-8 w-8 text-yellow-500" />
                 <div>
-                  <p className="text-sm text-gray-600">Earned Badges</p>
-                  <p className="text-2xl font-bold">{earnedBadges.length}</p>
+                  <p className="text-sm text-gray-600">Medalhas Recebidas</p>
+                  <p className="text-2xl font-bold">{earnedBadgesCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -238,8 +259,8 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <Target className="h-8 w-8 text-blue-500" />
                 <div>
-                  <p className="text-sm text-gray-600">Total Badges</p>
-                  <p className="text-2xl font-bold">{allBadges.length}</p>
+                  <p className="text-sm text-gray-600">Total de Medalhas</p>
+                  <p className="text-2xl font-bold">{totalBadgesCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -249,12 +270,10 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <TrendingUp className="h-8 w-8 text-green-500" />
                 <div>
-                  <p className="text-sm text-gray-600">Progress</p>
+                  <p className="text-sm text-gray-600">Progresso</p>
                   <p className="text-2xl font-bold">
-                    {allBadges.length > 0
-                      ? Math.round(
-                          (earnedBadges.length / allBadges.length) * 100
-                        )
+                    {totalBadgesCount > 0
+                      ? Math.round((earnedBadgesCount / totalBadgesCount) * 100)
                       : 0}
                     %
                   </p>
@@ -273,11 +292,11 @@ export default function BadgesPage() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="earned" className="flex items-center space-x-2">
               <Trophy className="h-4 w-4" />
-              <span>Earned Badges</span>
+              <span>Medalhas Recebidas</span>
             </TabsTrigger>
             <TabsTrigger value="all" className="flex items-center space-x-2">
               <Award className="h-4 w-4" />
-              <span>All Badges</span>
+              <span>Todas as Medalhas</span>
             </TabsTrigger>
           </TabsList>
 
@@ -287,23 +306,25 @@ export default function BadgesPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Badges Yet</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Nenhuma Medalha Ainda
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Start your journey by choosing a diet, tracking your weight,
-                    or exploring the app!
+                    Comece sua jornada escolhendo uma dieta, acompanhando seu
+                    peso, ou explorando o app!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center">
                     <Button
                       variant="outline"
                       onClick={() => (window.location.href = "/diets")}
                     >
-                      Browse Diets
+                      Explorar Planos
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => (window.location.href = "/profile")}
                     >
-                      Update Profile
+                      Atualizar Perfil
                     </Button>
                   </div>
                 </CardContent>
@@ -322,7 +343,7 @@ export default function BadgesPage() {
                             className="bg-yellow-100 text-yellow-800"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
-                            Earned
+                            Recebida
                           </Badge>
                         </div>
                         <CardTitle className={`text-lg ${status.textColor}`}>
@@ -337,11 +358,11 @@ export default function BadgesPage() {
                           <div className="flex items-center text-sm text-gray-600">
                             <Calendar className="h-4 w-4 mr-2" />
                             <span>
-                              Earned on {formatDate(status.awardedAt!)}
+                              Recebida em {formatDate(status.awardedAt!)}
                             </span>
                           </div>
                           <div className="text-sm text-gray-600">
-                            <strong>Criteria:</strong>{" "}
+                            <strong>Critério:</strong>{" "}
                             {getCriteriaDescription(badge.criteria)}
                           </div>
                         </div>
@@ -369,7 +390,7 @@ export default function BadgesPage() {
                             className="bg-yellow-100 text-yellow-800"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
-                            Earned
+                            Recebida
                           </Badge>
                         ) : (
                           <Badge
@@ -377,7 +398,7 @@ export default function BadgesPage() {
                             className="bg-gray-100 text-gray-600"
                           >
                             <Lock className="h-3 w-3 mr-1" />
-                            Locked
+                            Bloqueada
                           </Badge>
                         )}
                       </div>
@@ -394,12 +415,12 @@ export default function BadgesPage() {
                           <div className="flex items-center text-sm text-gray-600">
                             <Calendar className="h-4 w-4 mr-2" />
                             <span>
-                              Earned on {formatDate(status.awardedAt)}
+                              Recebida em {formatDate(status.awardedAt)}
                             </span>
                           </div>
                         )}
                         <div className="text-sm text-gray-600">
-                          <strong>Criteria:</strong>{" "}
+                          <strong>Critério:</strong>{" "}
                           {getCriteriaDescription(badge.criteria)}
                         </div>
                       </div>
