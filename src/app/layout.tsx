@@ -15,9 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Diet App - Your Personal Nutrition Assistant",
-  description:
-    "AI-powered diet recommendations and meal planning for your health goals",
+  title: "Nutritin",
+  description: "Planos nutricionais com IA para atingir seus objetivos",
 };
 
 export default function RootLayout({
