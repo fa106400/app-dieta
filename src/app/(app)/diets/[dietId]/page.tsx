@@ -64,7 +64,7 @@ export default function DietDetailPage() {
     if (hasFetchedDiet.current) return;
 
     if (!dietId || !supabase) {
-      setError("Invalid diet ID or database connection not available");
+      setError("Erro ao carregar dieta. Tente novamente.");
       setLoading(false);
       return;
     }
@@ -153,7 +153,7 @@ export default function DietDetailPage() {
       setDiet(dietDetail);
     } catch (err) {
       console.error("Error fetching diet:", err);
-      setError("Could not load diet. Try again later.");
+      setError("Falha ao carregar dieta. Tente novamente.");
       hasFetchedDiet.current = false; // Reset on error to allow retry
     } finally {
       setLoading(false);
@@ -331,7 +331,7 @@ export default function DietDetailPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">Loading diet details...</span>
+          <span className="text-center">Carregando detalhes da dieta...</span>
         </div>
       </div>
     );
@@ -343,8 +343,12 @@ export default function DietDetailPage() {
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Unable to Load Diet</h3>
-            <p className="text-gray-600 mb-4">{error || "Diet not found"}</p>
+            <h3 className="text-lg font-semibold mb-2">
+              Falha ao carregar dieta
+            </h3>
+            <p className="text-gray-600 mb-4">
+              {error || "Dieta não encontrada"}
+            </p>
             <Button
               onClick={() => {
                 hasFetchedDiet.current = false;
@@ -352,7 +356,7 @@ export default function DietDetailPage() {
               }}
               variant="outline"
             >
-              Try Again
+              Tentar novamente
             </Button>
           </CardContent>
         </Card>
@@ -372,7 +376,7 @@ export default function DietDetailPage() {
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back</span>
+            <span>Voltar</span>
           </Button>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
@@ -415,11 +419,11 @@ export default function DietDetailPage() {
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Target className="h-5 w-5 text-blue-500" />
               <span className="text-sm font-medium text-gray-600">
-                Category
+                Categoria
               </span>
             </div>
             <Badge variant="secondary">
-              {diet.category?.replace("_", " ").toUpperCase() || "Unknown"}
+              {diet.category?.replace("_", " ").toUpperCase() || "Desconhecido"}
             </Badge>
           </CardContent>
         </Card>
@@ -429,11 +433,11 @@ export default function DietDetailPage() {
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Users className="h-5 w-5 text-green-500" />
               <span className="text-sm font-medium text-gray-600">
-                Difficulty
+                Dificuldade
               </span>
             </div>
             <Badge variant="secondary">
-              {diet.difficulty?.toUpperCase() || "Unknown"}
+              {diet.difficulty?.toUpperCase() || "Desconhecido"}
             </Badge>
           </CardContent>
         </Card>
@@ -442,12 +446,10 @@ export default function DietDetailPage() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Calendar className="h-5 w-5 text-purple-500" />
-              <span className="text-sm font-medium text-gray-600">
-                Duration
-              </span>
+              <span className="text-sm font-medium text-gray-600">Duração</span>
             </div>
             <div className="text-lg font-semibold">
-              {diet.duration_weeks || 0} weeks
+              {diet.duration_weeks || 0} semana(s)
             </div>
           </CardContent>
         </Card>
@@ -457,7 +459,7 @@ export default function DietDetailPage() {
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Star className="h-5 w-5 text-yellow-500" />
               <span className="text-sm font-medium text-gray-600">
-                Popularity
+                Popularidade
               </span>
             </div>
             <div className="text-lg font-semibold">
@@ -473,14 +475,14 @@ export default function DietDetailPage() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Flame className="h-5 w-5" />
-              <span>Diet Information</span>
+              <span>Informações da Dieta</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center space-y-2">
                 <div className="text-2xl font-bold text-blue-600">
-                  {diet.calories_total} cal
+                  {diet.calories_total} kcal
                 </div>
               </div>
               {diet.macros && (
@@ -488,11 +490,11 @@ export default function DietDetailPage() {
                   <div className="text-sm text-gray-600">Macros</div>
                   <div className="text-sm">
                     <div>
-                      Protein:{" "}
+                      Proteína:{" "}
                       {(diet.macros as Json & { proteina?: number })?.proteina}g
                     </div>
                     <div>
-                      Carbs:{" "}
+                      Carboidrato:{" "}
                       {
                         (diet.macros as Json & { carboidrato?: number })
                           ?.carboidrato
@@ -500,7 +502,7 @@ export default function DietDetailPage() {
                       g
                     </div>
                     <div>
-                      Fat:{" "}
+                      Gordura:{" "}
                       {(diet.macros as Json & { gordura?: number })?.gordura}g
                     </div>
                   </div>
@@ -517,7 +519,7 @@ export default function DietDetailPage() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Star className="h-5 w-5 text-yellow-500" />
-              <span>Why this was recommended</span>
+              <span>Porque esta dieta foi recomendada</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -534,7 +536,7 @@ export default function DietDetailPage() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Utensils className="h-5 w-5" />
-              <span>Weekly Meal Plan</span>
+              <span>Plano de Refeições</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -587,7 +589,7 @@ export default function DietDetailPage() {
                     >
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">
-                          Day {dayIndex + 1}
+                          Dia {dayIndex + 1}
                         </CardTitle>
                         {expandedDays.has(dayIndex) ? (
                           <ChevronDown className="h-5 w-5" />
@@ -609,7 +611,7 @@ export default function DietDetailPage() {
                                 <div>
                                   <h4 className="font-medium">{meal.name}</h4>
                                   <div className="text-sm text-gray-600">
-                                    {meal.calories} calories
+                                    {meal.calories} kcal
                                   </div>
                                 </div>
                               </div>
@@ -657,7 +659,7 @@ export default function DietDetailPage() {
                                           }
                                           className="ml-2"
                                         >
-                                          Swap
+                                          Trocar
                                         </Button>
                                       )}
                                     </div>
@@ -690,13 +692,13 @@ export default function DietDetailPage() {
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 {diet.is_currently_active
-                  ? "Unfollowing..."
-                  : "Setting as Active..."}
+                  ? "Deixando de seguir..."
+                  : "Definindo como ativo..."}
               </>
             ) : diet.is_currently_active ? (
-              "Unfollow"
+              "Deixar de seguir"
             ) : (
-              "Follow Now"
+              "Seguir agora"
             )}
           </Button>
         </div>
@@ -709,7 +711,7 @@ export default function DietDetailPage() {
             className="px-8"
             onClick={() => router.push("/shopping-list")}
           >
-            Shopping List
+            Lista de Compras
           </Button>
         </div>
       </div>

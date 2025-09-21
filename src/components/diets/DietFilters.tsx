@@ -30,11 +30,11 @@ const difficulties = [
   { value: "advanced", label: "Advanced" },
 ];
 
-const durations = [
+/*const durations = [
   { value: "short", label: "Short-term (≤4 weeks)" },
   { value: "medium", label: "Medium-term (5-12 weeks)" },
   { value: "long", label: "Long-term (>12 weeks)" },
-];
+];*/
 
 const goals = [
   { value: "lose_weight", label: "Weight Loss" },
@@ -44,7 +44,7 @@ const goals = [
 ];
 
 export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleCategoryChange = (category: string, checked: boolean) => {
     const newCategories = checked
@@ -62,13 +62,13 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
     onChange({ ...filters, difficulty: newDifficulties });
   };
 
-  const handleDurationChange = (duration: string, checked: boolean) => {
+  /*const handleDurationChange = (duration: string, checked: boolean) => {
     const newDurations = checked
       ? [...filters.duration, duration]
       : filters.duration.filter((d) => d !== duration);
 
     onChange({ ...filters, duration: newDurations });
-  };
+  };*/
 
   const handleGoalChange = (goal: string, checked: boolean) => {
     const newGoals = checked
@@ -81,13 +81,13 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
   const hasActiveFilters =
     filters.category.length > 0 ||
     filters.difficulty.length > 0 ||
-    filters.duration.length > 0 ||
+    // filters.duration.length > 0 ||
     filters.goal.length > 0;
 
   const activeFilterCount =
     filters.category.length +
     filters.difficulty.length +
-    filters.duration.length +
+    // filters.duration.length +
     filters.goal.length;
 
   return (
@@ -177,7 +177,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
             </div>
           </div>
 
-          {/* Duration Filter */}
+          {/* Duration Filter 
           <div className="space-y-3">
             <Label className="text-sm font-medium">Duration</Label>
             <div className="space-y-2">
@@ -202,7 +202,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </div>*/}
 
           {/* Goal Filter */}
           <div className="space-y-3">
@@ -266,7 +266,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                   />
                 </Badge>
               ))}
-              {filters.duration.map((duration) => (
+              {/*filters.duration.map((duration) => (
                 <Badge
                   key={duration}
                   variant="secondary"
@@ -280,7 +280,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                     onClick={() => handleDurationChange(duration, false)}
                   />
                 </Badge>
-              ))}
+              ))*/}
               {filters.goal.map((goal) => (
                 <Badge
                   key={goal}

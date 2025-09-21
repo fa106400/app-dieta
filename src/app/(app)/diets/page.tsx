@@ -14,11 +14,11 @@ import { DietSearch } from "@/components/diets/DietSearch";
 
 import {
   Filter,
-  Grid3X3,
-  List,
+  // Grid3X3,
+  // List,
   Loader2,
   AlertCircle,
-  Sparkles,
+  // Sparkles,
 } from "lucide-react";
 
 export interface Diet {
@@ -48,7 +48,6 @@ export interface Diet {
 export interface DietFilters {
   category: string[];
   difficulty: string[];
-  duration: string[];
   goal: string[];
 }
 
@@ -69,11 +68,11 @@ export default function DietCatalogPage() {
   const [filters, setFilters] = useState<DietFilters>({
     category: [],
     difficulty: [],
-    duration: [],
+    // duration: [],
     goal: [],
   });
   const [sortBy, setSortBy] = useState<SortOption>("popularity");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  // const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
   // Refs to prevent unnecessary re-fetches
@@ -86,7 +85,7 @@ export default function DietCatalogPage() {
     if (hasFetchedDiets.current) return;
 
     if (!supabase) {
-      setError("Database connection not available");
+      setError("Erro ao conectar ao banco de dados. Tente novamente.");
       setLoading(false);
       return;
     }
@@ -120,8 +119,8 @@ export default function DietCatalogPage() {
 
       setDiets(data || []);
     } catch (err) {
-      console.error("Error fetching diets:", err);
-      setError("Unable to load diets. Please try again.");
+      console.error("Erro ao buscar planos:", err);
+      setError("Não foi possível carregar os planos. Tente novamente.");
       hasFetchedDiets.current = false; // Reset on error to allow retry
     } finally {
       setLoading(false);
@@ -236,7 +235,7 @@ export default function DietCatalogPage() {
       );
     }
 
-    if (filters.duration.length > 0) {
+    /*if (filters.duration.length > 0) {
       filtered = filtered.filter((diet) => {
         const weeks = diet.duration_weeks;
         if (!weeks) return false;
@@ -253,7 +252,7 @@ export default function DietCatalogPage() {
           }
         });
       });
-    }
+    }*/
 
     // Apply sorting
     filtered.sort((a, b) => {
@@ -318,7 +317,7 @@ export default function DietCatalogPage() {
     setFilters({
       category: [],
       difficulty: [],
-      duration: [],
+      // duration: [],
       goal: [],
     });
     setSearchQuery("");
@@ -328,7 +327,7 @@ export default function DietCatalogPage() {
     searchQuery.trim() ||
     filters.category.length > 0 ||
     filters.difficulty.length > 0 ||
-    filters.duration.length > 0 ||
+    // filters.duration.length > 0 ||
     filters.goal.length > 0;
 
   if (loading) {
@@ -336,7 +335,7 @@ export default function DietCatalogPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">Loading diets...</span>
+          <span className="text-center">Carregando planos...</span>
         </div>
       </div>
     );
@@ -348,7 +347,9 @@ export default function DietCatalogPage() {
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Unable to Load Diets</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              Não foi possível carregar os planos.
+            </h3>
             <p className="text-gray-600 mb-4">{error}</p>
             <Button
               onClick={() => {
@@ -357,7 +358,7 @@ export default function DietCatalogPage() {
               }}
               variant="outline"
             >
-              Try Again
+              Tentar novamente
             </Button>
           </CardContent>
         </Card>
@@ -370,9 +371,11 @@ export default function DietCatalogPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Diet Catalog</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Catálogo de Planos
+          </h1>
           <p className="text-gray-600 mt-1">
-            Discover the perfect diet plan for your health goals
+            Descubra o plano perfeito para seus objetivos de saúde
           </p>
         </div>
 
@@ -384,18 +387,18 @@ export default function DietCatalogPage() {
             className="flex items-center space-x-2"
           >
             <Filter className="h-4 w-4" />
-            <span>Filters</span>
+            <span>Filtros</span>
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-1">
                 {filters.category.length +
                   filters.difficulty.length +
-                  filters.duration.length +
+                  // filters.duration.length +
                   filters.goal.length}
               </Badge>
             )}
           </Button>
 
-          <div className="flex items-center border rounded-md">
+          {/*<div className="flex items-center border rounded-md">
             <Button
               variant={viewMode === "grid" ? "default" : "ghost"}
               size="sm"
@@ -412,7 +415,7 @@ export default function DietCatalogPage() {
             >
               <List className="h-4 w-4" />
             </Button>
-          </div>
+          </div>*/}
         </div>
       </div>
 
@@ -423,7 +426,7 @@ export default function DietCatalogPage() {
             <DietSearch
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder="Search diets by name, description, or tags..."
+              placeholder="Buscar planos por nome, descrição ou tags..."
             />
           </div>
           <DietSorting value={sortBy} onChange={setSortBy} />
@@ -438,7 +441,7 @@ export default function DietCatalogPage() {
         )}
       </div>
 
-      {/* Recommended Diets Section */}
+      {/* Recommended Diets Section }
       {recommendedDiets.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
@@ -447,40 +450,34 @@ export default function DietCatalogPage() {
               Recommended for You
             </h2>
           </div>
-          <div
-            className={`grid gap-4 ${
-              viewMode === "grid"
-                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                : "grid-cols-1"
-            }`}
-          >
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {recommendedDiets.map((diet) => (
               <DietCard
                 key={diet.id}
                 diet={diet}
-                viewMode={viewMode}
+                viewMode={"grid"}
                 isRecommended={true}
               />
             ))}
           </div>
         </div>
-      )}
+      )*/}
 
-      {/* All Diets Section */}
+      {/* All Diets Section - already sorted by recommendations first */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900">
-            All Diets
+            Todos os Planos
             {hasActiveFilters && (
               <span className="text-sm font-normal text-gray-500 ml-2">
-                ({filteredDiets.length} of {diets.length} diets)
+                ({filteredDiets.length} de {diets.length} planos)
               </span>
             )}
           </h2>
 
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters}>
-              Clear all filters
+              Limpar todos os filtros
             </Button>
           )}
         </div>
@@ -489,32 +486,28 @@ export default function DietCatalogPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No diets found</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Nenhum plano encontrado
+              </h3>
               <p className="text-gray-600 mb-4">
                 {hasActiveFilters
-                  ? "Try changing your filters or search terms."
-                  : "No diets are available at the moment."}
+                  ? "Tente alterar seus filtros ou termos de busca."
+                  : "Nenhum plano está disponível no momento."}
               </p>
               {hasActiveFilters && (
                 <Button onClick={clearFilters} variant="outline">
-                  Clear filters
+                  Limpar filtros
                 </Button>
               )}
             </CardContent>
           </Card>
         ) : (
-          <div
-            className={`grid gap-4 ${
-              viewMode === "grid"
-                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                : "grid-cols-1"
-            }`}
-          >
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredDiets.map((diet) => (
               <DietCard
                 key={diet.id}
                 diet={diet}
-                viewMode={viewMode}
+                viewMode={"grid"}
                 isRecommended={!!diet.is_recommended}
               />
             ))}
