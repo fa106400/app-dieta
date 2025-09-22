@@ -61,7 +61,7 @@ export default function ShoppingListPage() {
     if (!user) return;
 
     if (!supabase) {
-      setError("Database connection not available");
+      setError("Erro ao conectar ao banco de dados. Tente novamente.");
       setLoading(false);
       return;
     }

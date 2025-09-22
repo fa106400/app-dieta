@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     
     if (!supabase) {
       return NextResponse.json(
-        { error: "Database connection not available" },
+        { error: "Erro ao conectar ao banco de dados. Tente novamente." },
         { status: 500 }
       );
     }

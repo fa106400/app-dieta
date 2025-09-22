@@ -54,7 +54,7 @@ export default function MyWeekPage() {
     if (hasFetchedDiet.current || !user) return;
 
     if (!supabase) {
-      setError("Database connection not available");
+      setError("Erro ao conectar ao banco de dados. Tente novamente.");
       setLoading(false);
       return;
     }
@@ -128,7 +128,7 @@ export default function MyWeekPage() {
       }
     } catch (err) {
       console.error("Error fetching current diet:", err);
-      setError("Unable to load your current diet. Please try again.");
+      setError("Não foi possível carregar o plano. Tente novamente.");
       hasFetchedDiet.current = false; // Reset on error to allow retry
     } finally {
       setLoading(false);
@@ -215,8 +215,8 @@ export default function MyWeekPage() {
             <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Nenhum Plano Ativo</h3>
             <p className="text-gray-600 mb-6">
-              Você não tem um plano de dieta ativo ainda. Escolha um plano
-              nutricional para começar sua jornada!
+              Você não tem um plano ativo ainda. Escolha um para começar sua
+              jornada!
             </p>
             <Button
               onClick={() => (window.location.href = "/diets")}

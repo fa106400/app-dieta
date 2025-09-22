@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     const supabase = createRouteSupabaseClient(request, res);
     
     if (!supabase) {
-      return NextResponse.json({ error: "Database connection not available" }, { status: 500 });
+      return NextResponse.json({ error: "Erro ao conectar ao banco de dados. Tente novamente." }, { status: 500 });
     }
     
     // Get the current user
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     const supabase = createRouteSupabaseClient(request, res);
     
     if (!supabase) {
-      return NextResponse.json({ error: "Database connection not available" }, { status: 500 });
+      return NextResponse.json({ error: "Erro ao conectar ao banco de dados. Tente novamente." }, { status: 500 });
     }
     
     // Get the current user
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest) {
     const supabase = createRouteSupabaseClient(request, res);
     
     if (!supabase) {
-      return NextResponse.json({ error: "Database connection not available" }, { status: 500 });
+      return NextResponse.json({ error: "Erro ao conectar ao banco de dados. Tente novamente." }, { status: 500 });
     }
     
     // Get the current user
@@ -182,7 +182,7 @@ export async function DELETE(request: NextRequest) {
     const supabase = createRouteSupabaseClient(request, res);
     
     if (!supabase) {
-      return NextResponse.json({ error: "Database connection not available" }, { status: 500 });
+      return NextResponse.json({ error: "Erro ao conectar ao banco de dados. Tente novamente." }, { status: 500 });
     }
     
     // Get the current user
