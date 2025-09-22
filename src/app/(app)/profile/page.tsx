@@ -132,10 +132,10 @@ const DIETARY_PREFERENCES = [
 ];
 
 const GOALS = [
-  { value: "lose_weight", label: "Lose Weight" },
-  { value: "maintain", label: "Maintain Weight" },
-  { value: "gain_muscle", label: "Gain Muscle" },
-  { value: "health", label: "General Health" },
+  { value: "lose_weight", label: "Perder peso" },
+  { value: "maintain", label: "Manter peso" },
+  { value: "gain_muscle", label: "Ganhar massa" },
+  { value: "health", label: "Saúde e bem-estar" },
 ];
 
 export default function ProfileManagePage() {

@@ -9,10 +9,13 @@ import { ExperienceService } from "@/lib/experience-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent /*CardHeader, CardTitle */,
+} from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
+// import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -36,59 +39,61 @@ interface OnboardingData {
     | "moderately_active"
     | "very_active"
     | "extra_active";
-  food_dislikes: string;
+  //food_dislikes: string; //nao vou mais usar dado que tem swap na diet details
   user_alias: string;
   avatar_url: string;
 }
 
 const ACTIVITY_LEVELS = {
   sedentary: {
-    label: "Sedentary",
+    label: "Sedentário",
     description:
-      "Little to no exercise and a job that involves sitting most of the day.",
+      "Pouco ou nenhum exercício e um trabalho que envolve sentar a maior parte do dia.",
     examples:
-      "Office workers, receptionists, drivers, or individuals who spend most of their day in front of a computer with minimal movement",
+      "Trabalho de escritório, recepcionistas, motoristas ou indivíduos que passam a maior parte do dia em frente ao computador com pouco movimento",
     multiplier: "BMR × 1.375",
   },
   lightly_active: {
-    label: "Lightly Active",
-    description: "Light exercise or sports 1-3 days per week.",
+    label: "Levemente Ativo",
+    description: "Pouco exercício ou esportes 1-3 vezes por semana.",
     examples:
-      "A sedentary job with light exercise, such as a short walk or a light workout a few times a week.",
+      "Um trabalho sedentário com pouco exercício, como uma caminhada curta ou um treino leve algumas vezes por semana.",
     multiplier: "BMR × 1.375",
   },
   moderately_active: {
-    label: "Moderately Active",
-    description: "Moderate exercise or sports 3-5 days per week.",
+    label: "Moderadamente Ativo",
+    description: "Exercício moderado ou esportes 3-5 vezes por semana.",
     examples:
-      "Someone with a job that involves standing for a significant portion of the day, like a sales assistant, along with moderate exercise a few times a week.",
+      "Alguém com um trabalho que envolve ficar de pé por uma parte significativa do dia, junto com um exercício moderado algumas vezes por semana.",
     multiplier: "BMR × 1.55",
   },
   very_active: {
-    label: "Very Active",
-    description: "Hard exercise or sports 6-7 days per week.",
-    examples: "Engaging in intense workouts for most days of the week.",
+    label: "Muito Ativo",
+    description: "Exercício intenso ou esportes 6-7 vezes por semana.",
+    examples: "Treinos intensos na maioria dos dias da semana.",
     multiplier: "BMR × 1.725",
   },
   extra_active: {
-    label: "Extra Active",
+    label: "Super Ativo",
     description:
-      "Very intense exercise and training, a physically demanding job, or training twice a day.",
+      "Exercício intenso mais treino, um trabalho físico demandante ou treino duas vezes por dia.",
     examples:
-      "Professions such as carpenters, paramedics, or individuals with physically demanding jobs combined with frequent, intense exercise.",
+      "Profissões com trabalhos físicos demandantes combinados com exercício intenso frequentemente.",
     multiplier: "BMR × 1.9",
   },
 };
 
 const DIETARY_PREFERENCES = [
-  "vegan",
-  "vegetarian",
-  "lactose_intolerant",
-  "gluten_free",
-  "low_carb",
-  "keto",
-  "paleo",
-  "mediterranean",
+  { value: "vegan", label: "Vegano" },
+  { value: "vegetarian", label: "Vegetariano" },
+  { value: "lactose_intolerant", label: "Sem lactose" },
+  { value: "gluten_free", label: "Sem glúten" },
+  { value: "low_carb", label: "Low carb" },
+  { value: "keto", label: "Cetogência (Keto)" },
+  { value: "paleo", label: "Paleo" },
+  { value: "mediterranean", label: "Mediterrâneo" },
+  { value: "low_fat", label: "Pouca gordura" },
+  { value: "high_protein", label: "Bastante proteína" },
 ];
 
 function OnboardingPageContent() {
@@ -102,7 +107,7 @@ function OnboardingPageContent() {
     goal: "maintain",
     dietary_preferences: [],
     activity_level: "moderately_active",
-    food_dislikes: "",
+    //food_dislikes: "", //nao vou mais usar dado que tem swap na diet details
     user_alias: "",
     avatar_url: "",
   });
@@ -149,19 +154,10 @@ function OnboardingPageContent() {
   };
 
   const handleSubmit = async () => {
-    console.log("🔍 Onboarding - Starting form submission");
-    console.log("🔍 Onboarding - User state:", {
-      user: user ? "Present" : "Missing",
-      userMetadata: user?.user_metadata,
-      email: user?.email,
-    });
-    console.log("🔍 Onboarding - Form data:", formData);
-
     setIsLoading(true);
     setError(null);
 
     try {
-      console.log("🔍 Onboarding - Making API request to /api/auth/me");
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
@@ -174,37 +170,28 @@ function OnboardingPageContent() {
         }),
       });
 
-      console.log("🔍 Onboarding - API response status:", response.status);
-
       if (!response.ok) {
         const errorData = await response.text();
-        console.error("🔍 Onboarding - API error response:", errorData);
+        console.error("API error response:", errorData);
         throw new Error(
-          `Failed to save profile: ${response.status} ${response.statusText}`
+          `Falha ao salvar perfil: ${response.status} ${response.statusText}`
         );
       }
 
-      console.log(
-        "🔍 Onboarding - Profile saved successfully, onboarding_completed set to true"
-      );
-
       // Initialize user metrics with XP
       try {
-        console.log("🔍 Onboarding - Initializing user metrics with XP...");
         if (user?.id) {
           await ExperienceService.initializeUserMetrics(user.id, 100);
-          console.log("🔍 Onboarding - User metrics initialized with 100 XP");
           // Refresh XP in the global context
           await refreshXP();
         }
       } catch (xpError) {
-        console.warn("🔍 Onboarding - Error initializing XP:", xpError);
+        console.error("Error initializing XP:", xpError);
         // Don't fail the onboarding process if XP initialization fails
       }
 
       // Insert initial weight entry
       try {
-        console.log("🔍 Onboarding - Inserting initial weight entry...");
         const weightResponse = await fetch("/api/me/weight", {
           method: "POST",
           headers: {
@@ -216,65 +203,27 @@ function OnboardingPageContent() {
           }),
         });
 
-        if (weightResponse.ok) {
-          console.log(
-            "🔍 Onboarding - Initial weight entry saved successfully"
-          );
-        } else {
-          console.warn(
-            "🔍 Onboarding - Failed to save initial weight entry, but continuing..."
+        if (!weightResponse.ok) {
+          console.error(
+            "Failed to save initial weight entry, but continuing..."
           );
         }
       } catch (weightError) {
-        console.warn(
-          "🔍 Onboarding - Error saving initial weight:",
-          weightError
-        );
+        console.error("Onboarding - Error saving initial weight:", weightError);
         // Don't fail the onboarding process if weight entry fails
       }
 
       // Generate initial AI recommendations
       try {
-        console.log("🔍 Onboarding - Generating initial AI recommendations...");
-        console.log(
-          "🔍 Onboarding - Making request to:",
-          "/api/ai/onboarding-recommendations"
-        );
-
-        const recommendationsResponse = await fetch(
-          "/api/ai/onboarding-recommendations",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        console.log(
-          "🔍 Onboarding - Response status:",
-          recommendationsResponse.status
-        );
-        console.log(
-          "🔍 Onboarding - Response URL:",
-          recommendationsResponse.url
-        );
-
-        if (recommendationsResponse.ok) {
-          const recommendationsData = await recommendationsResponse.json();
-          console.log(
-            "🔍 Onboarding - Generated",
-            recommendationsData.recommendations?.length || 0,
-            "AI recommendations"
-          );
-        } else {
-          console.warn(
-            "🔍 Onboarding - Failed to generate AI recommendations, but continuing..."
-          );
-        }
+        await fetch("/api/ai/onboarding-recommendations", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
       } catch (recommendationError) {
-        console.warn(
-          "🔍 Onboarding - Error generating recommendations:",
+        console.error(
+          "Onboarding - Error generating recommendations:",
           recommendationError
         );
         // Don't fail the onboarding process if recommendations fail
@@ -297,8 +246,8 @@ function OnboardingPageContent() {
         // Don't fail the main operation if badge validation fails
       }
     } catch (err) {
-      console.error("🔍 Onboarding - Error during submission:", err);
-      setError(err instanceof Error ? err.message : "Failed to save profile");
+      console.error("Onboarding - Error during submission:", err);
+      setError(err instanceof Error ? err.message : "Falha ao salvar perfil");
     } finally {
       setIsLoading(false);
     }
@@ -328,31 +277,30 @@ function OnboardingPageContent() {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
-        <p className="text-gray-600 mb-6">
-          Let&apos;s start with some basic details about you.
-        </p>
+        <h3 className="text-lg font-semibold mb-4">Informações básicas</h3>
+        {/* <p className="text-gray-600 mb-6">
+          Vamos começar com algumas informações básicas sobre você.
+        </p> */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="age">Age *</Label>
+          <Label htmlFor="age">Idade *</Label>
           <Input
             id="age"
             type="number"
-            min="13"
-            max="120"
+            min="10"
+            max="99"
             value={formData.age || ""}
             onChange={(e) =>
               updateFormData("age", parseInt(e.target.value) || 0)
             }
-            placeholder="Enter your age"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="weight">Weight (kg) *</Label>
+          <Label htmlFor="weight">Peso (kg) *</Label>
           <Input
             id="weight"
             type="number"
@@ -363,13 +311,12 @@ function OnboardingPageContent() {
             onChange={(e) =>
               updateFormData("weight_start_kg", parseFloat(e.target.value) || 0)
             }
-            placeholder="Enter your weight"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="height">Height (cm) *</Label>
+          <Label htmlFor="height">Altura (cm) *</Label>
           <Input
             id="height"
             type="number"
@@ -379,7 +326,6 @@ function OnboardingPageContent() {
             onChange={(e) =>
               updateFormData("height_cm", parseInt(e.target.value) || 0)
             }
-            placeholder="Enter your height"
             required
           />
         </div>
@@ -390,10 +336,10 @@ function OnboardingPageContent() {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">Your Goal</h3>
-        <p className="text-gray-600 mb-6">
-          What&apos;s your primary objective?
-        </p>
+        <h3 className="text-lg font-semibold mb-4">Qual é o seu objetivo?</h3>
+        {/* <p className="text-gray-600 mb-6">
+          Qual é o seu objetivo?
+        </p> */}
       </div>
 
       <RadioGroup
@@ -406,9 +352,9 @@ function OnboardingPageContent() {
         <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
           <RadioGroupItem value="lose_weight" id="lose_weight" />
           <Label htmlFor="lose_weight" className="flex-1 cursor-pointer">
-            <div className="font-medium">Lose Weight</div>
-            <div className="text-sm text-gray-500">
-              Reduce body weight and improve body composition
+            <div className="font-medium">Perder peso</div>
+            <div className="hidden lg:block text-sm text-gray-500">
+              Reduzir o peso e melhorar a composição corporal
             </div>
           </Label>
         </div>
@@ -416,9 +362,9 @@ function OnboardingPageContent() {
         <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
           <RadioGroupItem value="maintain" id="maintain" />
           <Label htmlFor="maintain" className="flex-1 cursor-pointer">
-            <div className="font-medium">Maintain Weight</div>
-            <div className="text-sm text-gray-500">
-              Keep current weight while improving health
+            <div className="font-medium">Manter peso</div>
+            <div className="hidden lg:block text-sm text-gray-500">
+              Manter o peso atual enquanto melhora a saúde
             </div>
           </Label>
         </div>
@@ -426,9 +372,9 @@ function OnboardingPageContent() {
         <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
           <RadioGroupItem value="gain_muscle" id="gain_muscle" />
           <Label htmlFor="gain_muscle" className="flex-1 cursor-pointer">
-            <div className="font-medium">Gain Muscle</div>
-            <div className="text-sm text-gray-500">
-              Build muscle mass and strength
+            <div className="font-medium">Ganhar massa</div>
+            <div className="hidden lg:block text-sm text-gray-500">
+              Construir massa muscular e força
             </div>
           </Label>
         </div>
@@ -436,9 +382,9 @@ function OnboardingPageContent() {
         <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
           <RadioGroupItem value="health" id="health" />
           <Label htmlFor="health" className="flex-1 cursor-pointer">
-            <div className="font-medium">Improve Health</div>
-            <div className="text-sm text-gray-500">
-              Focus on overall health and wellness
+            <div className="font-medium">Melhorar saúde</div>
+            <div className="hidden lg:block text-sm text-gray-500">
+              Foco na saúde e bem-estar geral
             </div>
           </Label>
         </div>
@@ -449,10 +395,10 @@ function OnboardingPageContent() {
   const renderStep3 = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">Activity Level</h3>
-        <p className="text-gray-600 mb-6">
-          How active are you on a typical week?
-        </p>
+        <h3 className="text-lg font-semibold mb-4">Nível de atividade</h3>
+        {/* <p className="text-gray-600 mb-6">
+          Quão ativo você é em uma semana típica?
+        </p> */}
       </div>
 
       <Select
@@ -477,33 +423,33 @@ function OnboardingPageContent() {
       </Select>
 
       {formData.activity_level && (
-        <Card className="bg-blue-50 border-blue-200">
-          <CardHeader className="pb-3">
+        <Card className="bg-green-50 border-green-200">
+          {/* <CardHeader className="pb-3">
             <CardTitle className="text-blue-900 text-lg">
               {ACTIVITY_LEVELS[formData.activity_level].label}
             </CardTitle>
-          </CardHeader>
+          </CardHeader> */}
           <CardContent className="space-y-3">
             <div>
-              <div className="font-medium text-blue-800">Description:</div>
-              <div className="text-blue-700">
+              <div className="font-medium text-green-800">Descrição:</div>
+              <div className="text-green-700">
                 {ACTIVITY_LEVELS[formData.activity_level].description}
               </div>
             </div>
             <div>
-              <div className="font-medium text-blue-800">Examples:</div>
-              <div className="text-blue-700">
+              {/* <div className="font-medium text-blue-800">Exemplos:</div> */}
+              <div className="text-green-700">
                 {ACTIVITY_LEVELS[formData.activity_level].examples}
               </div>
             </div>
-            <div>
+            {/* <div>
               <div className="font-medium text-blue-800">
-                Calorie Multiplier:
+                Multiplicador de calorias:
               </div>
               <div className="text-blue-700 font-mono">
                 {ACTIVITY_LEVELS[formData.activity_level].multiplier}
               </div>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       )}
@@ -514,43 +460,48 @@ function OnboardingPageContent() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold mb-4">
-          Dietary Preferences & Restrictions
+          Preferências e restrições alimentares
         </h3>
-        <p className="text-gray-600 mb-6">
+        {/* <p className="text-gray-600 mb-6">
           Help us customize your diet recommendations.
-        </p>
+        </p> */}
       </div>
 
       <div className="space-y-4">
         <div>
-          <Label className="text-base font-medium">
-            Dietary Preferences (Optional)
-          </Label>
+          {/* <Label className="text-base font-medium">
+            Preferências e restrições alimentares (Opcional)
+          </Label> */}
           <div className="grid grid-cols-2 gap-3 mt-3">
             {DIETARY_PREFERENCES.map((preference) => (
-              <div key={preference} className="flex items-center space-x-2">
+              <div
+                key={preference.value}
+                className="flex items-center space-x-2"
+              >
                 <Checkbox
-                  id={preference}
-                  checked={formData.dietary_preferences.includes(preference)}
+                  id={preference.value}
+                  checked={formData.dietary_preferences.includes(
+                    preference.value
+                  )}
                   onCheckedChange={(checked) =>
                     handleDietaryPreferenceChange(
-                      preference,
+                      preference.value,
                       checked as boolean
                     )
                   }
                 />
                 <Label
-                  htmlFor={preference}
+                  htmlFor={preference.value}
                   className="text-sm capitalize cursor-pointer"
                 >
-                  {preference.replace("_", " ")}
+                  {preference.label}
                 </Label>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="food_dislikes">Food Dislikes (Optional)</Label>
           <Textarea
             id="food_dislikes"
@@ -559,7 +510,7 @@ function OnboardingPageContent() {
             onChange={(e) => updateFormData("food_dislikes", e.target.value)}
             rows={3}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -598,12 +549,10 @@ function OnboardingPageContent() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Let&apos;s personalize your diet plan!
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Bem vindo!</h1>
           <p className="text-lg text-gray-600">
-            Answer a few questions so we can recommend the best diet options for
-            you.
+            Responda algumas perguntas para nossa IA recomendar as melhores
+            opções para você.
           </p>
         </div>
 
@@ -611,7 +560,7 @@ function OnboardingPageContent() {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-gray-700">
-              Step {currentStep} of {totalSteps}
+              Passo {currentStep} de {totalSteps}
             </span>
             <span className="text-sm text-gray-500">
               {Math.round(progress)}%
@@ -640,7 +589,7 @@ function OnboardingPageContent() {
                 className="flex items-center space-x-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Previous
+                Anterior
               </Button>
 
               {currentStep < totalSteps ? (
@@ -649,7 +598,7 @@ function OnboardingPageContent() {
                   disabled={!canProceed()}
                   className="flex items-center space-x-2"
                 >
-                  Next
+                  Próximo
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               ) : (
@@ -659,11 +608,11 @@ function OnboardingPageContent() {
                   className="flex items-center space-x-2"
                 >
                   {isLoading ? (
-                    "Saving..."
+                    "Salvando..."
                   ) : (
                     <>
                       <Check className="h-4 w-4" />
-                      Save and Continue
+                      Salvar e Continuar
                     </>
                   )}
                 </Button>

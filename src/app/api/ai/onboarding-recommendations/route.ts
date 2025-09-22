@@ -3,7 +3,6 @@ import { createRouteSupabaseClient } from '@/lib/supabase-route';
 import { aiService, UserProfile } from '@/lib/ai-service';
 
 export async function GET() {
-  console.log('🔍 Onboarding Recommendations API - GET method called');
   return NextResponse.json({ 
     message: 'Onboarding Recommendations API is working',
     timestamp: new Date().toISOString()
@@ -11,7 +10,6 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('🔍 Onboarding Recommendations API - Route called');
   try {
     const res = NextResponse.next();
     const supabase = createRouteSupabaseClient(request, res);
@@ -33,22 +31,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('🔍 Onboarding Recommendations - Generating for user:', user.id);
-
     // Get user profile
-    console.log('🔍 Onboarding Recommendations - Fetching profile for user:', user.id);
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
-    console.log('🔍 Onboarding Recommendations - Profile query result:');
-    console.log('  - Profile data:', profile);
-    console.log('  - Profile error:', profileError);
-
     if (profileError || !profile) {
-      console.log('🔍 Onboarding Recommendations - Profile not found, returning 404');
       return NextResponse.json(
         { error: 'User profile not found', details: profileError?.message },
         { status: 404 }
@@ -56,9 +46,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if onboarding is completed
-    console.log('🔍 Onboarding Recommendations - Checking onboarding completion:', profile.onboarding_completed);
     if (!profile.onboarding_completed) {
-      console.log('🔍 Onboarding Recommendations - Onboarding not completed, returning 400');
+      return NextResponse.json(
+        { error: 'Onboarding not completed' },
+        { status: 400 }
+      );
+    }
+
+    if (!profile.onboarding_completed) {
       return NextResponse.json(
         { error: 'Onboarding not completed' },
         { status: 400 }
@@ -66,7 +61,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Get available diets
-    console.log('🔍 Onboarding Recommendations - Fetching available diets...');
     const { data: diets, error: dietsError } = await supabase
       .from('diets')
       .select(`
@@ -83,12 +77,8 @@ export async function POST(request: NextRequest) {
       .order('popularity_score', { ascending: false })
       .limit(50);
 
-    console.log('🔍 Onboarding Recommendations - Diets query result:');
-    console.log('  - Diets data:', diets);
-    console.log('  - Diets error:', dietsError);
-
     if (dietsError || !diets) {
-      console.log('🔍 Onboarding Recommendations - Failed to fetch diets, returning 500');
+      console.error('🔍 Onboarding Recommendations - Failed to fetch diets, returning 500');
       return NextResponse.json(
         { error: 'Failed to fetch available diets', details: dietsError?.message },
         { status: 500 }
@@ -121,21 +111,14 @@ export async function POST(request: NextRequest) {
       preferences: profile.food_dislikes ? [profile.food_dislikes] : [],
     };
 
-    // Generate initial recommendations using AI service
-    console.log('🔍 Onboarding Recommendations - Generating AI recommendations...');
-    console.log('🔍 Onboarding Recommendations - User profile:', userProfile);
-    console.log('🔍 Onboarding Recommendations - Valid diets count:', validDiets.length);
-    
     const aiResponse = await aiService.generateInitialRecommendations(
       user.id,
       userProfile,
       validDiets
     );
 
-    console.log('🔍 Onboarding Recommendations - AI response:', aiResponse);
-
     if (!aiResponse.success) {
-      console.log('🔍 Onboarding Recommendations - AI service failed, returning 500');
+      console.error('🔍 Onboarding Recommendations - AI service failed, returning 500');
       return NextResponse.json(
         { 
           error: aiResponse.error,
@@ -146,7 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!aiResponse.recommendations || aiResponse.recommendations.length === 0) {
-      console.log('🔍 Onboarding Recommendations - No recommendations generated, returning 500');
+      console.error('🔍 Onboarding Recommendations - No recommendations generated, returning 500');
       return NextResponse.json(
         { error: 'No recommendations generated' },
         { status: 500 }
@@ -154,17 +137,12 @@ export async function POST(request: NextRequest) {
     }
 
     //first, delete all recommendations for the user
-    console.log('🔍 Onboarding Recommendations - Deleting all recommendations for the user...');
     const { error: deleteError } = await supabase
       .from('diet_recommendations')
       .delete()
       .eq('user_id', user.id);
     
-    console.log('🔍 Onboarding Recommendations - Delete result:');
-    console.log('  - Delete error:', deleteError);
-    
     if (deleteError) {
-      console.log('🔍 Onboarding Recommendations - Failed to delete recommendations, returning 500');
       console.error('Error deleting recommendations:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete recommendations', details: deleteError.message },
@@ -173,7 +151,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Save recommendations to database
-    console.log('🔍 Onboarding Recommendations - Saving recommendations to database...');
     const now = new Date().toISOString();
     const recommendationInserts = aiResponse.recommendations.map(rec => ({
       user_id: user.id,
@@ -184,25 +161,17 @@ export async function POST(request: NextRequest) {
       last_refreshed: now,
     }));
 
-    console.log('🔍 Onboarding Recommendations - Insert data:', recommendationInserts);
-
     const { error: insertError } = await supabase
       .from('diet_recommendations')
       .insert(recommendationInserts);
 
-    console.log('🔍 Onboarding Recommendations - Insert result:');
-    console.log('  - Insert error:', insertError);
-
     if (insertError) {
-      console.log('🔍 Onboarding Recommendations - Failed to save recommendations, returning 500');
       console.error('Error saving onboarding recommendations:', insertError);
       return NextResponse.json(
         { error: 'Failed to save recommendations', details: insertError.message },
         { status: 500 }
       );
     }
-
-    console.log('🔍 Onboarding Recommendations - Generated and saved', aiResponse.recommendations.length, 'recommendations');
 
     // Return recommendations with diet details
     const recommendationsWithDetails = aiResponse.recommendations.map(rec => {
@@ -229,7 +198,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.log('🔍 Onboarding Recommendations - Catch block triggered, returning 500');
     console.error('Error in onboarding recommendations API:', error);
     console.error('Error details:', {
       name: error instanceof Error ? error.name : 'Unknown',

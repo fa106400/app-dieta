@@ -43,10 +43,10 @@ export function PrivacyDisplayTab({
   // Validate alias in real-time
   useEffect(() => {
     const validateAlias = async () => {
-      if (!alias || alias.length < 3) {
+      if (!alias || alias.length < 6) {
         setAliasValidation({
           isValid: false,
-          message: "Alias must be at least 3 characters long",
+          message: "Nome de usuário deve ter pelo menos 6 caracteres",
         });
         return;
       }
@@ -54,7 +54,7 @@ export function PrivacyDisplayTab({
       if (alias.length > 20) {
         setAliasValidation({
           isValid: false,
-          message: "Alias must be 20 characters or less",
+          message: "Nome de usuário deve ter no máximo 20 caracteres",
         });
         return;
       }
@@ -63,7 +63,8 @@ export function PrivacyDisplayTab({
       if (!/^[a-zA-Z0-9_]+$/.test(alias)) {
         setAliasValidation({
           isValid: false,
-          message: "Alias can only contain letters, numbers, and underscores",
+          message:
+            "Nome de usuário pode conter apenas letras, números e underscores",
         });
         return;
       }
@@ -72,7 +73,7 @@ export function PrivacyDisplayTab({
       if (alias === initialAlias) {
         setAliasValidation({
           isValid: true,
-          message: "Alias is available",
+          message: "Nome de usuário disponível",
         });
         return;
       }
@@ -92,14 +93,15 @@ export function PrivacyDisplayTab({
         setAliasValidation({
           isValid: data.available,
           message: data.available
-            ? "Alias is available"
-            : "Alias is already taken",
+            ? "Nome de usuário disponível"
+            : "Nome de usuário já utilizado",
         });
       } catch (error) {
         console.error("Error validating alias:", error);
         setAliasValidation({
           isValid: false,
-          message: "Error checking alias availability",
+          message:
+            "Erro ao verificar disponibilidade do nome de usuário, tente novamente",
         });
       } finally {
         setIsValidating(false);
@@ -112,12 +114,14 @@ export function PrivacyDisplayTab({
 
   const handleSave = async () => {
     if (!alias || !selectedAvatar) {
-      toast.error("Please fill in all fields");
+      toast.error("Por favor, preencha todos os campos");
       return;
     }
 
     if (aliasValidation.isValid !== true) {
-      toast.error("Please fix the alias validation errors");
+      toast.error(
+        "Por favor, corrija os erros de validação do nome de usuário"
+      );
       return;
     }
 
@@ -141,17 +145,20 @@ export function PrivacyDisplayTab({
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to save privacy settings");
+          throw new Error(
+            errorData.error ||
+              "Falha ao salvar configurações de privacidade. Tente novamente."
+          );
         }
 
-        toast.success("Privacy settings saved successfully!");
+        toast.success("Configurações de privacidade salvas com sucesso!");
       }
     } catch (error) {
       console.error("Error saving privacy settings:", error);
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to save privacy settings";
+          : "Falha ao salvar configurações de privacidade. Tente novamente.";
       toast.error(errorMessage);
     } finally {
       setIsSaving(false);
@@ -167,31 +174,31 @@ export function PrivacyDisplayTab({
         {onBack && (
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Voltar
           </Button>
         )}
         <div>
-          <h2 className="text-2xl font-bold">Privacidade & Exibição</h2>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-semibold mb-4">Privacidade & Exibição</h3>
+          {/* <p className="text-gray-600">
             Configure como você aparece para outros usuários
-          </p>
+          </p> */}
         </div>
       </div>
 
       {/* Public Alias Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Nome de Usuário Público</CardTitle>
+          <CardTitle>Nome de usuário</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="alias">Escolha um nome de usuário</Label>
+            {/* <Label htmlFor="alias">Escolha um nome de usuário</Label> */}
             <div className="relative">
               <Input
                 id="alias"
                 value={alias}
                 onChange={(e) => setAlias(e.target.value)}
-                placeholder="Digite seu nome de usuário"
+                // placeholder="Digite seu nome de usuário"
                 className={`pr-10 ${
                   aliasValidation.isValid === false
                     ? "border-red-500"
@@ -234,7 +241,7 @@ export function PrivacyDisplayTab({
       {/* Avatar Selection Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Selecionar Avatar</CardTitle>
+          <CardTitle>Selecionar seu avatar</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
