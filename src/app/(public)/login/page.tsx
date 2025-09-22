@@ -16,7 +16,7 @@ import {
   // CardTitle,
 } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 function LoginPageContent() {
   const [email, setEmail] = useState("");
