@@ -17,7 +17,7 @@ import {
   Search,
 } from "lucide-react";
 import { Diet } from "@/app/(app)/diets/page";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 interface FavoriteDiet extends Diet {
   favorited_at: string | null;

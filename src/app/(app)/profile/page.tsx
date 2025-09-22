@@ -54,7 +54,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 // Interfaces
 interface ProfileData {

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Shield, Eye, EyeOff, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 interface PasswordFormData {
   newPassword: string;
@@ -41,30 +41,30 @@ export default function SecurityPage() {
     if (password.length < 8) {
       return {
         isValid: false,
-        message: "Password must be at least 8 characters long",
+        message: "Senha deve ter pelo menos 8 caracteres",
       };
     }
     if (!/(?=.*[a-z])/.test(password)) {
       return {
         isValid: false,
-        message: "Password must contain at least one lowercase letter",
+        message: "Senha deve conter pelo menos uma letra minúscula",
       };
     }
     if (!/(?=.*[A-Z])/.test(password)) {
       return {
         isValid: false,
-        message: "Password must contain at least one uppercase letter",
+        message: "Senha deve conter pelo menos uma letra maiúscula",
       };
     }
     if (!/(?=.*\d)/.test(password)) {
       return {
         isValid: false,
-        message: "Password must contain at least one number",
+        message: "Senha deve conter pelo menos um número",
       };
     }
     return {
       isValid: true,
-      message: "Password is valid",
+      message: "Senha válida",
     };
   };
 
@@ -72,10 +72,10 @@ export default function SecurityPage() {
     const errors: string[] = [];
 
     if (!formData.newPassword) {
-      errors.push("New password is required");
+      errors.push("Nova senha é obrigatória");
     }
     if (!formData.confirmPassword) {
-      errors.push("Confirm password is required");
+      errors.push("Confirmação de senha é obrigatória");
     }
 
     // Validate new password strength
@@ -89,7 +89,7 @@ export default function SecurityPage() {
     // Check if passwords match
     if (formData.newPassword && formData.confirmPassword) {
       if (formData.newPassword !== formData.confirmPassword) {
-        errors.push("New password and confirmation do not match");
+        errors.push("Nova senha e confirmação não coincidem");
       }
     }
 
@@ -122,7 +122,7 @@ export default function SecurityPage() {
     try {
       // Check if supabase is available
       if (!supabase) {
-        toast.error("Database connection not available");
+        toast.error("Erro ao conectar ao banco de dados. Tente novamente.");
         return;
       }
 
@@ -134,23 +134,23 @@ export default function SecurityPage() {
       if (error) {
         // Handle specific error cases
         if (error.message.includes("Password should be at least")) {
-          toast.error("Password does not meet minimum requirements");
+          toast.error("Senha não atende aos requisitos mínimos");
         } else if (error.message.includes("Invalid login credentials")) {
-          toast.error("Current password is incorrect");
+          toast.error("Senha atual está incorreta");
         } else if (
           error.message.includes(
             "New password should be different from the old password"
           )
         ) {
-          toast.error("New password must be different from old password");
+          toast.error("Nova senha deve ser diferente da senha atual");
         } else {
-          toast.error("Failed to update password. Please try again.");
+          toast.error("Erro ao atualizar senha. Tente novamente.");
         }
         return;
       }
 
       // Success
-      toast.success("Password updated successfully!");
+      toast.success("Senha atualizada com sucesso!");
 
       // Clear form
       setFormData({
@@ -164,7 +164,7 @@ export default function SecurityPage() {
       }, 2000);
     } catch (error) {
       console.error("Unexpected error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error("Erro inesperado. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -194,14 +194,14 @@ export default function SecurityPage() {
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Me</span>
+            <span>Voltar</span>
           </Button>
           <div className="flex items-center space-x-3">
             <Shield className="h-6 w-6 text-red-600" />
             <div>
-              <h1 className="text-2xl font-bold">Security</h1>
+              <h1 className="text-2xl font-bold">Segurança</h1>
               <p className="text-gray-600">
-                Manage your account security and password
+                Gerencie a segurança da sua conta e senha
               </p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function SecurityPage() {
         {/* Password Change Form */}
         <Card className="max-w-2xl">
           <CardHeader>
-            <CardTitle>Change Password</CardTitle>
+            <CardTitle>Alterar Senha</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Current Password 
@@ -224,7 +224,6 @@ export default function SecurityPage() {
                   onChange={(e) =>
                     handleInputChange("currentPassword", e.target.value)
                   }
-                  placeholder="Enter your current password"
                   required
                 />
                 <Button
@@ -245,7 +244,7 @@ export default function SecurityPage() {
 
             {/* New Password */}
             <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
+              <Label htmlFor="newPassword">Nova Senha</Label>
               <div className="relative">
                 <Input
                   id="newPassword"
@@ -254,7 +253,6 @@ export default function SecurityPage() {
                   onChange={(e) =>
                     handleInputChange("newPassword", e.target.value)
                   }
-                  placeholder="Enter your new password"
                   required
                 />
                 <Button
@@ -286,7 +284,7 @@ export default function SecurityPage() {
 
             {/* Confirm New Password */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -295,7 +293,6 @@ export default function SecurityPage() {
                   onChange={(e) =>
                     handleInputChange("confirmPassword", e.target.value)
                   }
-                  placeholder="Confirm your new password"
                   required
                 />
                 <Button
@@ -318,9 +315,7 @@ export default function SecurityPage() {
                     passwordsMatch ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {passwordsMatch
-                    ? "Passwords match"
-                    : "Passwords do not match"}
+                  {passwordsMatch ? "Senhas coincidem" : "Senhas não coincidem"}
                 </p>
               )}
             </div>
@@ -328,14 +323,14 @@ export default function SecurityPage() {
             {/* Password Requirements */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-medium text-gray-900 mb-2">
-                Password Requirements:
+                Requisitos de Senha:
               </h4>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• At least 8 characters long</li>
-                <li>• At least one lowercase letter</li>
-                <li>• At least one uppercase letter</li>
-                <li>• At least one number</li>
-                <li>• Different from your current password</li>
+                <li>• Pelo menos 8 caracteres</li>
+                <li>• Pelo menos uma letra minúscula</li>
+                <li>• Pelo menos uma letra maiúscula</li>
+                <li>• Pelo menos um número</li>
+                <li>• Diferente da senha atual</li>
               </ul>
             </div>
 
@@ -349,10 +344,10 @@ export default function SecurityPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Updating...
+                    Atualizando...
                   </>
                 ) : (
-                  "Update Password"
+                  "Atualizar Senha"
                 )}
               </Button>
               <Button
@@ -361,7 +356,7 @@ export default function SecurityPage() {
                 disabled={isLoading}
                 className="flex-1"
               >
-                Cancel
+                Cancelar
               </Button>
             </div>
           </CardContent>

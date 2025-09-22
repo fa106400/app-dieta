@@ -14,7 +14,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { ArrowLeft, Mail } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 function ForgotPasswordPageContent() {
   const [email, setEmail] = useState("");

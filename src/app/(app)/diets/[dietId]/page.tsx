@@ -24,7 +24,7 @@ import {
   Target,
 } from "lucide-react";
 import { Diet } from "@/app/(app)/diets/page";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 // New interfaces for simplified schema - using Json types from Supabase
 

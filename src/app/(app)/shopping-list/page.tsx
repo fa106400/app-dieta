@@ -17,7 +17,7 @@ import {
   AlertCircle,
   Utensils,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { generateShoppingListPDF } from "@/lib/pdf-export";
 
 // Shopping Plan JSONB Structure Interfaces
