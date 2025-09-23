@@ -23,6 +23,8 @@ export function UserMenu() {
   const [userAlias, setUserAlias] = useState<string>("");
   const [aliasLoading, setAliasLoading] = useState(true);
 
+  const avatar_path = "/imgs/avatars/";
+
   const userInitials = user?.user_metadata?.name
     ? user.user_metadata.name
         .split(" ")
@@ -81,7 +83,10 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <button className="flex items-center space-x-3 rounded-full p-1 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.user_metadata?.avatar_url} alt={userName} />
+            <AvatarImage
+              src={avatar_path + user?.user_metadata?.avatar_url}
+              alt={userName}
+            />
             <AvatarFallback className="bg-blue-600 text-white text-sm">
               {userInitials}
             </AvatarFallback>
