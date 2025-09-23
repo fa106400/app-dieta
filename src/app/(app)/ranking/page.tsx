@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent /*CardHeader, CardTitle*/,
+} from "@/components/ui/card";
 // import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -40,6 +43,8 @@ export default function RankingPage() {
     useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const avatar_path = "/imgs/avatars/";
 
   const fetchLeaderboard = useCallback(async () => {
     if (!user) return;
@@ -144,7 +149,7 @@ export default function RankingPage() {
         </div>
 
         <Avatar className="h-10 w-10">
-          <AvatarImage src={userData.avatar_url || undefined} />
+          <AvatarImage src={avatar_path + userData.avatar_url || undefined} />
           <AvatarFallback className="bg-gray-200 text-gray-600">
             {userData.user_alias?.charAt(0).toUpperCase() || "U"}
           </AvatarFallback>
