@@ -44,6 +44,7 @@ import {
   Trash2,
   Calendar,
   Shield,
+  Sparkles,
 } from "lucide-react";
 import {
   LineChart,
@@ -91,44 +92,49 @@ interface ChartData {
 
 const ACTIVITY_LEVELS = {
   sedentary: {
-    label: "Sedentary",
+    label: "Sedentário",
     description:
-      "Little to no exercise and a job that involves sitting most of the day.",
-    examples: "Office worker, student, retired person",
+      "Pouco ou nenhum exercício e um trabalho que envolve sentar a maior parte do dia.",
+    examples:
+      "Trabalho de escritório, recepcionistas, motoristas ou indivíduos que passam a maior parte do dia em frente ao computador com pouco movimento",
   },
   lightly_active: {
-    label: "Lightly Active",
-    description: "Light exercise or sports 1-3 days per week.",
-    examples: "Walking, light jogging, yoga, casual cycling",
+    label: "Levemente Ativo",
+    description: "Pouco exercício ou esportes 1-3 vezes por semana.",
+    examples:
+      "Um trabalho sedentário com pouco exercício, como uma caminhada curta ou um treino leve algumas vezes por semana.",
   },
   moderately_active: {
-    label: "Moderately Active",
-    description: "Moderate exercise or sports 3-5 days per week.",
-    examples: "Running, swimming, weight training, team sports",
+    label: "Moderadamente Ativo",
+    description: "Exercício moderado ou esportes 3-5 vezes por semana.",
+    examples:
+      "Alguém com um trabalho que envolve ficar de pé por uma parte significativa do dia, junto com um exercício moderado algumas vezes por semana.",
   },
   very_active: {
-    label: "Very Active",
-    description: "Hard exercise or sports 6-7 days per week.",
-    examples: "Intensive training, competitive sports, manual labor",
+    label: "Muito Ativo",
+    description: "Exercício intenso ou esportes 6-7 vezes por semana.",
+    examples: "Treinos intensos na maioria dos dias da semana.",
   },
   extra_active: {
-    label: "Extra Active",
-    description: "Very hard exercise, physical job, or training twice a day.",
-    examples: "Professional athlete, construction worker, military training",
+    label: "Super Ativo",
+    description:
+      "Exercício intenso mais treino, um trabalho físico demandante ou treino duas vezes por dia.",
+    examples:
+      "Profissões com trabalhos físicos demandantes combinados com exercício intenso frequentemente.",
   },
 };
 
 const DIETARY_PREFERENCES = [
-  "vegetarian",
-  "vegan",
-  "gluten_free",
-  "dairy_free",
-  "keto",
-  "paleo",
-  "mediterranean",
-  "low_carb",
-  "low_fat",
-  "high_protein",
+  { value: "vegan", label: "Vegano" },
+  { value: "vegetarian", label: "Vegetariano" },
+  { value: "lactose_intolerant", label: "Sem lactose" },
+  { value: "gluten_free", label: "Sem glúten" },
+  { value: "low_carb", label: "Low carb" },
+  { value: "keto", label: "Cetogência (Keto)" },
+  { value: "paleo", label: "Paleo" },
+  { value: "mediterranean", label: "Mediterrâneo" },
+  { value: "low_fat", label: "Pouca gordura" },
+  { value: "high_protein", label: "Bastante proteína" },
 ];
 
 const GOALS = [
@@ -163,7 +169,7 @@ export default function ProfileManagePage() {
   const [isRefreshingAI, setIsRefreshingAI] = useState(false);
 
   // Active tab
-  const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useState("weight"); //TODO
 
   // Fetch profile data
   const fetchProfile = useCallback(async () => {
@@ -175,14 +181,14 @@ export default function ProfileManagePage() {
 
       const response = await fetch("/api/auth/me");
       if (!response.ok) {
-        throw new Error("Failed to fetch profile");
+        throw new Error("Falha ao carregar perfil. Tente novamente.");
       }
 
       const data = await response.json();
       setProfile(data.profile);
     } catch (err) {
       console.error("Error fetching profile:", err);
-      setProfileError("Failed to load profile data");
+      setProfileError("Falha ao carregar perfil. Tente novamente.");
     } finally {
       setProfileLoading(false);
     }
@@ -207,7 +213,7 @@ export default function ProfileManagePage() {
       setWeightEntries(data || []);
     } catch (err) {
       console.error("Error fetching weights:", err);
-      setWeightError("Failed to load weight data");
+      setWeightError("Falha ao carregar peso. Tente novamente.");
     } finally {
       setWeightLoading(false);
     }
@@ -263,15 +269,19 @@ export default function ProfileManagePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to save profile");
+        throw new Error(
+          errorData.error || "Falha ao salvar perfil. Tente novamente."
+        );
       }
 
       await fetchProfile(); // Refresh profile data
-      toast.success("Profile updated successfully!");
+      toast.success("Perfil atualizado com sucesso!");
     } catch (err) {
       console.error("Error saving profile:", err);
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to save profile";
+        err instanceof Error
+          ? err.message
+          : "Falha ao salvar perfil. Tente novamente.";
       setProfileError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -285,7 +295,7 @@ export default function ProfileManagePage() {
 
     const weight = parseFloat(newWeight);
     if (isNaN(weight) || weight < 30 || weight > 300) {
-      toast.error("Weight must be between 30 and 300 kg");
+      toast.error("Peso deve estar entre 30 e 300 kg");
       return;
     }
 
@@ -300,7 +310,7 @@ export default function ProfileManagePage() {
 
       if (error) {
         if (error.code === "23505") {
-          toast.error("You already have a weight entry for this date");
+          toast.error("Você já tem um registro de peso para esta data");
           return;
         }
         throw error;
@@ -309,12 +319,12 @@ export default function ProfileManagePage() {
       setNewWeight("");
       setSelectedDate("");
       await fetchWeights();
-      toast.success("Weight entry added successfully!");
+      toast.success("Registro de peso adicionado com sucesso!");
 
       // Increase XP for weight logging
       try {
         await ExperienceService.increaseXP(user.id, 100);
-        console.log("XP increased by 100 for weight logging");
+        console.debug("XP increased by 100 for weight logging");
         // Refresh XP in the global context
         await refreshXP();
       } catch (xpError) {
@@ -340,7 +350,7 @@ export default function ProfileManagePage() {
       }
     } catch (err) {
       console.error("Error adding weight:", err);
-      toast.error("Failed to add weight entry");
+      toast.error("Falha ao adicionar registro de peso. Tente novamente.");
     } finally {
       setIsAddingWeight(false);
     }
@@ -360,10 +370,10 @@ export default function ProfileManagePage() {
       if (error) throw error;
 
       await fetchWeights();
-      toast.success("Weight entry deleted successfully!");
+      toast.success("Registro de peso deletado com sucesso!");
     } catch (err) {
       console.error("Error deleting weight:", err);
-      toast.error("Failed to delete weight entry");
+      toast.error("Falha ao deletar registro de peso. Tente novamente.");
     }
   };
 
@@ -383,17 +393,20 @@ export default function ProfileManagePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to refresh recommendations");
+        throw new Error(
+          errorData.error ||
+            "Falha ao atualizar recomendações. Tente novamente."
+        );
       }
 
-      toast.success("AI recommendations refreshed successfully!");
+      toast.success("Recomendações atualizadas com sucesso!");
       await fetchAiCooldown();
     } catch (err) {
       console.error("Error refreshing AI:", err);
       const errorMessage =
         err instanceof Error
           ? err.message
-          : "Failed to refresh recommendations";
+          : "Falha ao atualizar recomendações. Tente novamente.";
       toast.error(errorMessage);
     } finally {
       setIsRefreshingAI(false);
@@ -402,9 +415,9 @@ export default function ProfileManagePage() {
 
   // Format cooldown display
   const formatCooldown = (hours: number): string => {
-    if (hours < 1) return "Available now";
-    if (hours < 24) return `${Math.ceil(hours)}h remaining`;
-    return `${Math.ceil(hours / 24)}d remaining`;
+    if (hours < 1) return "Disponível agora";
+    if (hours < 24) return `${Math.ceil(hours)} hora(s) restantes`;
+    return `${Math.ceil(hours / 24)} dia(s) restantes`;
   };
 
   // Prepare chart data
@@ -462,7 +475,7 @@ export default function ProfileManagePage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading profile...</p>
+            <p className="text-gray-600">Carregando perfil...</p>
           </div>
         </div>
       </div>
@@ -476,11 +489,11 @@ export default function ProfileManagePage() {
           <CardContent className="p-8 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">
-              Error Loading Profile
+              Erro ao carregar perfil
             </h2>
             <p className="text-gray-600 mb-4">{profileError}</p>
             <Button onClick={fetchProfile} variant="outline">
-              Try Again
+              Tentar novamente
             </Button>
           </CardContent>
         </Card>
@@ -494,9 +507,11 @@ export default function ProfileManagePage() {
         <Card>
           <CardContent className="p-8 text-center">
             <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">No Profile Found</h2>
+            <h2 className="text-xl font-semibold mb-2">
+              Nenhum perfil encontrado
+            </h2>
             <p className="text-gray-600">
-              Please complete your profile setup first.
+              Por favor, complete sua configuração de perfil primeiro.
             </p>
           </CardContent>
         </Card>
@@ -510,10 +525,10 @@ export default function ProfileManagePage() {
         {/* Header */}
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Perfil</h1>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <p className="text-gray-600 mb-4 lg:mb-0">
-              Manage your personal information and track your progress
+              Gerencie suas informações pessoais e acompanhe seu progresso
             </p>
 
             {/* AI Refresh Button */}
@@ -531,9 +546,9 @@ export default function ProfileManagePage() {
                   {isRefreshingAI ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <RefreshCw className="h-4 w-4" />
+                    <Sparkles className="h-4 w-4" />
                   )}
-                  <span>Refresh AI Recommendations</span>
+                  <span>Novas recomendações</span>
                 </Button>
               </div>
               <div className="flex items-center space-x-2">
@@ -559,32 +574,32 @@ export default function ProfileManagePage() {
               className="flex items-center space-x-2"
             >
               <User className="h-4 w-4" />
-              <span className="hidden sm:inline">Personal</span>
+              <span className="hidden sm:inline">Pessoal</span>
             </TabsTrigger>
             <TabsTrigger
               value="dietary"
               className="flex items-center space-x-2"
             >
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Dietary</span>
+              <span className="hidden sm:inline">Nutricional</span>
             </TabsTrigger>
             <TabsTrigger
               value="activity"
               className="flex items-center space-x-2"
             >
               <Activity className="h-4 w-4" />
-              <span className="hidden sm:inline">Activity</span>
+              <span className="hidden sm:inline">Atividade</span>
             </TabsTrigger>
             <TabsTrigger value="weight" className="flex items-center space-x-2">
               <Weight className="h-4 w-4" />
-              <span className="hidden sm:inline">Weight & Progress</span>
+              <span className="hidden sm:inline">Peso & Progresso</span>
             </TabsTrigger>
             <TabsTrigger
               value="privacy"
               className="flex items-center space-x-2"
             >
               <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">Privacy & Display</span>
+              <span className="hidden sm:inline">Exibição</span>
             </TabsTrigger>
           </TabsList>
 
@@ -592,15 +607,15 @@ export default function ProfileManagePage() {
           <TabsContent value="personal" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-                <CardDescription>
-                  Update your personal details and primary goal
-                </CardDescription>
+                <CardTitle>Informações Pessoais</CardTitle>
+                {/* <CardDescription>
+                  Atualize suas informações pessoais e objetivo principal
+                </CardDescription> */}
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="age">Age:</Label>
+                    <Label htmlFor="age">Idade:</Label>
                     <Input
                       id="age"
                       type="number"
@@ -615,7 +630,7 @@ export default function ProfileManagePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="weight_start">Starting Weight (kg):</Label>
+                    <Label htmlFor="weight_start">Peso Inicial (kg):</Label>
                     <Input
                       id="weight_start"
                       type="number"
@@ -636,7 +651,7 @@ export default function ProfileManagePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="height">Height (cm):</Label>
+                    <Label htmlFor="height">Altura (cm):</Label>
                     <Input
                       id="height"
                       type="number"
@@ -656,7 +671,9 @@ export default function ProfileManagePage() {
                 </div>
 
                 <div>
-                  <Label className="text-base font-medium">Primary Goal</Label>
+                  <Label className="text-base font-medium">
+                    Objetivo Principal
+                  </Label>
                   <RadioGroup
                     value={profile.goal}
                     onValueChange={(value) =>
@@ -679,36 +696,38 @@ export default function ProfileManagePage() {
                     ))}
                   </RadioGroup>
                 </div>
-
-                <Button
-                  onClick={() => saveProfile(profile)}
-                  disabled={profileSaving}
-                  className="w-full"
-                >
-                  {profileSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Changes
-                    </>
-                  )}
-                </Button>
               </CardContent>
             </Card>
+
+            <div className="flex justify-end">
+              <Button
+                onClick={() => saveProfile(profile)}
+                disabled={profileSaving}
+                className="min-w-[120px]"
+              >
+                {profileSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar
+                  </>
+                )}
+              </Button>
+            </div>
           </TabsContent>
 
           {/* Dietary Tab */}
           <TabsContent value="dietary" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Dietary Preferences</CardTitle>
-                <CardDescription>
+                <CardTitle>Preferências Alimentares</CardTitle>
+                {/* <CardDescription>
                   Select your dietary preferences and list any food dislikes
-                </CardDescription>
+                </CardDescription> */}
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
@@ -718,38 +737,39 @@ export default function ProfileManagePage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                     {DIETARY_PREFERENCES.map((preference) => (
                       <div
-                        key={preference}
+                        key={preference.value}
                         className="flex items-center space-x-2"
                       >
                         <Checkbox
-                          id={preference}
+                          id={preference.value}
                           checked={
-                            profile.dietary_preferences?.includes(preference) ||
-                            false
+                            profile.dietary_preferences?.includes(
+                              preference.value
+                            ) || false
                           }
                           onCheckedChange={(checked) => {
                             setProfile((prev) => {
                               if (!prev) return null;
                               const current = prev.dietary_preferences || [];
                               const updated = checked
-                                ? [...current, preference]
-                                : current.filter((p) => p !== preference);
+                                ? [...current, preference.value]
+                                : current.filter((p) => p !== preference.value);
                               return { ...prev, dietary_preferences: updated };
                             });
                           }}
                         />
                         <Label
-                          htmlFor={preference}
+                          htmlFor={preference.value}
                           className="text-sm capitalize"
                         >
-                          {preference.replace("_", " ")}
+                          {preference.label}
                         </Label>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div>
+                {/* <div>
                   <Label htmlFor="food_dislikes">Food Dislikes</Label>
                   <Textarea
                     id="food_dislikes"
@@ -762,38 +782,39 @@ export default function ProfileManagePage() {
                     }
                     className="mt-2"
                   />
-                </div>
-
-                <Button
-                  onClick={() => saveProfile(profile)}
-                  disabled={profileSaving}
-                  className="w-full"
-                >
-                  {profileSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Changes
-                    </>
-                  )}
-                </Button>
+                </div> */}
               </CardContent>
             </Card>
+            <div className="flex justify-end">
+              <Button
+                onClick={() => saveProfile(profile)}
+                disabled={profileSaving}
+                className="w-min-[120px]"
+              >
+                {profileSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar
+                  </>
+                )}
+              </Button>
+            </div>
           </TabsContent>
 
           {/* Activity Tab */}
           <TabsContent value="activity" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Activity Level</CardTitle>
-                <CardDescription>
+                <CardTitle>Nível de Atividade</CardTitle>
+                {/* <CardDescription>
                   Select your current activity level to help calculate your
                   calorie needs
-                </CardDescription>
+                </CardDescription> */}
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
@@ -813,7 +834,7 @@ export default function ProfileManagePage() {
                     }
                   >
                     <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Select your activity level" />
+                      <SelectValue placeholder="Selecione seu nível de atividade" />
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(ACTIVITY_LEVELS).map(([key, level]) => (
@@ -826,41 +847,50 @@ export default function ProfileManagePage() {
                 </div>
 
                 {profile.activity_level && (
-                  <Card className="bg-blue-50 border-blue-200">
-                    <CardContent className="p-4">
-                      <h4 className="font-semibold text-blue-900 mb-2">
+                  <Card className="bg-green-50 border-green-200">
+                    {/* <h4 className="font-semibold text-green-900 mb-2">
                         {ACTIVITY_LEVELS[profile.activity_level].label}
-                      </h4>
-                      <p className="text-blue-800 text-sm mb-2">
-                        {ACTIVITY_LEVELS[profile.activity_level].description}
-                      </p>
-                      <p className="text-blue-700 text-xs">
-                        Examples:{" "}
-                        {ACTIVITY_LEVELS[profile.activity_level].examples}
-                      </p>
+                      </h4> */}
+
+                    <CardContent className="space-y-3">
+                      <div>
+                        <div className="font-medium text-green-800">
+                          Descrição:
+                        </div>
+                        <div className="text-green-700">
+                          {ACTIVITY_LEVELS[profile.activity_level].description}
+                        </div>
+                      </div>
+                      <div>
+                        {/* <div className="font-medium text-blue-800">Exemplos:</div> */}
+                        <div className="text-green-700">
+                          {ACTIVITY_LEVELS[profile.activity_level].examples}
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
-
-                <Button
-                  onClick={() => saveProfile(profile)}
-                  disabled={profileSaving}
-                  className="w-full"
-                >
-                  {profileSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Changes
-                    </>
-                  )}
-                </Button>
               </CardContent>
             </Card>
+            <div className="flex justify-end">
+              <Button
+                onClick={() => saveProfile(profile)}
+                disabled={profileSaving}
+                className="w-min-[120px]"
+              >
+                {profileSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar
+                  </>
+                )}
+              </Button>
+            </div>
           </TabsContent>
 
           {/* Weight & Progress Tab */}
@@ -868,26 +898,25 @@ export default function ProfileManagePage() {
             {/* Add Weight Form */}
             <Card>
               <CardHeader>
-                <CardTitle>Add Weight Entry</CardTitle>
-                <CardDescription>
-                  Record your current weight for today
-                </CardDescription>
+                <CardTitle>Adicionar Registro de Peso</CardTitle>
+                {/* <CardDescription>
+                  Registre seu peso atual para hoje
+                </CardDescription> */}
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-1 space-y-2">
-                    <Label htmlFor="weight">Weight (kg):</Label>
+                    <Label htmlFor="weight">Peso (kg):</Label>
                     <Input
                       id="weight"
                       type="number"
                       step="0.1"
-                      placeholder="Enter your weight"
                       value={newWeight}
                       onChange={(e) => setNewWeight(e.target.value)}
                     />
                   </div>
                   <div className="flex-1 space-y-2">
-                    <Label htmlFor="date">Date:</Label>
+                    <Label htmlFor="date">Data:</Label>
                     <Input
                       disabled={true}
                       id="date"
@@ -917,7 +946,7 @@ export default function ProfileManagePage() {
                 </div>
                 {selectedDate && hasEntryForDate(selectedDate) && (
                   <p className="text-sm text-amber-600 mt-2">
-                    You already have a weight entry for this date
+                    Você já tem um registro de peso para esta data
                   </p>
                 )}
               </CardContent>
@@ -929,10 +958,10 @@ export default function ProfileManagePage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle>Weight Progress</CardTitle>
-                      <CardDescription>
+                      <CardTitle>Progresso de Peso</CardTitle>
+                      {/* <CardDescription>
                         Track your weight changes over time
-                      </CardDescription>
+                      </CardDescription> */}
                     </div>
                     <div className="flex space-x-2">
                       {(["1w", "1m", "3m"] as const).map((period) => (
@@ -945,10 +974,10 @@ export default function ProfileManagePage() {
                           onClick={() => setChartPeriod(period)}
                         >
                           {period === "1w"
-                            ? "1 Week"
+                            ? "1 Semana"
                             : period === "1m"
-                            ? "1 Month"
-                            : "3 Months"}
+                            ? "1 Mês"
+                            : "3 Meses"}
                         </Button>
                       ))}
                     </div>
@@ -985,31 +1014,34 @@ export default function ProfileManagePage() {
             {/* Weight Entries List */}
             <Card>
               <CardHeader>
-                <CardTitle>Weight History</CardTitle>
-                <CardDescription>
+                <CardTitle>Histórico de Peso</CardTitle>
+                {/* <CardDescription>
                   View and manage your weight entries
-                </CardDescription>
+                </CardDescription> */}
               </CardHeader>
               <CardContent>
                 {weightLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                    <span>Loading weight entries...</span>
+                    <span>Carregando registros de peso...</span>
                   </div>
                 ) : weightError ? (
                   <div className="text-center py-8">
                     <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
                     <p className="text-red-600 mb-4">{weightError}</p>
                     <Button onClick={fetchWeights} variant="outline">
-                      Try Again
+                      Tentar Novamente
                     </Button>
                   </div>
                 ) : weightEntries.length === 0 ? (
                   <div className="text-center py-8">
                     <Weight className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">No weight entries yet</p>
+                    <p className="text-gray-600">
+                      Nenhum registro de peso ainda
+                    </p>
                     <p className="text-sm text-gray-500">
-                      Add your first weight entry above to start tracking
+                      Adicione seu primeiro registro de peso acima para começar
+                      a rastrear
                     </p>
                   </div>
                 ) : (
