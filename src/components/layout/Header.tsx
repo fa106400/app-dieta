@@ -12,8 +12,8 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
+        <div className="flex h-14 items-center justify-between">
           {/* Left side - Mobile menu button and search */}
           <div className="flex items-center space-x-4">
             <Button

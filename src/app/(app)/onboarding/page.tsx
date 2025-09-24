@@ -694,7 +694,7 @@ function OnboardingPageContent() {
     <div className="min-h-screen bg-gray-50 py-2">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-3">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Bem vindo!</h1>
           <p className="text-lg text-gray-600">
             Responda algumas perguntas para nossa IA recomendar as melhores
@@ -702,7 +702,7 @@ function OnboardingPageContent() {
           </p>
         </div>
         {/* Progress Bar */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-gray-700">
               Passo {currentStep} de {totalSteps}
@@ -725,7 +725,7 @@ function OnboardingPageContent() {
             )}
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between mt-6">
               <Button
                 variant="outline"
                 onClick={prevStep}
@@ -756,7 +756,7 @@ function OnboardingPageContent() {
                   ) : (
                     <>
                       <Check className="h-4 w-4" />
-                      Salvar e Continuar
+                      Salvar
                     </>
                   )}
                 </Button>
