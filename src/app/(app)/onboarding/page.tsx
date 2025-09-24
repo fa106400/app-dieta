@@ -590,10 +590,10 @@ function OnboardingPageContent() {
   );
 
   const renderStep5 = () => (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Alias */}
       <Card>
-        <CardContent className="space-y-4 p-6">
+        <CardContent className="space-y-4 p-4">
           <div className="space-y-2">
             <div className="relative">
               <Input
@@ -641,7 +641,7 @@ function OnboardingPageContent() {
 
       {/* Avatar picker */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {PREDEFINED_AVATARS.map((avatar) => (
               <div
@@ -691,10 +691,10 @@ function OnboardingPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-2">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Bem vindo!</h1>
           <p className="text-lg text-gray-600">
             Responda algumas perguntas para nossa IA recomendar as melhores
@@ -702,7 +702,7 @@ function OnboardingPageContent() {
           </p>
         </div>
         {/* Progress Bar */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-gray-700">
               Passo {currentStep} de {totalSteps}
@@ -715,7 +715,7 @@ function OnboardingPageContent() {
         </div>
         {/* Form Card */}
         <Card className="max-w-2xl mx-auto">
-          <CardContent className="p-8">
+          <CardContent className="p-4">
             {renderCurrentStep()}
 
             {error && (
