@@ -53,7 +53,7 @@ export function useAIRecommendations() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch recommendations');
+        throw new Error(data.error || 'Falha ao buscar recomendações');
       }
 
       setState(prev => ({
@@ -65,11 +65,11 @@ export function useAIRecommendations() {
         rateLimitStatus: data.rateLimitStatus,
       }));
     } catch (error) {
-      console.error('Error fetching recommendations:', error);
+      console.error('Erro ao buscar recomendações:', error);
       setState(prev => ({
         ...prev,
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch recommendations',
+        error: error instanceof Error ? error.message : 'Falha ao buscar recomendações',
       }));
     }
   }, [user]);
@@ -103,7 +103,7 @@ export function useAIRecommendations() {
         }));
         return;
       }
-        throw new Error(data.error || 'Failed to generate recommendations');
+        throw new Error(data.error || 'Falha ao gerar recomendações');
       }
 
       setState(prev => ({
@@ -114,11 +114,11 @@ export function useAIRecommendations() {
         cooldownRemaining: undefined,
       }));
     } catch (error) {
-      console.error('Error generating recommendations:', error);
+      console.error('Erro ao gerar recomendações:', error);
       setState(prev => ({
         ...prev,
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to generate recommendations',
+        error: error instanceof Error ? error.message : 'Falha ao gerar recomendações',
       }));
     }
   }, [user]);

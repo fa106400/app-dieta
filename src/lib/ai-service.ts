@@ -144,7 +144,7 @@ class AIService {
     if (!this.isAvailable()) {
       return {
         success: false,
-        error: 'AI service is not available. Please check configuration.',
+        error: 'Serviço AI não disponível. Por favor, acione o suporte.',
       };
     }
 
@@ -153,7 +153,7 @@ class AIService {
     if (!rateLimitCheck.allowed) {
       return {
         success: false,
-        error: 'Rate limit exceeded. Please try again later.',
+        error: 'Limite de requisições excedido. Por favor, acione o suporte.',
         rateLimited: true,
         resetTime: rateLimitCheck.resetTime,
       };
@@ -166,10 +166,9 @@ class AIService {
         return { success: true, recommendations: mocked };
       }
       const prompt = this.buildRecommendationPrompt(userProfile, availableDiets);
-      console.log('🔍 AI Service - Prompt:', prompt);
       
       if (!this.model) {
-        throw new Error('AI model not initialized');
+        throw new Error('Modelo AI não inicializado');
       }
       
       const result = await this.model.generateContent(prompt);
@@ -178,41 +177,40 @@ class AIService {
 
       // Parse the AI response
       const recommendations = this.parseRecommendations(text, availableDiets);
-      console.log('🔍 AI Service - Recommendations:', recommendations);
       
       return {
         success: true,
         recommendations,
       };
     } catch (error) {
-      console.error('Error generating diet recommendations:', error);
+      console.error('Erro ao gerar recomendações de dieta:', error);
       
       // Handle specific error types
       if (error instanceof Error) {
         if (error.message.includes('API_KEY_INVALID')) {
           return {
             success: false,
-            error: 'Invalid API key. Please check configuration.',
+            error: 'Chave API inválida. Por favor, acione o suporte.',
           };
         }
         if (error.message.includes('QUOTA_EXCEEDED')) {
           return {
             success: false,
-            error: 'API quota exceeded. Please try again later.',
+            error: 'Quota de API excedida. Por favor, acione o suporte.',
             rateLimited: true,
           };
         }
         if (error.message.includes('SAFETY')) {
           return {
             success: false,
-            error: 'Content blocked by safety filters. Please try different inputs.',
+            error: 'Conteúdo bloqueado por filtros de segurança. Por favor, acione o suporte.',
           };
         }
       }
 
       return {
         success: false,
-        error: 'Failed to generate recommendations. Please try again later.',
+        error: 'Falha ao gerar recomendações. Por favor, acione o suporte.',
       };
     }
   }
@@ -254,7 +252,7 @@ class AIService {
     const estimatedCalories = this.calculateEstimatedCalories(userProfile);
 
     return `
-You are a nutrition expert AI assistant specializing in personalized diet recommendations. Analyze the user profile and available diets to recommend the best 3-5 diets with detailed matching logic.
+You are a nutrition expert AI assistant specializing in personalized diet recommendations. Analyze the user profile and available diets to recommend the best 3 diets with detailed matching logic.
 
 USER PROFILE ANALYSIS:
 - Age: ${userProfile.age || 'Not specified'} years
@@ -290,15 +288,15 @@ Please provide your recommendations in the following JSON format:
     {
       "dietId": "diet_id_here",
       "score": 0.85,
-      "reasoning": "Detailed explanation of why this diet is recommended, including specific matching factors and how it aligns with the user's profile"
+      "reasoning": "Detailed explanation of why this diet is recommended, including specific matching factors and how it aligns with the user's profile. This MUST be in pt-BR language!"
     }
   ]
 }
 
 REQUIREMENTS:
-- Provide exactly 3-5 recommendations
+- Provide exactly 3 recommendations
 - Scores should be between 0.0 and 1.0
-- Reasoning should be specific and detailed (2-3 sentences)
+- Reasoning should be specific, detailed (2-3 sentences) and in pt-BR language 
 - Prioritize diets that best match the user's profile
 - Consider the user's complete profile holistically
 
@@ -356,7 +354,7 @@ Return only the JSON response, no additional text.
       // Extract JSON from response
       const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        throw new Error('No JSON found in response');
+        throw new Error('Nenhum JSON encontrado na resposta. Acione o suporte.');
       }
 
       const parsed = JSON.parse(jsonMatch[0]);
@@ -462,12 +460,10 @@ Return only the JSON response, no additional text.
     recommendations?: DietRecommendation[];
     error?: string;
   }> {
-    console.log('🔍 AI Service - Generating initial recommendations for user:', userId);
-    
     if (!this.isAvailable()) {
       return {
         success: false,
-        error: 'AI service is not available. Please check configuration.',
+        error: 'Serviço AI não disponível. Por favor, acione o suporte.',
       };
     }
 
@@ -478,28 +474,26 @@ Return only the JSON response, no additional text.
       if (!aiResponse.success) {
         return {
           success: false,
-          error: aiResponse.error || 'Failed to generate recommendations',
+          error: aiResponse.error || 'Falha ao gerar recomendações',
         };
       }
 
       if (!aiResponse.recommendations || aiResponse.recommendations.length === 0) {
         return {
           success: false,
-          error: 'No recommendations generated',
+          error: 'Nenhuma recomendação gerada',
         };
       }
 
-      console.log('🔍 AI Service - Generated', aiResponse.recommendations.length, 'initial recommendations');
-      
       return {
         success: true,
         recommendations: aiResponse.recommendations,
       };
     } catch (error) {
-      console.error('🔍 AI Service - Error generating initial recommendations:', error);
+      console.error('Erro ao gerar recomendações iniciais:', error);
       return {
         success: false,
-        error: 'Failed to generate initial recommendations',
+        error: 'Falha ao gerar recomendações iniciais',
       };
     }
   }

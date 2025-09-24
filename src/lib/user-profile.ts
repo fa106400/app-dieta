@@ -20,7 +20,7 @@ export interface CreateProfileData {
 export const userProfile = {
   // Create a new user profile
   async create(data: CreateProfileData): Promise<Profile> {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const profileData: ProfileInsert = {
       ...data,
@@ -41,7 +41,7 @@ export const userProfile = {
 
   // Get user profile by user ID
   async getByUserId(userId: string): Promise<Profile | null> {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { data: profile, error } = await supabase
       .from('profiles')
@@ -59,7 +59,7 @@ export const userProfile = {
 
   // Update user profile
   async update(userId: string, updates: Partial<ProfileUpdate>): Promise<Profile> {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const updateData: ProfileUpdate = {
       ...updates,
@@ -79,7 +79,7 @@ export const userProfile = {
 
   // Mark onboarding as completed
   async completeOnboarding(userId: string): Promise<void> {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { error } = await supabase
       .from('profiles')
@@ -122,7 +122,7 @@ export async function createProfileAfterSignup(
       food_dislikes: undefined
     })
   } catch (error) {
-    console.error('Error creating profile after signup:', error)
+    console.error('Erro ao criar perfil após o signup:', error)
     // Don't throw - profile creation failure shouldn't block signup
   }
 }

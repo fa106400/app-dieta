@@ -14,104 +14,79 @@ export const supabase: SupabaseClient<Database> | null = supabaseUrl && supabase
 // Function to create a fresh Supabase client
 export function createFreshSupabaseClient(): SupabaseClient<Database> | null {
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('🔍 Missing Supabase environment variables')
+    console.error('Supabase environment variables não disponíveis')
     return null
   }
   
-  console.log('🔍 Creating fresh Supabase client...')
   return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey)
 }
 
 // Helper function to validate session before making requests
 export async function validateSession() {
-  console.log('🔍 validateSession - Starting session validation...');
-  console.log('🔍 validateSession - Supabase client exists:', !!supabase);
-  
   if (!supabase) {
-    console.error('🔍 validateSession - Supabase client not available');
-    throw new Error('Supabase client not available')
+    console.error('Supabase client não disponível');
+    throw new Error('Supabase client não disponível')
   }
   
   // NEW APPROACH: Skip getSession() entirely and try refreshSession() first
-  console.log('🔍 validateSession - Attempting refreshSession() instead of getSession()...');
-  
   try {
     // Try refreshSession first - this is more reliable after browser minimization
     const refreshPromise = supabase.auth.refreshSession();
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Session refresh timeout after 5 seconds')), 5000)
+      setTimeout(() => reject(new Error('Timeout de refresh de sessão após 5 segundos')), 5000)
     );
     
-    console.log('🔍 validateSession - Waiting for refresh response...');
     const result = await Promise.race([refreshPromise, timeoutPromise]) as { data: { session: Session | null }, error: Error | null };
     
     const { data: { session }, error } = result;
     
-    console.log('🔍 validateSession - Refresh response received:', {
-      hasSession: !!session,
-      hasError: !!error,
-      errorMessage: error?.message
-    });
-    
     if (error) {
-      console.error('🔍 validateSession - Session refresh error:', error);
-      console.error('🔍 validateSession - Error details:', {
+      console.error('Erro ao refreshar sessão:', error);
+      console.error('Detalhes do erro:', {
         message: error.message
       });
       throw error
     }
     
     if (!session) {
-      console.error('🔍 validateSession - No valid session after refresh');
-      throw new Error('No valid session found')
+      console.error('Nenhuma sessão válida após o refresh');
+      throw new Error('Nenhuma sessão válida encontrada')
     }
-    
-    console.log('🔍 validateSession - Session refresh successful:', {
-      userId: session.user?.id,
-      email: session.user?.email,
-      expiresAt: session.expires_at,
-      accessToken: session.access_token ? 'Present' : 'Missing'
-    });
     
     return session
   } catch (err) {
-    console.error('🔍 validateSession - Refresh failed, trying getSession as fallback:', err);
+    console.error('Refresh falhou, tentando getSession como fallback:', err);
     
     // If refresh fails, try getSession as fallback
     try {
-      console.log('🔍 validateSession - Attempting getSession() as fallback...');
       const sessionPromise = supabase.auth.getSession();
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Session get timeout after 3 seconds')), 3000)
+        setTimeout(() => reject(new Error('Timeout de get de sessão após 3 segundos')), 3000)
       );
       
       const result = await Promise.race([sessionPromise, timeoutPromise]) as { data: { session: Session | null }, error: Error | null };
       const { data: { session }, error } = result;
       
       if (error) throw error;
-      if (!session) throw new Error('No valid session found');
+      if (!session) throw new Error('Nenhuma sessão válida encontrada');
       
-      console.log('🔍 validateSession - getSession fallback successful!');
       return session;
     } catch (fallbackErr) {
-      console.error('🔍 validateSession - Both refresh and getSession failed:', fallbackErr);
+      console.error('Refresh and getSession falharam:', fallbackErr);
       
       // Final fallback: create fresh client and try refresh
-      console.log('🔍 validateSession - Attempting final fallback with fresh client...');
       try {
         const freshClient = createFreshSupabaseClient();
         if (freshClient) {
-          console.log('🔍 validateSession - Fresh client created, trying refresh...');
           const { data: { session }, error } = await freshClient.auth.refreshSession();
           
           if (error) throw error;
-          if (!session) throw new Error('No valid session found');
+          if (!session) throw new Error('Nenhuma sessão válida encontrada');
           
-          console.log('🔍 validateSession - Fresh client refresh successful!');
           return session;
         }
       } catch (freshErr) {
-        console.error('🔍 validateSession - Fresh client also failed:', freshErr);
+        console.error('Fresh client também falhou:', freshErr);
       }
     }
     

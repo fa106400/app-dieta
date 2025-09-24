@@ -14,7 +14,7 @@ export class ExperienceService {
   static async getCurrentXP(userId: string): Promise<number> {
     try {
       if (!supabase) {
-        throw new Error("Supabase client not available");
+        throw new Error("Supabase client não disponível");
       }
 
       const { data, error } = await supabase
@@ -33,7 +33,7 @@ export class ExperienceService {
 
       return data?.exp || 0;
     } catch (error) {
-      console.error("Error fetching current XP:", error);
+      console.error("Erro ao buscar XP atual:", error);
       return 0;
     }
   }
@@ -44,7 +44,7 @@ export class ExperienceService {
   static async increaseXP(userId: string, amount: number): Promise<number> {
     try {
       if (!supabase) {
-        throw new Error("Supabase client not available");
+        throw new Error("Supabase client não disponível");
       }
 
       // Get current XP
@@ -73,7 +73,7 @@ export class ExperienceService {
 
       return data?.exp || newXP;
     } catch (error) {
-      console.error("Error increasing XP:", error);
+      console.error("Erro ao aumentar XP:", error);
       throw error;
     }
   }
@@ -84,7 +84,7 @@ export class ExperienceService {
   static async initializeUserMetrics(userId: string, initialXP: number = 100): Promise<number> {
     try {
       if (!supabase) {
-        throw new Error("Supabase client not available");
+        throw new Error("Supabase client não disponível");
       }
 
       const { data, error } = await supabase
@@ -102,7 +102,7 @@ export class ExperienceService {
 
       return data?.exp || initialXP;
     } catch (error) {
-      console.error("Error initializing user metrics:", error);
+      console.error("Erro ao inicializar metrics do usuário:", error);
       throw error;
     }
   }
@@ -117,7 +117,7 @@ export class ExperienceService {
   } | null> {
     try {
       if (!supabase) {
-        throw new Error("Supabase client not available");
+        throw new Error("Supabase client não disponível");
       }
 
       // Get all users with their ranks using window function
@@ -140,7 +140,7 @@ export class ExperienceService {
         .map((user, index) => ({
           user_id: user.user_id!,
           exp: user.exp!,
-          user_alias: user.user_alias || "Anonymous",
+          user_alias: user.user_alias || "Anônimo",
           avatar_url: user.avatar_url,
           rank: index + 1,
         }));
@@ -161,7 +161,7 @@ export class ExperienceService {
         totalUsers: sortedUsers.length,
       };
     } catch (error) {
-      console.error("Error getting user rank:", error);
+      console.error("Erro ao buscar rank do usuário:", error);
       return null;
     }
   }
@@ -176,7 +176,7 @@ export class ExperienceService {
   }> {
     try {
       if (!supabase) {
-        throw new Error("Supabase client not available");
+        throw new Error("Supabase client não disponível");
       }
 
       // Get all users with their ranks
@@ -199,7 +199,7 @@ export class ExperienceService {
         .map((user, index) => ({
           user_id: user.user_id!,
           exp: user.exp!,
-          user_alias: user.user_alias || "Anonymous",
+          user_alias: user.user_alias || "Anônimo",
           avatar_url: user.avatar_url,
           rank: index + 1,
         }));
@@ -226,7 +226,7 @@ export class ExperienceService {
         next4,
       };
     } catch (error) {
-      console.error("Error getting leaderboard data:", error);
+      console.error("Erro ao buscar dados da leaderboard:", error);
       return { top5: [], currentUser: [], next4: [] };
     }
   }

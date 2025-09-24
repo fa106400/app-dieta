@@ -31,15 +31,12 @@ export interface PasswordUpdateData {
 export const auth = {
   // Sign up with email/password
   async signUp({ email, password, name }: SignUpData) {
-    console.log('auth.signUp called with:', { email, name, password: '***' })
-    console.log('Supabase client available:', !!supabase)
     
     if (!supabase) {
-      console.error('Supabase not configured!')
-      throw new Error('Supabase not configured')
+      console.error('Supabase não configurado!')
+      throw new Error('Supabase não configurado')
     }
     
-    console.log('Calling supabase.auth.signUp...')
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -50,10 +47,8 @@ export const auth = {
       }
     })
     
-    console.log('Supabase signUp response:', { data, error })
-    
     if (error) {
-      console.error('Supabase signUp error:', error)
+      console.error('Erro ao cadastrar usuário:', error)
       throw error
     }
     return data
@@ -61,7 +56,7 @@ export const auth = {
 
   // Sign in with email/password
   async signIn({ email, password }: SignInData) {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -74,7 +69,7 @@ export const auth = {
 
   // Sign out
   async signOut() {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { error } = await supabase.auth.signOut()
     if (error) throw error
@@ -82,7 +77,7 @@ export const auth = {
 
   // Send password reset email
   async resetPassword({ email }: PasswordResetData) {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`
@@ -93,7 +88,7 @@ export const auth = {
 
   // Update password (for reset password flow)
   async updatePassword({ password }: PasswordUpdateData) {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { error } = await supabase.auth.updateUser({
       password
@@ -104,7 +99,7 @@ export const auth = {
 
   // Get current session
   async getSession() {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { data: { session }, error } = await supabase.auth.getSession()
     if (error) throw error
@@ -113,7 +108,7 @@ export const auth = {
 
   // Get current user
   async getUser() {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error) throw error
@@ -122,7 +117,7 @@ export const auth = {
 
   // Listen to auth state changes
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-    if (!supabase) throw new Error('Supabase not configured')
+    if (!supabase) throw new Error('Supabase não configurado')
     
     return supabase.auth.onAuthStateChange(callback)
   }
@@ -160,18 +155,13 @@ export const cookieUtils = {
   getAccessToken(cookieHeader: string | null): string | null {
     if (!cookieHeader) return null
     
-    console.log('🍪 CookieUtils - Raw cookie header:', cookieHeader)
-    
     const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
       const [key, value] = cookie.trim().split('=')
       if (key && value) {
         acc[key] = value
-        console.log(`🍪 CookieUtils - Parsed cookie: ${key} = ${value.substring(0, 20)}...`)
       }
       return acc
     }, {} as Record<string, string>)
-    
-    console.log('🍪 CookieUtils - All cookie keys:', Object.keys(cookies))
     
     // Try multiple possible cookie names for Supabase
     const accessToken = cookies['sb-access-token'] || 
@@ -179,7 +169,6 @@ export const cookieUtils = {
                        cookies['sb-access-token.1'] ||
                        cookies['access_token']
     
-    console.log('🍪 CookieUtils - Access token found:', accessToken ? 'Yes' : 'No')
     return accessToken
   },
 
@@ -201,7 +190,6 @@ export const cookieUtils = {
                         cookies['sb-refresh-token.1'] ||
                         cookies['refresh_token']
     
-    console.log('🍪 CookieUtils - Refresh token found:', refreshToken ? 'Yes' : 'No')
     return refreshToken
   }
 }

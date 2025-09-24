@@ -58,7 +58,7 @@ export function useBadgeNotificationTrigger() {
       });
 
       if (!response.ok) {
-        console.error("Badge validation failed:", response.statusText);
+        console.error("Falha na validação de badge:", response.statusText);
         return;
       }
 
@@ -88,7 +88,7 @@ export function useBadgeNotificationTrigger() {
         }, 100);
       }
     } catch (error) {
-      console.error("Error triggering badge validation:", error);
+      console.error("Erro ao triggerar validação de badge:", error);
     }
   }, [showBadgeNotification]);
 
@@ -108,7 +108,7 @@ export function useBadgeNotificationTrigger() {
       });
 
       if (!response.ok) {
-        console.error("Batch badge validation failed:", response.statusText);
+        console.error("Falha na validação de badge em lote:", response.statusText);
         return;
       }
 
@@ -138,7 +138,7 @@ export function useBadgeNotificationTrigger() {
         }, 100);
       }
     } catch (error) {
-      console.error("Error triggering batch badge validation:", error);
+      console.error("Erro ao triggerar validação de badge em lote:", error);
     }
   }, [showBadgeNotification]);
 
