@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 interface PasswordFormData {
@@ -187,7 +187,7 @@ export default function SecurityPage() {
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center space-x-4 mb-6">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push("/me")}
@@ -195,12 +195,11 @@ export default function SecurityPage() {
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Voltar</span>
-          </Button>
+          </Button> */}
           <div className="flex items-center space-x-3">
-            <Shield className="h-6 w-6 text-red-600" />
             <div>
-              <h1 className="text-2xl font-bold">Segurança</h1>
-              <p className="text-gray-600">
+              <h1 className="text-3xl font-bold">Segurança</h1>
+              <p className="text-gray-600 mt-1">
                 Gerencie a segurança da sua conta e senha
               </p>
             </div>

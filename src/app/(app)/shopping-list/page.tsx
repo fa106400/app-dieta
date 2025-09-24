@@ -248,7 +248,7 @@ export default function ShoppingListPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push("/my-plan")}
@@ -256,7 +256,7 @@ export default function ShoppingListPage() {
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back to My Week</span>
-          </Button>
+          </Button> */}
           <div>
             <h1 className="text-2xl font-bold">Shopping List</h1>
             <p className="text-gray-600">{currentDiet.title}</p>

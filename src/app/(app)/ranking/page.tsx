@@ -217,10 +217,10 @@ export default function RankingPage() {
   const allUsers = [...top5, ...currentUser, ...next4];
 
   return (
-    <div className="space-y-3">
+    <div className="container mx-auto px-4 py-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Ranking</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">Ranking</h1>
         {/* <p className="text-gray-600">Top usuários por experiência</p> 
         <div className="flex items-center justify-center space-x-4 mt-4">
           <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -268,6 +268,7 @@ export default function RankingPage() {
       )}
 
       {/* Leaderboard */}
+      <br />
       <Card>
         {/* <CardHeader>
           <CardTitle className="flex items-center space-x-2">

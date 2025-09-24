@@ -365,11 +365,11 @@ export default function DietDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto px-4 py-6 space-y-2">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={() => router.back()}
@@ -377,7 +377,7 @@ export default function DietDetailPage() {
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Voltar</span>
-          </Button>
+          </Button> */}
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
               {diet.title || "Untitled Diet"}
@@ -679,7 +679,7 @@ export default function DietDetailPage() {
         </Card>
       )}
 
-      <div className="flex items-center justify-center space-x-4">
+      <div className="flex items-center justify-center space-x-4 mt-4">
         {/* Follow/Unfollow Button */}
         <div className="flex justify-center">
           <Button
