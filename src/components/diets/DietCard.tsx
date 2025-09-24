@@ -25,18 +25,42 @@ export function DietCard({
   // viewMode,
   isRecommended = false,
 }: DietCardProps) {
-  const getDifficultyColor = (difficulty: string | null) => {
+  // lista com todos os valores possiveis para cada tag
+  const tags = [
+    { value: "traditional", label: "Tradicional" },
+    { value: "vegan", label: "Vegano" },
+    { value: "vegetarian", label: "Vegetariano" },
+    { value: "lactose_intolerant", label: "Sem lactose" },
+    { value: "gluten_free", label: "Sem glúten" },
+    { value: "low_carb", label: "Low carb" },
+    { value: "keto", label: "Cetogência (Keto)" },
+    { value: "paleo", label: "Paleo" },
+    { value: "mediterranean", label: "Mediterrâneo" },
+    { value: "low_fat", label: "Pouca gordura" },
+    { value: "high_protein", label: "Bastante proteína" },
+    { value: "lose_weight", label: "Perder peso" },
+    { value: "maintain", label: "Manter peso" },
+    { value: "gain_muscle", label: "Ganhar massa" },
+    { value: "health", label: "Melhorar saúde" },
+  ];
+
+  //função que recebe uma tag e retorna o label
+  const getTagLabel = (tag: string) => {
+    return tags.find((t) => t.value === tag)?.label;
+  };
+
+  /*const getDifficultyColor = (difficulty: string | null) => {
     switch (difficulty) {
-      // case "beginner":
-      //   return "bg-green-100 text-green-800";
-      // case "intermediate":
-      //   return "bg-yellow-100 text-yellow-800";
-      // case "advanced":
-      //   return "bg-red-100 text-red-800";
+       case "beginner":
+         return "bg-green-100 text-green-800";
+       case "intermediate":
+         return "bg-yellow-100 text-yellow-800";
+       case "advanced":
+         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
+  };*/
 
   const getCategoryColor = (category: string | null) => {
     switch (category) {
@@ -213,16 +237,19 @@ export function DietCard({
 
           {diet.tags && diet.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {diet.tags.slice(0, 2).map((tag) => (
+              {/* mostra até 3 tags */}
+              {diet.tags.slice(0, 3).map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
-                  {tag.replaceAll("_", " ")}
+                  {/*tag.replaceAll("_", " ")*/}
+                  {getTagLabel(tag)}
                 </Badge>
               ))}
-              {diet.tags.length > 2 && (
+              {/* sempre teremos no max 3 tags ja exibidas acima */}
+              {/*diet.tags.length > 3 && (
                 <Badge variant="outline" className="text-xs">
                   +{diet.tags.length - 2}
                 </Badge>
-              )}
+              )*/}
             </div>
           )}
         </div>

@@ -224,14 +224,23 @@ export default function DietCatalogPage() {
     // Apply filters
     if (filters.category.length > 0) {
       filtered = filtered.filter(
-        (diet) => diet.category && filters.category.includes(diet.category)
+        (diet) =>
+          diet.tags &&
+          filters.category.some((category) => diet.tags!.includes(category))
       );
     }
 
-    if (filters.difficulty.length > 0) {
+    // if (filters.difficulty.length > 0) {
+    //   filtered = filtered.filter(
+    //     (diet) =>
+    //       diet.difficulty && filters.difficulty.includes(diet.difficulty)
+    //   );
+    // }
+
+    if (filters.goal.length > 0) {
       filtered = filtered.filter(
         (diet) =>
-          diet.difficulty && filters.difficulty.includes(diet.difficulty)
+          diet.tags && filters.goal.some((goal) => diet.tags!.includes(goal))
       );
     }
 
