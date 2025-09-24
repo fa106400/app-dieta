@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
@@ -24,8 +24,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
-import { PrivacyDisplayTab } from "@/components/profile/PrivacyDisplayTab";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+import Image from "next/image";
 
 interface OnboardingData {
   age: number;
@@ -123,6 +129,74 @@ function OnboardingPageContent() {
   const updateFormData = (field: keyof OnboardingData, value: unknown) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  // Step 5: Privacy & Display (alias + avatar)
+  const PREDEFINED_AVATARS = [
+    { id: "avatar_1.png", path: "/imgs/avatars/avatar_1.png" },
+    { id: "avatar_2.png", path: "/imgs/avatars/avatar_2.png" },
+    { id: "avatar_3.png", path: "/imgs/avatars/avatar_3.png" },
+    { id: "avatar_4.png", path: "/imgs/avatars/avatar_4.png" },
+  ];
+  const [isValidatingAlias, setIsValidatingAlias] = useState(false);
+  const [aliasValidation, setAliasValidation] = useState<{
+    isValid: boolean | null;
+    message: string;
+  }>({ isValid: null, message: "" });
+
+  // Validate alias in real-time (debounced)
+  useEffect(() => {
+    const validateAlias = async () => {
+      const alias = formData.user_alias || "";
+      if (!alias || alias.length < 6) {
+        setAliasValidation({
+          isValid: false,
+          message: "Nome de usuário deve ter pelo menos 6 caracteres",
+        });
+        return;
+      }
+      if (alias.length > 20) {
+        setAliasValidation({
+          isValid: false,
+          message: "Nome de usuário deve ter no máximo 20 caracteres",
+        });
+        return;
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(alias)) {
+        setAliasValidation({
+          isValid: false,
+          message:
+            "Nome de usuário pode conter apenas letras, números e underscores",
+        });
+        return;
+      }
+      setIsValidatingAlias(true);
+      try {
+        const response = await fetch("/api/auth/validate-alias", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ alias }),
+        });
+        const data = await response.json();
+        setAliasValidation({
+          isValid: data.available,
+          message: data.available
+            ? "Nome de usuário disponível"
+            : "Nome de usuário já utilizado",
+        });
+      } catch (_error) {
+        console.error("Error validating alias:", _error);
+        setAliasValidation({
+          isValid: false,
+          message:
+            "Erro ao verificar disponibilidade do nome de usuário, tente novamente",
+        });
+      } finally {
+        setIsValidatingAlias(false);
+      }
+    };
+    const timeoutId = setTimeout(validateAlias, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.user_alias]);
 
   const handleDietaryPreferenceChange = (
     preference: string,
@@ -268,7 +342,7 @@ function OnboardingPageContent() {
       case 4:
         return true; // Food dislikes is optional
       case 5:
-        return formData.user_alias && formData.avatar_url; // Privacy & Display required
+        return Boolean(formData.avatar_url) && aliasValidation.isValid === true; // Require picked avatar and a valid alias
       default:
         return false;
     }
@@ -516,15 +590,87 @@ function OnboardingPageContent() {
   );
 
   const renderStep5 = () => (
-    <PrivacyDisplayTab
-      isOnboarding={true}
-      initialAlias={formData.user_alias}
-      initialAvatar={formData.avatar_url}
-      onSave={(data) => {
-        updateFormData("user_alias", data.user_alias);
-        updateFormData("avatar_url", data.avatar_url);
-      }}
-    />
+    <div className="space-y-6">
+      {/* Alias */}
+      <Card>
+        <CardContent className="space-y-4 p-6">
+          <div className="space-y-2">
+            <div className="relative">
+              <Input
+                id="alias"
+                value={formData.user_alias}
+                onChange={(e) => updateFormData("user_alias", e.target.value)}
+                className={`pr-10 ${
+                  aliasValidation.isValid === false
+                    ? "border-red-500"
+                    : aliasValidation.isValid === true
+                    ? "border-green-500"
+                    : ""
+                }`}
+              />
+              {isValidatingAlias && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                </div>
+              )}
+              {!isValidatingAlias && aliasValidation.isValid === true && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <Check className="h-4 w-4 text-green-500" />
+                </div>
+              )}
+              {!isValidatingAlias && aliasValidation.isValid === false && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <AlertCircle className="h-4 w-4 text-red-500" />
+                </div>
+              )}
+            </div>
+            {aliasValidation.message && (
+              <p
+                className={`text-sm ${
+                  aliasValidation.isValid === true
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {aliasValidation.message}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Avatar picker */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {PREDEFINED_AVATARS.map((avatar) => (
+              <div
+                key={avatar.id}
+                className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
+                  formData.avatar_url === avatar.id
+                    ? "border-blue-500 ring-2 ring-blue-200"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+                onClick={() => updateFormData("avatar_url", avatar.id)}
+              >
+                <Image
+                  src={avatar.path}
+                  alt={`Avatar ${avatar.id}`}
+                  width={96}
+                  height={96}
+                  className="w-full h-24 object-cover"
+                />
+                {formData.avatar_url === avatar.id && (
+                  <div className="absolute opacity-70 inset-0 bg-blue-500 flex items-center justify-center">
+                    <Check className="h-6 w-6 text-blue-600" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 
   const renderCurrentStep = () => {
@@ -555,7 +701,6 @@ function OnboardingPageContent() {
             opções para você.
           </p>
         </div>
-
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
@@ -568,7 +713,6 @@ function OnboardingPageContent() {
           </div>
           <Progress value={progress} className="h-2" />
         </div>
-
         {/* Form Card */}
         <Card className="max-w-2xl mx-auto">
           <CardContent className="p-8">
@@ -604,7 +748,7 @@ function OnboardingPageContent() {
               ) : (
                 <Button
                   onClick={handleSubmit}
-                  disabled={!canProceed() || isLoading}
+                  disabled={!canProceed() || isLoading || isValidatingAlias}
                   className="flex items-center space-x-2"
                 >
                   {isLoading ? (

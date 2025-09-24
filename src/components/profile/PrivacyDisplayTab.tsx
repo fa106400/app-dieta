@@ -152,6 +152,7 @@ export function PrivacyDisplayTab({
         }
 
         toast.success("Configurações de privacidade salvas com sucesso!");
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error saving privacy settings:", error);

@@ -22,6 +22,8 @@ export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [userAlias, setUserAlias] = useState<string>("");
   const [aliasLoading, setAliasLoading] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarVersion, setAvatarVersion] = useState<number>(0);
 
   const avatar_path = "/imgs/avatars/";
 
@@ -36,12 +38,13 @@ export function UserMenu() {
   const userName =
     user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
 
-  // Fetch user alias from profiles table
+  // Fetch user alias and avatar from profiles table
   useEffect(() => {
-    const fetchUserAlias = async () => {
+    const fetchUserProfileBits = async () => {
       if (!user?.id || !supabase) {
         setUserAlias(userName);
         setAliasLoading(false);
+        setAvatarUrl(user?.user_metadata?.avatar_url || null);
         return;
       }
 
@@ -49,26 +52,75 @@ export function UserMenu() {
         setAliasLoading(true);
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_alias")
+          .select("user_alias, avatar_url")
           .eq("user_id", user.id)
           .single();
 
         if (error) {
           console.error("Error fetching user alias:", error);
           setUserAlias(userName);
+          setAvatarUrl(user?.user_metadata?.avatar_url || null);
         } else {
           setUserAlias(data?.user_alias || userName);
+          setAvatarUrl(
+            data?.avatar_url || user?.user_metadata?.avatar_url || null
+          );
         }
       } catch (error) {
         console.error("Error fetching user alias:", error);
         setUserAlias(userName);
+        setAvatarUrl(user?.user_metadata?.avatar_url || null);
       } finally {
         setAliasLoading(false);
       }
     };
 
-    fetchUserAlias();
+    fetchUserProfileBits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, userName]);
+
+  // Realtime subscription to profile updates for immediate avatar refresh
+  useEffect(() => {
+    if (!user?.id || !supabase) return;
+
+    type ProfileUpdatePayload = {
+      new: {
+        user_alias?: string | null;
+        avatar_url?: string | null;
+      };
+    };
+
+    const channel = supabase
+      .channel(`profiles_avatar_${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "profiles",
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload: ProfileUpdatePayload) => {
+          const newAlias = payload.new?.user_alias ?? undefined;
+          const newAvatar = payload.new?.avatar_url ?? undefined;
+          if (newAlias !== undefined) {
+            setUserAlias(newAlias || userName);
+          }
+          if (newAvatar !== undefined) {
+            setAvatarUrl(newAvatar || null);
+            // bump version to break cache if filename stays same by accident
+            setAvatarVersion((v) => v + 1);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      try {
+        channel.unsubscribe();
+      } catch {}
+    };
+  }, [user?.id, userName, user?.user_metadata?.avatar_url]);
 
   const handleSignOut = async () => {
     try {
@@ -84,7 +136,11 @@ export function UserMenu() {
         <button className="flex items-center space-x-3 rounded-full p-1 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={avatar_path + user?.user_metadata?.avatar_url}
+              src={
+                avatarUrl
+                  ? `${avatar_path}${avatarUrl}?v=${avatarVersion}`
+                  : undefined
+              }
               alt={userName}
             />
             <AvatarFallback className="bg-blue-600 text-white text-sm">
