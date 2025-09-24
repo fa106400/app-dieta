@@ -270,7 +270,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
@@ -284,7 +284,7 @@ export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-4">
       {/* Header 
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Welcome back, {user?.email?.split("@")[0]}!
         </h1>
@@ -348,7 +348,7 @@ export default function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
+              <div className="text-center py-6">
                 <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Em construção</h3>
                 <Button variant="outline" disabled>

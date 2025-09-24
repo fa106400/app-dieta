@@ -184,9 +184,9 @@ export default function SecurityPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="flex items-center space-x-4 mb-8">
+        <div className="flex items-center space-x-4 mb-6">
           <Button
             variant="ghost"
             size="sm"
@@ -208,7 +208,7 @@ export default function SecurityPage() {
         </div>
 
         {/* Password Change Form */}
-        <Card className="max-w-2xl">
+        <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Alterar Senha</CardTitle>
           </CardHeader>

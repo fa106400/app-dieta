@@ -51,8 +51,8 @@ function LoginPageContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4 sm:px-5 lg:px-6">
+      <div className="max-w-md w-full space-y-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">[LOGO]</h1>
         </div>
@@ -118,7 +118,7 @@ function LoginPageContent() {
               </Button>
             </form>
 
-            <div className="mt-6 space-y-3 text-center">
+            <div className="mt-4 space-y-2 text-center">
               <div>
                 <Link
                   href="/forgot-password"

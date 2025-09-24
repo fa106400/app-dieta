@@ -191,7 +191,7 @@ export default function BadgesPage() {
   if (loading) {
     return (
       <ProtectedRoute>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
@@ -206,7 +206,7 @@ export default function BadgesPage() {
   if (error) {
     return (
       <ProtectedRoute>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <Card>
             <CardContent className="p-8 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
@@ -231,9 +231,9 @@ export default function BadgesPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Minhas Medalhas
           </h1>
@@ -244,7 +244,7 @@ export default function BadgesPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
