@@ -4,7 +4,7 @@ export async function POST(_request: NextRequest) {
   // Check if Supabase environment variables are available
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ 
-      error: 'Supabase not configured'
+      error: 'Supabase não configurado'
     }, { status: 503 })
   }
 
@@ -18,14 +18,14 @@ export async function POST(_request: NextRequest) {
       // Sign out from Supabase (SSR client manages cookies)
       const { error } = await supabase.auth.signOut()
       if (error) {
-        console.error('Supabase logout error:', error)
+        console.error('Erro ao deslogar do Supabase:', error)
         // Continue with cookie cleanup even if Supabase logout fails
       }
     }
 
     // Clear all auth-related cookies
     const response = NextResponse.json({
-      message: 'Logged out successfully'
+      message: 'Deslogado com sucesso'
     })
 
     // Clear all possible auth cookies
@@ -50,11 +50,11 @@ export async function POST(_request: NextRequest) {
 
     return response
   } catch (error) {
-    console.error('Auth logout error:', error)
+    console.error('Erro ao deslogar:', error)
     
     // Even if there's an error, try to clear cookies
     const response = NextResponse.json(
-      { error: 'Logout completed with errors' },
+      { error: 'Deslogado com erros' },
       { status: 500 }
     )
 

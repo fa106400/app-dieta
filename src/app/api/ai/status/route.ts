@@ -10,11 +10,11 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error checking AI status:', error);
+    console.error('Erro ao verificar status da AI:', error);
     return NextResponse.json(
       { 
         available: false,
-        error: 'Failed to check AI service status',
+        error: 'Falha ao verificar status do serviço da AI',
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(_request: NextRequest) {
-  console.log('🔍 GET /api/auth/me - Starting request')
   
   // Check if Supabase environment variables are available
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.error('❌ Supabase environment variables not configured')
+    console.error('❌ Supabase environment variables não configuradas')
     return NextResponse.json({ 
-      error: 'Supabase not configured'
+      error: 'Supabase não configurado'
     }, { status: 503 })
   }
 
@@ -19,7 +18,7 @@ export async function GET(_request: NextRequest) {
     
     if (!supabase) {
       return NextResponse.json({ 
-        error: 'Supabase client not available'
+        error: 'Supabase client não disponível'
       }, { status: 503 })
     }
     
@@ -28,7 +27,7 @@ export async function GET(_request: NextRequest) {
     
     if (userError || !user) {
       return NextResponse.json({ 
-        error: 'Invalid authentication token'
+        error: 'Token de autenticação inválido'
       }, { status: 401 })
     }
 
@@ -56,7 +55,7 @@ export async function GET(_request: NextRequest) {
     }
 
     if (profileError) {
-      console.error('Error fetching profile:', profileError)
+      console.error('Erro ao buscar perfil:', profileError)
       return NextResponse.json({
         user: {
           id: user.id,
@@ -84,22 +83,21 @@ export async function GET(_request: NextRequest) {
       hasProfile: true
     })
   } catch (error) {
-    console.error('Auth me endpoint error:', error)
+    console.error('Erro no endpoint de auth me:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }
 }
 
 export async function PUT(_request: NextRequest) {
-  console.log('🔍 PUT /api/auth/me - Starting request')
   
   // Check if Supabase environment variables are available
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.error('❌ Supabase environment variables not configured')
+    console.error('❌ Supabase environment variables não configuradas')
     return NextResponse.json({ 
-      error: 'Supabase not configured'
+      error: 'Supabase não configurado'
     }, { status: 503 })
   }
 
@@ -111,7 +109,7 @@ export async function PUT(_request: NextRequest) {
     
     if (!supabase) {
       return NextResponse.json({ 
-        error: 'Supabase client not available'
+        error: 'Supabase client não disponível'
       }, { status: 503 })
     }
     
@@ -120,15 +118,13 @@ export async function PUT(_request: NextRequest) {
     
     if (userError || !user) {
       return NextResponse.json({ 
-        error: 'Invalid authentication token'
+        error: 'Token de autenticação inválido'
       }, { status: 401 })
     }
 
     // Parse request body
     const body = await _request.json()
-    console.log('🔍 PUT /api/auth/me - Request body:', body)
     const { name, avatar_url, ...otherProfileData } = body
-    console.log('🔍 PUT /api/auth/me - Extracted fields:', { name, avatar_url, otherProfileData })
 
     // Update user metadata if name provided (avatar_url goes to profile table)
     if (name) {
@@ -140,7 +136,7 @@ export async function PUT(_request: NextRequest) {
 
       if (updateError) {
         return NextResponse.json({ 
-          error: 'Failed to update user metadata'
+          error: 'Falha ao atualizar metadados do usuário'
         }, { status: 400 })
       }
     }
@@ -165,7 +161,6 @@ export async function PUT(_request: NextRequest) {
     const updateData = Object.fromEntries(
       Object.entries(validProfileFields).filter(([, value]) => value !== undefined)
     )
-    console.log('🔍 PUT /api/auth/me - Update data for profiles table:', updateData)
 
     const { data: updatedProfile, error: profileError } = await supabase
       .from('profiles')
@@ -175,13 +170,11 @@ export async function PUT(_request: NextRequest) {
       .single()
 
     if (profileError) {
-      console.error('Error updating profile:', profileError)
+      console.error('Erro ao atualizar perfil:', profileError)
       return NextResponse.json({ 
-        error: 'Failed to update profile'
+        error: 'Falha ao atualizar perfil'
       }, { status: 400 })
     }
-
-    console.log('🔍 PUT /api/auth/me - Updated profile:', updatedProfile);
 
     return NextResponse.json({
       user: {
@@ -196,9 +189,9 @@ export async function PUT(_request: NextRequest) {
       hasProfile: true
     })
   } catch (error) {
-    console.error('Auth me update error:', error)
+    console.error('Erro ao atualizar perfil:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }

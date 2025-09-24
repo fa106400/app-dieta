@@ -4,7 +4,7 @@ import { aiService, UserProfile } from '@/lib/ai-service';
 
 export async function GET() {
   return NextResponse.json({ 
-    message: 'Onboarding Recommendations API is working',
+    message: 'Onboarding Recommendations API está funcionando',
     timestamp: new Date().toISOString()
   });
 }
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     
     if (!supabase) {
       return NextResponse.json(
-        { error: 'Supabase client not available' },
+        { error: 'Supabase client não disponível' },
         { status: 503 }
       );
     }
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Não autorizado' },
         { status: 401 }
       );
     }
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     if (profileError || !profile) {
       return NextResponse.json(
-        { error: 'User profile not found', details: profileError?.message },
+        { error: 'Perfil do usuário não encontrado', details: profileError?.message },
         { status: 404 }
       );
     }
@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
     // Check if onboarding is completed
     if (!profile.onboarding_completed) {
       return NextResponse.json(
-        { error: 'Onboarding not completed' },
+        { error: 'Onboarding não completado' },
         { status: 400 }
       );
     }
 
     if (!profile.onboarding_completed) {
       return NextResponse.json(
-        { error: 'Onboarding not completed' },
+        { error: 'Onboarding não completado' },
         { status: 400 }
       );
     }
@@ -78,9 +78,8 @@ export async function POST(request: NextRequest) {
       .limit(50);
 
     if (dietsError || !diets) {
-      console.error('🔍 Onboarding Recommendations - Failed to fetch diets, returning 500');
       return NextResponse.json(
-        { error: 'Failed to fetch available diets', details: dietsError?.message },
+        { error: 'Falha ao buscar dietas disponíveis', details: dietsError?.message },
         { status: 500 }
       );
     }
@@ -118,20 +117,18 @@ export async function POST(request: NextRequest) {
     );
 
     if (!aiResponse.success) {
-      console.error('🔍 Onboarding Recommendations - AI service failed, returning 500');
       return NextResponse.json(
         { 
           error: aiResponse.error,
-          message: 'Failed to generate recommendations. You can try again later.'
+          message: 'Falha ao gerar recomendações. Você pode tentar novamente mais tarde.'
         },
         { status: 500 }
       );
     }
 
     if (!aiResponse.recommendations || aiResponse.recommendations.length === 0) {
-      console.error('🔍 Onboarding Recommendations - No recommendations generated, returning 500');
       return NextResponse.json(
-        { error: 'No recommendations generated' },
+        { error: 'Nenhuma recomendação gerada' },
         { status: 500 }
       );
     }
@@ -143,9 +140,8 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id);
     
     if (deleteError) {
-      console.error('Error deleting recommendations:', deleteError);
       return NextResponse.json(
-        { error: 'Failed to delete recommendations', details: deleteError.message },
+        { error: 'Falha ao deletar recomendações', details: deleteError.message },
         { status: 500 }
       );
     }
@@ -166,9 +162,8 @@ export async function POST(request: NextRequest) {
       .insert(recommendationInserts);
 
     if (insertError) {
-      console.error('Error saving onboarding recommendations:', insertError);
       return NextResponse.json(
-        { error: 'Failed to save recommendations', details: insertError.message },
+        { error: 'Falha ao salvar recomendações', details: insertError.message },
         { status: 500 }
       );
     }
@@ -194,19 +189,13 @@ export async function POST(request: NextRequest) {
       success: true,
       recommendations: recommendationsWithDetails,
       generatedAt: new Date().toISOString(),
-      message: 'Initial recommendations generated successfully!'
+      message: 'Initial recommendations geradas com sucesso!'
     });
 
   } catch (error) {
-    console.error('Error in onboarding recommendations API:', error);
-    console.error('Error details:', {
-      name: error instanceof Error ? error.name : 'Unknown',
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
-    });
     return NextResponse.json(
       { 
-        error: 'Internal server error',
+        error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }

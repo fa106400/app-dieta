@@ -33,14 +33,14 @@ export async function POST(request: NextRequest) {
       events = [{ event: requestBody.event, payload: requestBody.payload || {} }];
     } else {
       return NextResponse.json(
-        { error: "Event or events array is required" },
+        { error: "Evento ou array de eventos é obrigatório" },
         { status: 400 }
       );
     }
     
     if (events.length === 0) {
       return NextResponse.json(
-        { error: "At least one event is required" },
+        { error: "Pelo menos um evento é obrigatório" },
         { status: 400 }
       );
     }
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     
     if (!supabase) {
       return NextResponse.json(
-        { error: "Erro ao conectar ao banco de dados. Tente novamente." },
+        { error: "Erro ao conectar ao banco de dados. Por favor, tente novamente." },
         { status: 500 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "Não autorizado" },
         { status: 401 }
       );
     }
@@ -85,9 +85,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error("Error validating badges:", error);
+    console.error("Erro ao validar badges:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }
@@ -106,7 +106,7 @@ async function validateBadgesForUser(
     .eq("criteria->>event", event);
 
   if (badgesError) {
-    console.error("Error fetching badges:", badgesError);
+    console.error("Erro ao buscar badges:", badgesError);
     return [];
   }
 
@@ -131,7 +131,7 @@ async function validateBadgesForUser(
           .single();
 
         if (checkError && checkError.code !== "PGRST116") {
-          console.error("Error checking existing badge:", checkError);
+          console.error("Erro ao verificar badge existente:", checkError);
           continue;
         }
 
@@ -151,7 +151,7 @@ async function validateBadgesForUser(
             });
 
           if (insertError) {
-            console.error("Error inserting user badge:", insertError);
+            console.error("Erro ao inserir badge do usuário:", insertError);
             continue;
           }
 
@@ -159,7 +159,7 @@ async function validateBadgesForUser(
         }
       }
     } catch (error) {
-      console.error(`Error evaluating badge ${badge.id}:`, error);
+      console.error(`Erro ao avaliar badge ${badge.id}:`, error);
       continue;
     }
   }
@@ -204,7 +204,7 @@ async function evaluateCriteria(
         return false;
     }
   } catch (error) {
-    console.error(`Error evaluating criteria for event ${criteria.event}:`, error);
+    console.error(`Erro ao avaliar critérios para evento ${criteria.event}:`, error);
     return false;
   }
 }
@@ -221,7 +221,7 @@ async function evaluateDietChosen(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Error evaluating diet_chosen:", error);
+    console.error("Erro ao avaliar diet_chosen:", error);
     return false;
   }
 
@@ -241,7 +241,7 @@ async function evaluateDietSwitches(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Error evaluating diet_switches:", error);
+    console.error("Erro ao avaliar diet_switches:", error);
     return false;
   }
 

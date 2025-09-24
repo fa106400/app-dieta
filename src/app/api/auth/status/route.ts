@@ -6,7 +6,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({ 
       authenticated: false, 
       user: null,
-      error: 'Supabase not configured'
+      error: 'Supabase não configurado'
     }, { status: 503 })
   }
 
@@ -21,7 +21,7 @@ export async function GET(_request: NextRequest) {
         authenticated: false, 
         user: null,
         session: null,
-        error: 'Supabase client not available'
+        error: 'Supabase client não disponível'
       }, { status: 503 })
     }
     
@@ -32,7 +32,7 @@ export async function GET(_request: NextRequest) {
         authenticated: false, 
         user: null,
         session: null,
-        error: error?.message || 'Authentication failed'
+        error: error?.message || 'Autenticação falhou'
       })
     }
 
@@ -49,13 +49,13 @@ export async function GET(_request: NextRequest) {
       session: null
     })
   } catch (error) {
-    console.error('Auth status check error:', error)
+    console.error('Erro ao verificar status de autenticação:', error)
     return NextResponse.json(
       { 
         authenticated: false,
         user: null,
         session: null,
-        error: 'Internal server error' 
+        error: 'Erro interno do servidor' 
       },
       { status: 500 }
     )

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "Não autorizado" },
         { status: 401 }
       );
     }
@@ -37,9 +37,9 @@ export async function GET(request: NextRequest) {
         .order("weight", { ascending: true });
 
       if (earnedError) {
-        console.error("Error fetching earned badges:", earnedError);
+        console.error("Erro ao buscar badges ganhos:", earnedError);
         return NextResponse.json(
-          { error: "Failed to fetch earned badges" },
+          { error: "Falha ao buscar badges ganhos" },
           { status: 500 }
         );
       }
@@ -60,9 +60,9 @@ export async function GET(request: NextRequest) {
         .order("weight", { ascending: true });
 
       if (allError) {
-        console.error("Error fetching all badges:", allError);
+        console.error("Erro ao buscar todos os badges:", allError);
         return NextResponse.json(
-          { error: "Failed to fetch badges" },
+          { error: "Falha ao buscar badges" },
           { status: 500 }
         );
       }
@@ -74,9 +74,9 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error("Error fetching badges:", error);
+    console.error("Erro ao buscar badges:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

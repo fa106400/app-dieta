@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "Não autorizado" },
         { status: 401 }
       );
     }
@@ -28,9 +28,9 @@ export async function GET(request: NextRequest) {
       .select("user_id, exp, user_alias, avatar_url");
 
     if (usersError) {
-      console.error("Error fetching users:", usersError);
+      console.error("Erro ao buscar usuários:", usersError);
       return NextResponse.json(
-        { error: "Unable to load leaderboard" },
+        { error: "Falha ao carregar leaderboard" },
         { status: 500 }
       );
     }
@@ -77,9 +77,9 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error("Error in leaderboard API:", error);
+    console.error("Erro no API de leaderboard:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

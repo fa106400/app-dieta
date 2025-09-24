@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
     if (!alias || typeof alias !== "string") {
       return NextResponse.json(
-        { error: "Alias is required" },
+        { error: "Alias é obrigatório" },
         { status: 400 }
       );
     }
@@ -15,14 +15,14 @@ export async function POST(request: NextRequest) {
     // Validate alias format
     if (alias.length < 3 || alias.length > 20) {
       return NextResponse.json(
-        { available: false, error: "Alias must be 3-20 characters long" },
+        { available: false, error: "Alias deve ter 3-20 caracteres" },
         { status: 400 }
       );
     }
 
     if (!/^[a-zA-Z0-9_]+$/.test(alias)) {
       return NextResponse.json(
-        { available: false, error: "Alias can only contain letters, numbers, and underscores" },
+        { available: false, error: "Alias pode conter apenas letras, números e underscores" },
         { status: 400 }
       );
     }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     if (!supabase) {
       return NextResponse.json(
-        { error: "Supabase client not available" },
+        { error: "Supabase client não disponível" },
         { status: 503 }
       );
     }
@@ -46,9 +46,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error && error.code !== "PGRST116") {
-      console.error("Error checking alias:", error);
+      console.error("Erro ao verificar alias:", error);
       return NextResponse.json(
-        { error: "Failed to validate alias" },
+        { error: "Falha ao validar alias" },
         { status: 500 }
       );
     }
@@ -59,9 +59,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ available });
 
   } catch (error) {
-    console.error("Error in validate-alias API:", error);
+    console.error("Erro no API de validate-alias:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

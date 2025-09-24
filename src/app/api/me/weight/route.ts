@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!weight || typeof weight !== 'number' || weight < 30 || weight > 300) {
-      return NextResponse.json({ error: "Invalid weight. Must be between 30-300 kg" }, { status: 400 });
+      return NextResponse.json({ error: "Peso inválido. Deve ser entre 30-300 kg" }, { status: 400 });
     }
 
     if (!date || typeof date !== 'string') {
-      return NextResponse.json({ error: "Invalid date" }, { status: 400 });
+      return NextResponse.json({ error: "Data inválida" }, { status: 400 });
     }
 
     // Insert weight entry
@@ -41,17 +41,17 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("Error inserting weight entry:", error);
+      console.error("Erro ao inserir entrada de peso:", error);
       
       // Handle duplicate date error specifically
       if (error.code === '23505') {
         return NextResponse.json({ 
-          error: "You already have a weight entry for this date. Please edit the existing entry instead.",
+          error: "Você já tem uma entrada de peso para esta data. Por favor, edite a entrada existente em vez de inserir uma nova.",
           code: error.code 
         }, { status: 409 });
       }
       
-      return NextResponse.json({ error: "Failed to save weight entry" }, { status: 500 });
+      return NextResponse.json({ error: "Falha ao salvar entrada de peso" }, { status: 500 });
     }
 
     // Trigger badge validation for weight loss
@@ -74,13 +74,13 @@ export async function POST(request: NextRequest) {
         }
       }
     } catch (badgeError) {
-      console.error("Error validating badges for weight loss:", badgeError);
+      console.error("Erro ao validar badges para perda de peso:", badgeError);
       // Don't fail the main operation if badge validation fails
     }
 
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {
-    console.error("Error in weight POST:", error);
+    console.error("Erro no POST de peso:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     // Get weight entries for the user
@@ -109,14 +109,14 @@ export async function GET(request: NextRequest) {
       .order("measured_at", { ascending: true });
 
     if (error) {
-      console.error("Error fetching weight entries:", error);
-      return NextResponse.json({ error: "Failed to fetch weight entries" }, { status: 500 });
+      console.error("Erro ao buscar entradas de peso:", error);
+      return NextResponse.json({ error: "Falha ao buscar entradas de peso" }, { status: 500 });
     }
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    console.error("Error in weight GET:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Erro no GET de peso:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -133,7 +133,7 @@ export async function PUT(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -141,15 +141,15 @@ export async function PUT(request: NextRequest) {
 
     // Validate input
     if (!id) {
-      return NextResponse.json({ error: "Entry ID is required" }, { status: 400 });
+      return NextResponse.json({ error: "ID da entrada é obrigatório" }, { status: 400 });
     }
 
     if (!weight || typeof weight !== 'number' || weight < 30 || weight > 300) {
-      return NextResponse.json({ error: "Invalid weight. Must be between 30-300 kg" }, { status: 400 });
+      return NextResponse.json({ error: "Peso inválido. Deve ser entre 30-300 kg" }, { status: 400 });
     }
 
     if (!date || typeof date !== 'string') {
-      return NextResponse.json({ error: "Invalid date" }, { status: 400 });
+      return NextResponse.json({ error: "Data inválida" }, { status: 400 });
     }
 
     // Update weight entry
@@ -165,14 +165,14 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("Error updating weight entry:", error);
-      return NextResponse.json({ error: "Failed to update weight entry" }, { status: 500 });
+      console.error("Erro ao atualizar entrada de peso:", error);
+      return NextResponse.json({ error: "Falha ao atualizar entrada de peso" }, { status: 500 });
     }
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    console.error("Error in weight PUT:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Erro no PUT de peso:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -189,14 +189,14 @@ export async function DELETE(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (!id) {
-      return NextResponse.json({ error: "Entry ID is required" }, { status: 400 });
+      return NextResponse.json({ error: "ID da entrada é obrigatório" }, { status: 400 });
     }
 
     // Delete weight entry
@@ -207,13 +207,13 @@ export async function DELETE(request: NextRequest) {
       .eq("user_id", user.id);
 
     if (error) {
-      console.error("Error deleting weight entry:", error);
-      return NextResponse.json({ error: "Failed to delete weight entry" }, { status: 500 });
+      console.error("Erro ao deletar entrada de peso:", error);
+      return NextResponse.json({ error: "Falha ao deletar entrada de peso" }, { status: 500 });
     }
 
-    return NextResponse.json({ message: "Weight entry deleted successfully" }, { status: 200 });
+    return NextResponse.json({ message: "Entrada de peso deletada com sucesso" }, { status: 200 });
   } catch (error) {
-    console.error("Error in weight DELETE:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Erro no DELETE de peso:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

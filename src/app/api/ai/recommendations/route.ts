@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Não autorizado' },
         { status: 401 }
       );
     }
@@ -42,10 +42,10 @@ export async function POST(request: NextRequest) {
       if (!cooldownCheck.allowed) {
         return NextResponse.json(
           { 
-            error: 'Recommendations are on cooldown',
+            error: 'Recomendações estão em cooldown',
             cooldownHours: cooldownCheck.cooldownHours,
             cooldownRemaining: cooldownCheck.cooldownRemaining,
-            message: `Please wait ${cooldownCheck.cooldownHours} hours before requesting new recommendations.`
+            message: `Por favor, aguarde ${cooldownCheck.cooldownHours} horas antes de solicitar novas recomendações.`
           },
           { status: 429 }
         );
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     if (!profile) {
       return NextResponse.json(
-        { error: 'User profile not found' },
+        { error: 'Perfil do usuário não encontrado' },
         { status: 404 }
       );
     }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     if (dietsError || !diets) {
       return NextResponse.json(
-        { error: 'Failed to fetch available diets' },
+        { error: 'Falha ao buscar dietas disponíveis' },
         { status: 500 }
       );
     }
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     if (!aiResponse.recommendations || aiResponse.recommendations.length === 0) {
       return NextResponse.json(
-        { error: 'No recommendations generated' },
+        { error: 'Nenhuma recomendação gerada' },
         { status: 500 }
       );
     }
@@ -155,9 +155,9 @@ export async function POST(request: NextRequest) {
       .insert(recommendationInserts);
 
     if (insertError) {
-      console.error('Error saving recommendations:', insertError);
+      console.error('Erro ao salvar recomendações:', insertError);
       return NextResponse.json(
-        { error: 'Failed to save recommendations' },
+        { error: 'Falha ao salvar recomendações' },
         { status: 500 }
       );
     }
@@ -186,9 +186,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in recommendations API:', error);
+    console.error('Erro no API de recomendações:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     );
   }
@@ -207,7 +207,7 @@ export async function GET(_request: NextRequest) {
     
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Não autorizado' },
         { status: 401 }
       );
     }
@@ -237,7 +237,7 @@ export async function GET(_request: NextRequest) {
 
     if (error) {
       return NextResponse.json(
-        { error: 'Failed to fetch recommendations' },
+        { error: 'Falha ao buscar recomendações' },
         { status: 500 }
       );
     }
@@ -261,9 +261,9 @@ export async function GET(_request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching recommendations:', error);
+    console.error('Erro ao buscar recomendações:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     );
   }
