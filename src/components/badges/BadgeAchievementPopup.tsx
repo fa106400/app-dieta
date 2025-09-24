@@ -178,13 +178,15 @@ export function BadgeAchievementPopup({
       case "diet_duration":
         return `Manter a mesma dieta por ${criteria.duration_days || 7} dias`;
       case "shopping_exported":
-        return `Exportar lista de compras ${criteria.count || 1} vez${
-          (criteria.count || 1) > 1 ? "es" : ""
-        }`;
+        // return `Exportar lista de compras ${criteria.count || 1} vez${
+        //   (criteria.count || 1) > 1 ? "es" : ""
+        // }`;
+        return "Exportar lista de compras";
       case "onboarding_completed":
-        return `Completar o onboarding ${criteria.count || 1} vez${
-          (criteria.count || 1) > 1 ? "es" : ""
-        }`;
+        // return `Completar o onboarding ${criteria.count || 1} vez${
+        //   (criteria.count || 1) > 1 ? "es" : ""
+        // }`;
+        return "Completar o onboarding";
       case "weight_loss":
         return `Perder ${criteria.threshold || 1}kg`;
       case "experience":
