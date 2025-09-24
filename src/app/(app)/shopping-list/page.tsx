@@ -132,13 +132,12 @@ export default function ShoppingListPage() {
         details?: string;
       };
       let errorMessage =
-        "Could not load your shopping list. Please try again later.";
+        "Erro ao carregar sua lista de compras. Tente novamente mais tarde.";
 
       if (error?.code === "406") {
-        errorMessage =
-          "Invalid request format. Please refresh the page and try again.";
+        errorMessage = "Atualize a página e tente novamente.";
       } else if (error?.message?.includes("JWT")) {
-        errorMessage = "Authentication error. Please log in again.";
+        errorMessage = "Erro de autenticação. Por favor, faça login novamente.";
       }
 
       setError(errorMessage);
@@ -198,7 +197,7 @@ export default function ShoppingListPage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading your shopping list...</p>
+            <p className="text-gray-600">Carregando sua lista de compras...</p>
           </div>
         </div>
       </div>
@@ -212,11 +211,11 @@ export default function ShoppingListPage() {
           <CardContent className="p-8 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">
-              Error Loading Shopping List
+              Erro ao carregar lista de compras
             </h2>
             <p className="text-gray-600 mb-4">{error}</p>
             <Button onClick={fetchShoppingList} variant="outline">
-              Try Again
+              Tentar novamente
             </Button>
           </CardContent>
         </Card>
@@ -230,12 +229,13 @@ export default function ShoppingListPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">No Active Diet</h2>
+            <h2 className="text-xl font-semibold mb-2">Nenhum plano ativo</h2>
             <p className="text-gray-600 mb-4">
-              You need to select a diet first to generate your shopping list.
+              Você precisa selecionar um plano primeiro para gerar sua lista de
+              compras.
             </p>
             <Button onClick={() => router.push("/diets")}>
-              Select a Diet First
+              Selecionar um plano
             </Button>
           </CardContent>
         </Card>
@@ -258,7 +258,7 @@ export default function ShoppingListPage() {
             <span>Back to My Week</span>
           </Button> */}
           <div>
-            <h1 className="text-2xl font-bold">Shopping List</h1>
+            <h1 className="text-2xl font-bold">Lista de compras</h1>
             <p className="text-gray-600">{currentDiet.title}</p>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function ShoppingListPage() {
       {/* Period Selection */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg">Time Period</CardTitle>
+          <CardTitle className="text-lg">Período</CardTitle>
         </CardHeader>
         <CardContent>
           <RadioGroup
@@ -279,11 +279,11 @@ export default function ShoppingListPage() {
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="week" id="week" />
-              <Label htmlFor="week">1 Week</Label>
+              <Label htmlFor="week">7 Dias</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="month" id="month" />
-              <Label htmlFor="month">1 Month (30 days)</Label>
+              <Label htmlFor="month">30 Dias</Label>
             </div>
           </RadioGroup>
         </CardContent>
@@ -297,8 +297,8 @@ export default function ShoppingListPage() {
               <CardTitle className="flex items-center space-x-2">
                 <ShoppingCart className="h-5 w-5" />
                 <span>
-                  Main Ingredients (
-                  {currentDiet.shopping_plan.main_items.length} items)
+                  Ingredientes principais (
+                  {currentDiet.shopping_plan.main_items.length} itens)
                 </span>
               </CardTitle>
               <Button
@@ -312,7 +312,7 @@ export default function ShoppingListPage() {
                       converteMedidas,
                     });
 
-                    toast.success("PDF exported successfully!");
+                    toast.success("PDF exportado com sucesso!");
 
                     // Trigger badge validation for shopping export
                     try {
@@ -323,13 +323,13 @@ export default function ShoppingListPage() {
                     }
                   } catch (error) {
                     console.error("Error generating PDF:", error);
-                    toast.error("Failed to generate PDF. Please try again.");
+                    toast.error("Falha ao gerar PDF. Tente novamente.");
                   }
                 }}
                 className="flex items-center space-x-2"
               >
                 <FileText className="h-4 w-4" />
-                <span>Export PDF</span>
+                <span>Exportar PDF</span>
               </Button>
             </div>
           </CardHeader>
@@ -365,13 +365,14 @@ export default function ShoppingListPage() {
             <CardTitle className="flex items-center space-x-2">
               <Utensils className="h-5 w-5" />
               <span>
-                Alternative Ingredients (
-                {currentDiet.shopping_plan.alt_items.length} items)
+                Ingredientes alternativos (
+                {currentDiet.shopping_plan.alt_items.length} itens)
               </span>
             </CardTitle>
             <p className="text-sm text-gray-600">
-              This diet contains alternative ingredient suggestions listed here
-              so you can consider shopping in small quantities for daily use.
+              Este plano contém sugestões de ingredientes alternativos listadas
+              aqui para que você possa considerar comprar em pequenas
+              quantidades para uso diário.
             </p>
           </CardHeader>
           <CardContent>
@@ -397,11 +398,11 @@ export default function ShoppingListPage() {
             <CardContent className="p-8 text-center">
               <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">
-                No Ingredients Found
+                Nenhum ingrediente encontrado
               </h2>
               <p className="text-gray-600">
-                This diet doesn&apos;t have any ingredients defined in its
-                shopping plan.
+                Este plano não tem nenhum ingrediente definido em seu plano de
+                compras.
               </p>
             </CardContent>
           </Card>
