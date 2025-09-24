@@ -748,7 +748,7 @@ function OnboardingPageContent() {
               ) : (
                 <Button
                   onClick={handleSubmit}
-                  disabled={!canProceed() || isLoading || isValidatingAlias}
+                  disabled={!canProceed() || isLoading}
                   className="flex items-center space-x-2"
                 >
                   {isLoading ? (
