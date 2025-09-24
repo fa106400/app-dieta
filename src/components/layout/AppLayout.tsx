@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Header } from "./Header";
-import { Breadcrumbs } from "./Breadcrumbs";
+// import { Breadcrumbs } from "./Breadcrumbs";
 import { Sidebar } from "./Sidebar";
 
 interface AppLayoutProps {
@@ -31,7 +31,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <Header onMenuClick={() => setSidebarOpen(true)} />
 
         {/* Breadcrumbs */}
-        <Breadcrumbs />
+        {/* <Breadcrumbs /> */}
 
         {/* Page content */}
         <main className="py-4">
