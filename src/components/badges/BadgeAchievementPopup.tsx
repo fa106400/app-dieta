@@ -164,7 +164,7 @@ export function BadgeAchievementPopup({
   };
 
   const getCriteriaDescription = (criteria: BadgeData["criteria"]) => {
-    if (!criteria) return "No criteria available";
+    if (!criteria) return "Nenhum critério disponível";
 
     switch (criteria.event) {
       case "diet_chosen":
@@ -223,11 +223,11 @@ export function BadgeAchievementPopup({
                   Conquista {currentBadgeIndex + 1} de {badges.length}
                 </div>
               )}
-              {deferredAction && (
+              {/* {deferredAction && (
                 <div className="mt-2 text-sm text-blue-600 font-medium">
                   ⏳ Aguardando sua ação para continuar...
                 </div>
-              )}
+              )} */}
             </CardDescription>
           </CardHeader>
 

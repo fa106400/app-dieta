@@ -16,18 +16,23 @@ interface DietFiltersProps {
 }
 
 const categories = [
-  { value: "low_carb", label: "Low Carb" },
-  { value: "keto", label: "Ketogenic" },
-  { value: "vegetarian", label: "Vegetarian" },
-  { value: "balanced", label: "Balanced" },
-  { value: "high_protein", label: "High Protein" },
-  { value: "mediterranean", label: "Mediterranean" },
+  { value: "traditional", label: "Tradicional" },
+  { value: "vegan", label: "Vegano" },
+  { value: "vegetarian", label: "Vegetariano" },
+  { value: "lactose_intolerant", label: "Sem lactose" },
+  { value: "gluten_free", label: "Sem glúten" },
+  { value: "low_carb", label: "Low carb" },
+  { value: "keto", label: "Cetogência (Keto)" },
+  { value: "paleo", label: "Paleo" },
+  { value: "mediterranean", label: "Mediterrâneo" },
+  { value: "low_fat", label: "Pouca gordura" },
+  { value: "high_protein", label: "Bastante proteína" },
 ];
 
 const difficulties = [
-  { value: "beginner", label: "Beginner" },
-  { value: "intermediate", label: "Intermediate" },
-  { value: "advanced", label: "Advanced" },
+  { value: "beginner", label: "Iniciante" },
+  { value: "intermediate", label: "Intermediário" },
+  { value: "advanced", label: "Avançado" },
 ];
 
 /*const durations = [
@@ -37,10 +42,10 @@ const difficulties = [
 ];*/
 
 const goals = [
-  { value: "lose_weight", label: "Weight Loss" },
-  { value: "maintain", label: "Weight Maintenance" },
-  { value: "gain_muscle", label: "Muscle Gain" },
-  { value: "health", label: "General Health" },
+  { value: "lose_weight", label: "Perder peso" },
+  { value: "maintain", label: "Manter peso" },
+  { value: "gain_muscle", label: "Ganhar massa" },
+  { value: "health", label: "Melhorar saúde" },
 ];
 
 export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
@@ -96,7 +101,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2">
             <Filter className="h-5 w-5" />
-            <span>Filters</span>
+            <span>Filtros</span>
             {activeFilterCount > 0 && (
               <Badge variant="secondary">{activeFilterCount}</Badge>
             )}
@@ -104,7 +109,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
           <div className="flex items-center space-x-2">
             {hasActiveFilters && (
               <Button variant="ghost" size="sm" onClick={onClear}>
-                Clear all
+                Limpar todos
               </Button>
             )}
             <Button
@@ -112,7 +117,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
             >
-              {isExpanded ? "Collapse" : "Expand"}
+              {isExpanded ? "Colapsar" : "Expandir"}
             </Button>
           </div>
         </div>
@@ -122,7 +127,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
         <CardContent className="space-y-6">
           {/* Category Filter */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Category</Label>
+            <Label className="text-sm font-medium">Categoria</Label>
             <div className="grid grid-cols-2 gap-2">
               {categories.map((category) => (
                 <div
@@ -148,8 +153,8 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
           </div>
 
           {/* Difficulty Filter */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Difficulty</Label>
+          {/* <div className="space-y-3">
+            <Label className="text-sm font-medium">Dificuldade</Label>
             <div className="flex flex-wrap gap-2">
               {difficulties.map((difficulty) => (
                 <div
@@ -175,7 +180,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Duration Filter 
           <div className="space-y-3">
@@ -206,7 +211,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
 
           {/* Goal Filter */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Goal</Label>
+            <Label className="text-sm font-medium">Objetivo</Label>
             <div className="grid grid-cols-2 gap-2">
               {goals.map((goal) => (
                 <div key={goal.value} className="flex items-center space-x-2">
@@ -234,7 +239,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
       {hasActiveFilters && (
         <CardContent className="pt-0">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Active Filters:</Label>
+            <Label className="text-sm font-medium">Filtros selecionados:</Label>
             <div className="flex flex-wrap gap-2">
               {filters.category.map((category) => (
                 <Badge

@@ -13,7 +13,7 @@ interface DietSearchProps {
 export function DietSearch({
   value,
   onChange,
-  placeholder = "Search diets...",
+  placeholder = "Procure por planos...",
 }: DietSearchProps) {
   return (
     <div className="relative">
@@ -33,7 +33,7 @@ export function DietSearch({
           className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0 hover:bg-gray-100"
         >
           <X className="h-4 w-4" />
-          <span className="sr-only">Clear search</span>
+          <span className="sr-only">Limpar a busca</span>
         </Button>
       )}
     </div>

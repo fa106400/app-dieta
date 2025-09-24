@@ -18,23 +18,23 @@ interface DietSortingProps {
 const sortOptions = [
   {
     value: "popularity" as const,
-    label: "Popularity",
-    description: "Most popular diets first",
+    label: "Popularidade",
+    description: "As mais populares primeiro",
   },
   {
     value: "recommendation" as const,
-    label: "Recommended",
-    description: "AI recommended for you",
+    label: "Recomendadas",
+    description: "Recomendadas pra você pela IA",
   },
   {
     value: "alphabetical" as const,
     label: "A-Z",
-    description: "Alphabetical order",
+    description: "Ordem alfabética",
   },
   {
     value: "recent" as const,
-    label: "Recently Added",
-    description: "Newest diets first",
+    label: "Recentes",
+    description: "As mais recentes primeiro",
   },
 ];
 
@@ -46,7 +46,7 @@ export function DietSorting({ value, onChange }: DietSortingProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="w-full sm:w-auto">
           <ArrowUpDown className="h-4 w-4 mr-2" />
-          Sort by: {currentOption?.label}
+          Ordenar por: {currentOption?.label}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

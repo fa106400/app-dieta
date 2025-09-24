@@ -36,19 +36,11 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
       }
 
       try {
-        console.log(
-          "🔍 OnboardingGuard - Checking onboarding status for user:",
-          user.id
-        );
-
         const response = await fetch("/api/auth/me");
         const data = await response.json();
 
         if (!response.ok) {
-          console.error(
-            "🔍 OnboardingGuard - Failed to fetch profile:",
-            data.error
-          );
+          console.error("Falha ao buscar perfil:", data.error);
           setOnboardingStatus({ loading: false, completed: true }); // Allow access on error
           return;
         }
@@ -56,28 +48,15 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
         const profile = data.profile as UserProfile | null;
         const isCompleted = profile?.onboarding_completed === true;
 
-        console.log("🔍 OnboardingGuard - Profile data:", {
-          hasProfile: data.hasProfile,
-          onboarding_completed: profile?.onboarding_completed,
-          isCompleted,
-        });
-
         setOnboardingStatus({ loading: false, completed: isCompleted });
 
         // Redirect to onboarding if not completed
         if (!isCompleted) {
-          console.log("🔍 OnboardingGuard - Redirecting to onboarding");
           router.push("/onboarding");
         } else {
-          console.log(
-            "🔍 OnboardingGuard - Onboarding completed, allowing access"
-          );
         }
       } catch (error) {
-        console.error(
-          "🔍 OnboardingGuard - Error checking onboarding status:",
-          error
-        );
+        console.error("Erro ao verificar status de onboarding:", error);
         setOnboardingStatus({ loading: false, completed: true }); // Allow access on error
       }
     };
