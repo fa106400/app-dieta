@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 function ResetPasswordPageContent() {
   const [password, setPassword] = useState("");
@@ -103,7 +104,14 @@ function ResetPasswordPageContent() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4 sm:px-5 lg:px-6">
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">[LOGO]</h1>
+          <Image
+            className="h-8 sm:h-10 lg:h-12 w-auto max-w-full object-contain mx-auto"
+            src="/imgs/logo/logo-rect.png"
+            alt="Logo"
+            width={450}
+            height={113}
+            priority
+          />
           {/* <p className="mt-2 text-sm text-gray-600">
             Enter your new password below.
           </p>*/}

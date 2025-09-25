@@ -15,6 +15,8 @@ import {
   //Target,
 } from "lucide-react";
 
+import Image from "next/image";
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -47,7 +49,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               {/* <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
                 <Utensils className="h-5 w-5 text-white" />
               </div> */}
-              <span className="text-xl font-bold text-gray-900">[LOGO]</span>
+              <Image
+                className="h-10 w-auto max-w-full object-contain"
+                src="/imgs/logo/logo-rect.png"
+                alt="Logo"
+                width={450}
+                height={113}
+                priority
+              />
+              {/* <span className="text-xl font-bold text-gray-900">[LOGO]</span> */}
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">
@@ -134,10 +144,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200">
             <Link href="/home" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              {/* <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
                 <Utensils className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">DietApp</span>
+              </div> */}
+              <Image
+                className="h-8 w-auto max-w-full object-contain"
+                src="/imgs/logo/logo-rect.png"
+                alt="Logo"
+                width={450}
+                height={113}
+                priority
+              />
+              {/* <span className="text-xl font-bold text-gray-900">[LOGO]</span> */}
             </Link>
             <button
               onClick={onClose}
