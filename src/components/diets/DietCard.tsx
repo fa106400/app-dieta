@@ -213,14 +213,14 @@ export function DietCard({
         </p>
 
         <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
+          {/* <div className="flex flex-wrap gap-2">
             <Badge className={getCategoryColor(diet.category)}>
               {formatCategory(diet.category)}
             </Badge>
-            {/* <Badge className={getDifficultyColor(diet.difficulty)}>
+            <Badge className={getDifficultyColor(diet.difficulty)}>
               {diet.difficulty || "Desconhecida"}
-            </Badge> */}
-          </div>
+            </Badge>
+          </div> */}
 
           {/* <div className="flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center">
