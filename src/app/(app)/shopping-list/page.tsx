@@ -170,6 +170,15 @@ export default function ShoppingListPage() {
         }
 
         break;
+      case "grams": //converte grams pra g ou kilo
+        if (newQuantidade > 999) {
+          newQuantidade = newQuantidade / 1000;
+          newUnidade = "kg";
+        } else {
+          newUnidade = "g";
+        }
+
+        break;
       case "ml": //converte ml pra litro
         if (newQuantidade > 999) {
           newQuantidade = newQuantidade / 1000;
@@ -180,6 +189,14 @@ export default function ShoppingListPage() {
       case "unidade": //corrige plural
         if (newQuantidade > 1) {
           newUnidade = "unidades";
+        }
+
+        break;
+      case "pc": //converte pc pra unidade ou unidades
+        if (newQuantidade > 1) {
+          newUnidade = "unidades";
+        } else {
+          newUnidade = "unidade";
         }
 
         break;

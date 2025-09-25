@@ -44,10 +44,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white border-r border-gray-200 px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
             <Link href="/home" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              {/* <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
                 <Utensils className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">DietApp</span>
+              </div> */}
+              <span className="text-xl font-bold text-gray-900">[LOGO]</span>
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">

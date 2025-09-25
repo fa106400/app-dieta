@@ -23,7 +23,7 @@ export function Header({ onMenuClick }: HeaderProps) {
               onClick={onMenuClick}
             >
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Open sidebar</span>
+              <span className="sr-only">Abrir menu</span>
             </Button>
 
             {/* Search bar - hidden on mobile 

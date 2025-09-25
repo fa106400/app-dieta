@@ -13,11 +13,9 @@ export function BrowserMinimizationHandler() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
         // Browser was minimized or tab lost focus
-        console.log("🔍 Browser minimized or lost focus - marking for popup");
         setWasMinimized(true);
       } else if (document.visibilityState === "visible" && wasMinimized) {
         // Browser was restored and we had previously minimized it
-        console.log("🔍 Browser restored after minimization - showing popup");
         setShowPopup(true);
       }
     };
@@ -27,13 +25,11 @@ export function BrowserMinimizationHandler() {
 
     // Also listen for window focus/blur events as backup
     const handleWindowBlur = () => {
-      console.log("🔍 Window lost focus - marking for popup");
       setWasMinimized(true);
     };
 
     const handleWindowFocus = () => {
       if (wasMinimized) {
-        console.log("🔍 Window regained focus after blur - showing popup");
         setShowPopup(true);
       }
     };
@@ -49,7 +45,6 @@ export function BrowserMinimizationHandler() {
   }, [wasMinimized]);
 
   const handleRefresh = () => {
-    console.log("🔍 User clicked refresh - reloading page");
     window.location.reload();
   };
 

@@ -221,6 +221,57 @@ export default function DietDetailPage() {
     }
   };*/
 
+  // Converte unidades caso passem de 1.000
+  const converteMedidas = (quantidade: number, unidade: string): string => {
+    let newQuantidade: number = quantidade;
+    let newUnidade: string = unidade;
+
+    switch (newUnidade) {
+      case "g": //converte grama pra kilo
+        if (newQuantidade > 999) {
+          newQuantidade = newQuantidade / 1000;
+          newUnidade = "kg";
+        }
+
+        break;
+      case "grams": //converte grams pra g ou kilo
+        if (newQuantidade > 999) {
+          newQuantidade = newQuantidade / 1000;
+          newUnidade = "kg";
+        } else {
+          newUnidade = "g";
+        }
+
+        break;
+      case "ml": //converte ml pra litro
+        if (newQuantidade > 999) {
+          newQuantidade = newQuantidade / 1000;
+          newUnidade = "l";
+        }
+
+        break;
+      case "unidade": //corrige plural
+        if (newQuantidade > 1) {
+          newUnidade = "unidades";
+        }
+
+        break;
+      case "pc": //converte pc pra unidade ou unidades
+        if (newQuantidade > 1) {
+          newUnidade = "unidades";
+        } else {
+          newUnidade = "unidade";
+        }
+
+        break;
+      default:
+        // não altera os valores e devolve a const
+        break;
+    }
+
+    return `${newQuantidade} ${newUnidade}`;
+  };
+
   // Follow Now functionality
   const followNow = async () => {
     if (!user || !supabase || !diet || !diet.id) return;
@@ -641,8 +692,12 @@ export default function DietDetailPage() {
                                           {currentItem.name}
                                         </div>
                                         <div className="text-xs text-gray-500">
-                                          {currentItem.quantity}{" "}
-                                          {currentItem.unit}
+                                          {converteMedidas(
+                                            currentItem.quantity,
+                                            currentItem.unit
+                                          )}
+                                          {/*{currentItem.quantity}{" "}
+                                            {currentItem.unit}*/}
                                         </div>
                                       </div>
                                       {hasAlternatives && (

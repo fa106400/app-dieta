@@ -46,7 +46,7 @@ export function generateShoppingListPDF({
   // Header
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
-  doc.text("Shopping List", 20, 30);
+  doc.text("Lista de compras", 20, 30);
   
   // Diet title
   doc.setFontSize(14);
@@ -56,8 +56,8 @@ export function generateShoppingListPDF({
   // Period information
   doc.setFontSize(12);
   doc.setFont("helvetica", "italic");
-  const periodText = selectedPeriod === "week" ? "1 Week" : "1 Month (30 days)";
-  doc.text(`Period: ${periodText}`, 20, 55);
+  const periodText = selectedPeriod === "week" ? "7 dias" : "30 dias";
+  doc.text(`Período: ${periodText}`, 20, 55);
   
   // Date
   const currentDate = new Date().toLocaleDateString("pt-BR", {
@@ -65,7 +65,7 @@ export function generateShoppingListPDF({
     month: "long",
     day: "numeric",
   });
-  doc.text(`Generated on: ${currentDate}`, 20, 65);
+  doc.text(`Lista gerada em: ${currentDate}`, 20, 65);
   
   let yPosition = 80;
   const pageHeight = doc.internal.pageSize.height;
@@ -88,7 +88,7 @@ export function generateShoppingListPDF({
     checkNewPage(15);
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.text("Main Ingredients", 20, yPosition);
+    doc.text("Ingredientes principais", 20, yPosition);
     yPosition += 10;
     
     // Items
@@ -119,13 +119,13 @@ export function generateShoppingListPDF({
     checkNewPage(15);
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.text("Alternative Ingredients", 20, yPosition);
+    doc.text("Ingredientes alternativos", 20, yPosition);
     yPosition += 10;
     
     // Description
     doc.setFontSize(10);
     doc.setFont("helvetica", "italic");
-    doc.text("Optional ingredients for daily use", 25, yPosition);
+    doc.text("Sugestão de ingredientes alternativos se quiser trocar no dia a dia.", 25, yPosition);
     yPosition += 8;
     
     // Items
@@ -150,16 +150,16 @@ export function generateShoppingListPDF({
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     doc.text(
-      `Page ${i} of ${pageCount}`,
+      `Página ${i} de ${pageCount}`,
       doc.internal.pageSize.width - 30,
       doc.internal.pageSize.height - 10
     );
   }
   
   // Generate filename
-  const periodSuffix = selectedPeriod === "week" ? "week" : "month";
+  const periodSuffix = selectedPeriod === "week" ? "semana" : "mes";
   const dateSuffix = new Date().toISOString().split("T")[0];
-  const filename = `shopping-list-${periodSuffix}-${dateSuffix}.pdf`;
+  const filename = `lista-nutritin-${periodSuffix}-${dateSuffix}.pdf`;
   
   // Save the PDF
   doc.save(filename);
