@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Utensils, Calendar, Trophy, User } from "lucide-react";
+import { Home, Utensils, LibraryBig, Trophy, UserRound } from "lucide-react";
 
 const navigation = [
   { name: "Home", href: "/home", icon: Home },
-  { name: "Catálogo", href: "/diets", icon: Utensils },
-  { name: "Meu plano", href: "/my-plan", icon: Calendar },
+  { name: "Catálogo", href: "/diets", icon: LibraryBig },
+  { name: "Meu plano", href: "/my-plan", icon: Utensils },
   { name: "Ranking", href: "/ranking", icon: Trophy },
-  { name: "Eu", href: "/me", icon: User },
+  { name: "Eu", href: "/me", icon: UserRound },
 ];
 
 export function FooterMenu() {
@@ -34,7 +34,7 @@ export function FooterMenu() {
             >
               <item.icon
                 className={cn(
-                  "h-5 w-5",
+                  "h-7 w-7",
                   isActive ? "text-sky-500" : "text-gray-400"
                 )}
                 aria-hidden="true"

@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 import {
   Home,
   Utensils,
-  Calendar,
+  LibraryBig,
+  // Calendar,
   //ShoppingCart,
   Trophy,
-  User,
+  UserRound,
   X,
   //Settings,
   //Target,
@@ -23,12 +24,12 @@ interface SidebarProps {
 }
 
 const navigation = [
-  { name: "Home", href: "/home", icon: Home },
-  { name: "Catálogo", href: "/diets", icon: Utensils },
-  { name: "Meu plano", href: "/my-plan", icon: Calendar },
+  { name: "Início", href: "/home", icon: Home },
+  { name: "Catálogo", href: "/diets", icon: LibraryBig },
+  { name: "Meu plano", href: "/my-plan", icon: Utensils },
   //{ name: "Shopping List", href: "/shopping-list", icon: ShoppingCart },
   { name: "Ranking", href: "/ranking", icon: Trophy },
-  { name: "Eu", href: "/me", icon: User },
+  { name: "Eu", href: "/me", icon: UserRound },
 ];
 
 /*const secondaryNavigation = [
