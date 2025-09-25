@@ -1290,7 +1290,7 @@ function ProfilePrivacyDisplayInline({
                 key={avatar.id}
                 className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
                   selectedAvatar === avatar.id
-                    ? "border-blue-500 ring-2 ring-blue-200"
+                    ? "border-blue-500 ring-2 ring-sky-500"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
                 onClick={() => setSelectedAvatar(avatar.id)}
@@ -1303,7 +1303,7 @@ function ProfilePrivacyDisplayInline({
                   className="w-full h-24 object-cover"
                 />
                 {selectedAvatar === avatar.id && (
-                  <div className="absolute opacity-70 inset-0 bg-blue-500 flex items-center justify-center">
+                  <div className="absolute opacity-70 inset-0 bg-sky-500 flex items-center justify-center">
                     <Check className="h-6 w-6 text-sky-500" />
                   </div>
                 )}

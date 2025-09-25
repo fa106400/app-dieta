@@ -133,7 +133,7 @@ export function UserMenu() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center space-x-3 rounded-full p-1 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        <button className="flex items-center space-x-3 rounded-full p-1 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
           <Avatar className="h-8 w-8">
             <AvatarImage
               src={

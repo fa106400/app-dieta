@@ -28,7 +28,7 @@ export function FooterMenu() {
               className={cn(
                 "flex flex-col items-center justify-center p-2 rounded-lg transition-colors",
                 isActive
-                  ? "bg-blue-50 text-sky-500"
+                  ? "bg-sky-50 text-sky-500"
                   : "text-gray-600 hover:text-sky-500 hover:bg-gray-50"
               )}
             >

@@ -163,7 +163,7 @@ export default function RankingPage() {
             {/* {isCurrentUser && (
               <Badge
                 variant="outline"
-                className="text-xs bg-blue-100 text-sky-500 border-blue-200"
+                className="text-xs bg-sky-100 text-sky-500 border-blue-200"
               >
                 You
               </Badge>

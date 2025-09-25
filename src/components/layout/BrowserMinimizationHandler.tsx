@@ -77,7 +77,7 @@ export function BrowserMinimizationHandler() {
           </p>
           <Button
             onClick={handleRefresh}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             size="lg"
           >
             <RefreshCw className="h-5 w-5 mr-2" />

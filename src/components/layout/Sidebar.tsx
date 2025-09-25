@@ -46,7 +46,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white border-r border-gray-200 px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
             <Link href="/home" className="flex items-center space-x-2">
-              {/* <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              {/* <div className="h-8 w-8 rounded-lg bg-sky-600 flex items-center justify-center">
                 <Utensils className="h-5 w-5 text-white" />
               </div> */}
               <Image
@@ -72,7 +72,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           href={item.href}
                           className={cn(
                             isActive
-                              ? "bg-blue-50 text-sky-500"
+                              ? "bg-sky-50 text-sky-500"
                               : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
@@ -107,7 +107,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           href={item.href}
                           className={cn(
                             isActive
-                              ? "bg-blue-50 text-sky-500"
+                              ? "bg-sky-50 text-sky-500"
                               : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
@@ -144,7 +144,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200">
             <Link href="/home" className="flex items-center space-x-2">
-              {/* <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              {/* <div className="h-8 w-8 rounded-lg bg-sky-600 flex items-center justify-center">
                 <Utensils className="h-5 w-5 text-white" />
               </div> */}
               <Image
@@ -177,7 +177,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       onClick={onClose}
                       className={cn(
                         isActive
-                          ? "bg-blue-50 text-sky-500"
+                          ? "bg-sky-50 text-sky-500"
                           : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                       )}
@@ -213,7 +213,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         onClick={onClose}
                         className={cn(
                           isActive
-                            ? "bg-blue-50 text-sky-500"
+                            ? "bg-sky-50 text-sky-500"
                             : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                           "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}

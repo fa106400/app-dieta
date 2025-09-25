@@ -65,7 +65,7 @@ export function DietCard({
   /*const getCategoryColor = (category: string | null) => {
     switch (category) {
        case "low_carb":
-         return "bg-blue-100 text-sky-500";
+         return "bg-sky-100 text-sky-500";
        case "keto":
          return "bg-purple-100 text-purple-800";
        case "vegetarian":

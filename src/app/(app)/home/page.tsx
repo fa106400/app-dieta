@@ -390,7 +390,7 @@ export default function HomePage() {
                 <div className="space-y-4">
                   {/* Current Weight */}
                   {personalSnapshot?.currentWeight && (
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
                       <div>
                         <p className="text-sm text-gray-600">Peso atual</p>
                         <p className="text-xl font-bold">
