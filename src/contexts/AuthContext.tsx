@@ -18,14 +18,5 @@ export function useAuthContext(): UseAuthReturn {
     throw new Error("useAuthContext must be used within an AuthProvider");
   }
 
-  // Add logging to debug auth state
-  console.debug("🔍 useAuthContext - Current state:", {
-    user: context.user ? "Present" : "Missing",
-    email: context.user ? context.user.email : "Not logged",
-    session: context.session ? "Present" : "Missing",
-    loading: context.loading,
-    isAuthenticated: context.isAuthenticated,
-  });
-
   return context;
 }

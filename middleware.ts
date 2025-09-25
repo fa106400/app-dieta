@@ -2,21 +2,21 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Public routes do not require authentication
-const publicRoutes: string[] = [
-  '/',
-  '/login',
-  '/signup',
-  '/forgot-password',
-  '/reset-password',
-  '/plans',
-  '/terms',
-  '/privacy',
-  '/faq',
-  '/api/healthz',
-  '/api/auth/status',
-  '/api/auth/refresh',
-  '/api/auth/logout'
-]
+// const publicRoutes: string[] = [
+//   '/',
+//   '/login',
+//   '/signup',
+//   '/forgot-password',
+//   '/reset-password',
+//   '/plans',
+//   '/terms',
+//   '/privacy',
+//   '/faq',
+//   '/api/healthz',
+//   '/api/auth/status',
+//   '/api/auth/refresh',
+//   '/api/auth/logout'
+// ]
 
 // Routes intended for authenticated users should redirect away if already logged in
 const authOnlyLandingRoutes: string[] = ['/login', '/signup', '/forgot-password', '/reset-password']
@@ -27,9 +27,9 @@ const protectedApiRoutes: string[] = []
 // Prefix considered protected (app area)
 const protectedPrefix = '/(app)'
 
-function isPublicPath(pathname: string): boolean {
-  return publicRoutes.some((p) => pathname === p || pathname.startsWith(`${p}/`))
-}
+// function isPublicPath(pathname: string): boolean {
+//   return publicRoutes.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+// }
 
 function isAuthLandingPath(pathname: string): boolean {
   return authOnlyLandingRoutes.some((p) => pathname === p || pathname.startsWith(`${p}/`))
@@ -50,21 +50,11 @@ function hasAnySupabaseCookie(req: NextRequest): boolean {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   
-  console.debug('🔍 Middleware - Processing request:', pathname)
-
   const hasAuthTokens = hasAnySupabaseCookie(req)
   const isProtected = pathname.startsWith(protectedPrefix)
-  const isPublic = isPublicPath(pathname)
   const isAuthLanding = isAuthLandingPath(pathname)
   const isProtectedApi = isProtectedApiPath(pathname)
   
-  console.debug('🔍 Middleware - Route analysis:')
-  console.debug('  Is protected route:', isProtected)
-  console.debug('  Is public route:', isPublic)
-  console.debug('  Is auth landing:', isAuthLanding)
-  console.debug('  Is protected API:', isProtectedApi)
-  console.debug('  Has auth tokens:', hasAuthTokens)
-
   // Gate protected routes by auth
   if (isProtected && !hasAuthTokens) {
     const url = req.nextUrl.clone()
