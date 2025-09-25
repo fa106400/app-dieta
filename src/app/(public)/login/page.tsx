@@ -56,7 +56,7 @@ function LoginPageContent() {
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
           <Image
-            className="h-8 sm:h-10 lg:h-12 w-auto max-w-full object-contain mx-auto"
+            className="h-12 sm:h-14 lg:h-16 w-auto max-w-full object-contain mx-auto"
             src="/imgs/logo/logo-rect.png"
             alt="Logo"
             width={450}
