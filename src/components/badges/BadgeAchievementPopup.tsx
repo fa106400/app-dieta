@@ -64,6 +64,7 @@ export function BadgeAchievementPopup({
   onClose,
 }: BadgeAchievementPopupProps) {
   // const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { hideBadgeNotification, deferredAction } = useBadgeNotification();
   const [currentBadgeIndex, setCurrentBadgeIndex] = React.useState(0);
 
