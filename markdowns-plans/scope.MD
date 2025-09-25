@@ -272,8 +272,8 @@ This plan outlines the development of a complete nutrition and diet management p
   - Create sticky footer menu for mobile only (hide side menu button)
   - Logo on Header and EXP outside header menu
 
-### 5.5.2 Translation
-- **Translate every page and service classes to pt-BR**
+### 5.5.2 Translation ✅
+- **Translate every page and service classes to pt-BR** ✅
 
 ### 5.5.3 Visual Identity
 - **Logo**
