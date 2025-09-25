@@ -397,7 +397,7 @@ export default function HomePage() {
                           {personalSnapshot.currentWeight.weight_kg} kg
                         </p>
                       </div>
-                      <TrendingUp className="h-6 w-6 text-blue-600" />
+                      <TrendingUp className="h-6 w-6 text-sky-500" />
                     </div>
                   )}
 

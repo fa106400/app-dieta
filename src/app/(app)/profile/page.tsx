@@ -863,7 +863,7 @@ export default function ProfileManagePage() {
                         </div>
                       </div>
                       <div>
-                        {/* <div className="font-medium text-blue-800">Exemplos:</div> */}
+                        {/* <div className="font-medium text-sky-500">Exemplos:</div> */}
                         <div className="text-green-700">
                           {ACTIVITY_LEVELS[profile.activity_level].examples}
                         </div>
@@ -1304,7 +1304,7 @@ function ProfilePrivacyDisplayInline({
                 />
                 {selectedAvatar === avatar.id && (
                   <div className="absolute opacity-70 inset-0 bg-blue-500 flex items-center justify-center">
-                    <Check className="h-6 w-6 text-blue-600" />
+                    <Check className="h-6 w-6 text-sky-500" />
                   </div>
                 )}
               </div>

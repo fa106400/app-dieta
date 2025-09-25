@@ -499,7 +499,7 @@ function OnboardingPageContent() {
       {formData.activity_level && (
         <Card className="bg-green-50 border-green-200">
           {/* <CardHeader className="pb-3">
-            <CardTitle className="text-blue-900 text-lg">
+            <CardTitle className="text-sky-500 text-lg">
               {ACTIVITY_LEVELS[formData.activity_level].label}
             </CardTitle>
           </CardHeader> */}
@@ -511,16 +511,16 @@ function OnboardingPageContent() {
               </div>
             </div>
             <div>
-              {/* <div className="font-medium text-blue-800">Exemplos:</div> */}
+              {/* <div className="font-medium text-sky-500">Exemplos:</div> */}
               <div className="text-green-700">
                 {ACTIVITY_LEVELS[formData.activity_level].examples}
               </div>
             </div>
             {/* <div>
-              <div className="font-medium text-blue-800">
+              <div className="font-medium text-sky-500">
                 Multiplicador de calorias:
               </div>
-              <div className="text-blue-700 font-mono">
+              <div className="text-sky-500 font-mono">
                 {ACTIVITY_LEVELS[formData.activity_level].multiplier}
               </div>
             </div> */}
@@ -662,7 +662,7 @@ function OnboardingPageContent() {
                 />
                 {formData.avatar_url === avatar.id && (
                   <div className="absolute opacity-70 inset-0 bg-blue-500 flex items-center justify-center">
-                    <Check className="h-6 w-6 text-blue-600" />
+                    <Check className="h-6 w-6 text-sky-500" />
                   </div>
                 )}
               </div>

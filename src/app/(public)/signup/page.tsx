@@ -220,7 +220,7 @@ function SignupPageContent() {
                 Já tem uma conta?{" "}
                 <Link
                   href="/login"
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="text-sky-500 hover:text-sky-500 font-medium"
                 >
                   Entrar
                 </Link>

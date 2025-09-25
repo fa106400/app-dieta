@@ -130,7 +130,7 @@ function LoginPageContent() {
               <div>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-blue-600 hover:text-blue-500"
+                  className="text-sm text-sky-500 hover:text-sky-500"
                 >
                   Esqueceu sua senha?
                 </Link>
@@ -140,7 +140,7 @@ function LoginPageContent() {
                 Não tem uma conta?{" "}
                 <Link
                   href="/signup"
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="text-sky-500 hover:text-sky-500 font-medium"
                 >
                   Criar conta
                 </Link>

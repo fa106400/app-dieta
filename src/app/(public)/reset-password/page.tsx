@@ -198,7 +198,7 @@ function ResetPasswordPageContent() {
             <div className="mt-4 text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center text-sm text-blue-600 hover:text-blue-500"
+                className="inline-flex items-center text-sm text-sky-500 hover:text-sky-500"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar para Login

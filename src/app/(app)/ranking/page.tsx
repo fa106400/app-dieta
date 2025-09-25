@@ -163,7 +163,7 @@ export default function RankingPage() {
             {/* {isCurrentUser && (
               <Badge
                 variant="outline"
-                className="text-xs bg-blue-100 text-blue-800 border-blue-200"
+                className="text-xs bg-blue-100 text-sky-500 border-blue-200"
               >
                 You
               </Badge>
@@ -243,7 +243,7 @@ export default function RankingPage() {
             {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-sky-500">
                   #{currentUser[0].rank}
                 </div>
                 <div className="text-sm text-gray-600">Sua Posição</div>

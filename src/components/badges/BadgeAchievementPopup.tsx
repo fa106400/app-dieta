@@ -146,7 +146,7 @@ export function BadgeAchievementPopup({
         case "trophy":
           return <Trophy className="h-16 w-16 text-yellow-500" />;
         case "award":
-          return <Award className="h-16 w-16 text-blue-500" />;
+          return <Award className="h-16 w-16 text-sky-500" />;
         case "target":
           return <Target className="h-16 w-16 text-green-500" />;
         case "trending-up":
@@ -225,7 +225,7 @@ export function BadgeAchievementPopup({
                 </div>
               )}
               {/* {deferredAction && (
-                <div className="mt-2 text-sm text-blue-600 font-medium">
+                <div className="mt-2 text-sm text-sky-500 font-medium">
                   ⏳ Aguardando sua ação para continuar...
                 </div>
               )} */}

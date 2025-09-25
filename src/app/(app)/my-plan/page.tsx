@@ -199,7 +199,7 @@ export default function MyWeekPage() {
       {currentDiet ? (
         <div className="space-y-4">
           {/*<div className="flex items-center space-x-2">
-            <Target className="h-5 w-5 text-blue-600" />
+            <Target className="h-5 w-5 text-sky-500" />
             <h2 className="text-xl font-semibold text-gray-900">
               Seu Plano Atual
             </h2>

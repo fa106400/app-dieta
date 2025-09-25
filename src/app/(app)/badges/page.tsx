@@ -259,7 +259,7 @@ export default function BadgesPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
-                <Target className="h-8 w-8 text-blue-500" />
+                <Target className="h-8 w-8 text-sky-500" />
                 <div>
                   <p className="text-sm text-gray-600">Total de Medalhas</p>
                   <p className="text-2xl font-bold">{totalBadgesCount}</p>

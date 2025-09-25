@@ -72,16 +72,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           href={item.href}
                           className={cn(
                             isActive
-                              ? "bg-blue-50 text-blue-700"
-                              : "text-gray-700 hover:text-blue-700 hover:bg-gray-50",
+                              ? "bg-blue-50 text-sky-500"
+                              : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                         >
                           <item.icon
                             className={cn(
                               isActive
-                                ? "text-blue-700"
-                                : "text-gray-400 group-hover:text-blue-700",
+                                ? "text-sky-500"
+                                : "text-gray-400 group-hover:text-sky-500",
                               "h-6 w-6 shrink-0"
                             )}
                             aria-hidden="true"
@@ -107,16 +107,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           href={item.href}
                           className={cn(
                             isActive
-                              ? "bg-blue-50 text-blue-700"
-                              : "text-gray-700 hover:text-blue-700 hover:bg-gray-50",
+                              ? "bg-blue-50 text-sky-500"
+                              : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                         >
                           <item.icon
                             className={cn(
                               isActive
-                                ? "text-blue-700"
-                                : "text-gray-400 group-hover:text-blue-700",
+                                ? "text-sky-500"
+                                : "text-gray-400 group-hover:text-sky-500",
                               "h-6 w-6 shrink-0"
                             )}
                             aria-hidden="true"
@@ -177,16 +177,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       onClick={onClose}
                       className={cn(
                         isActive
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-gray-700 hover:text-blue-700 hover:bg-gray-50",
+                          ? "bg-blue-50 text-sky-500"
+                          : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                       )}
                     >
                       <item.icon
                         className={cn(
                           isActive
-                            ? "text-blue-700"
-                            : "text-gray-400 group-hover:text-blue-700",
+                            ? "text-sky-500"
+                            : "text-gray-400 group-hover:text-sky-500",
                           "h-6 w-6 shrink-0"
                         )}
                         aria-hidden="true"
@@ -213,16 +213,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         onClick={onClose}
                         className={cn(
                           isActive
-                            ? "bg-blue-50 text-blue-700"
-                            : "text-gray-700 hover:text-blue-700 hover:bg-gray-50",
+                            ? "bg-blue-50 text-sky-500"
+                            : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
                           "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
                       >
                         <item.icon
                           className={cn(
                             isActive
-                              ? "text-blue-700"
-                              : "text-gray-400 group-hover:text-blue-700",
+                              ? "text-sky-500"
+                              : "text-gray-400 group-hover:text-sky-500",
                             "h-6 w-6 shrink-0"
                           )}
                           aria-hidden="true"

@@ -69,7 +69,7 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
       {/*<CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Target className="h-5 w-5 text-blue-600" />
+            <Target className="h-5 w-5 text-sky-500" />
             <CardTitle className="text-lg">Current Diet Plan</CardTitle>
           </div>
           <Badge variant="default" className="bg-blue-600">

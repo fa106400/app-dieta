@@ -468,7 +468,7 @@ export default function DietDetailPage() {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
-              <Target className="h-5 w-5 text-blue-500" />
+              <Target className="h-5 w-5 text-sky-500" />
               <span className="text-sm font-medium text-gray-600">
                 Categoria
               </span>
@@ -532,7 +532,7 @@ export default function DietDetailPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center space-y-2">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-sky-500">
                   {diet.calories_total} kcal
                 </div>
               </div>
