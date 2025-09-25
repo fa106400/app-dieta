@@ -280,10 +280,14 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Logo** ✅
 - **Nunito font** ✅
 - **Increase font size on ALL pages, one by one**
+- **Swap ingredients animation with 1sec fake loading**
+- **Exp animation on header??**
+- **Diet catalog grid refactor for better UX**
+- **Diet details refactor for better UX**
 - **App colors**
-- **App icons**
+- **App menu icons** ✅
 
-### 5.5.y Parking lot items on Kanban
+### 5.5.4 Parking lot items on Kanban
 - **Basics cards**
 - **Login cards**
 - **Ranking cards**
@@ -291,6 +295,13 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Diet cards**
 - **PDF cards**
 - **AI Diet matching cards**
+
+### 5.5.5 Diet Database
+- **Generate full list of diets plan with GPT**
+- **Generate and insert all diets**
+- **Test diet sort & filtering with full database**
+- **Test AI diet matching with full database (AI selects correct match for intolarances?)** 
+
 
 ## Phase 6: Subscription & Payment Integration (Weeks 13-14)
 
