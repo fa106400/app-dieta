@@ -279,6 +279,7 @@ This plan outlines the development of a complete nutrition and diet management p
 ### 5.5.3 Visual Identity
 - **Logo** ✅
 - **Nunito font** ✅
+- **Increase font size on ALL pages, one by one**
 - **App colors**
 - **App icons**
 

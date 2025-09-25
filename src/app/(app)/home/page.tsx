@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Bell,
-  Trophy,
+  // Trophy,
   TrendingUp,
   Target,
   Award,
@@ -20,6 +20,7 @@ import {
   Star,
   AlertCircle,
   Loader2,
+  LibraryBig,
 } from "lucide-react";
 // import { toast } from "react-toastify";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
@@ -340,7 +341,7 @@ export default function HomePage() {
           )}
 
           {/* Ranking Preview */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Trophy className="h-5 w-5" />
@@ -356,7 +357,7 @@ export default function HomePage() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Right Column */}
@@ -392,23 +393,36 @@ export default function HomePage() {
                   {personalSnapshot?.currentWeight && (
                     <div className="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
                       <div>
-                        <p className="text-md text-gray-600">Peso atual</p>
-                        <p className="text-xl font-bold">
-                          {personalSnapshot.currentWeight.weight_kg} kg
+                        <p className="text-md">
+                          Peso atual:{" "}
+                          <span className="font-bold">
+                            {personalSnapshot.currentWeight.weight_kg} kg
+                          </span>
                         </p>
+                        {/* <p className="text-xl font-bold">
+                          {personalSnapshot.currentWeight.weight_kg} kg
+                        </p> */}
                       </div>
-                      <TrendingUp className="h-6 w-6 text-sky-500" />
+                      {/* <TrendingUp className="h-6 w-6 text-sky-500" /> */}
+                      {/** Button to redirect to weight history page */}
+                      <Button
+                        size="sm"
+                        onClick={() => router.push("/weight-history")}
+                      >
+                        <TrendingUp className="h-6 w-6 text-white" />
+                        Ver gráfico
+                      </Button>
                     </div>
                   )}
 
                   {/* Weight Chart */}
-                  {personalSnapshot?.weightHistory &&
+                  {/* {personalSnapshot?.weightHistory &&
                     personalSnapshot.weightHistory.length > 1 && (
                       <div className="h-32">
                         <h4 className="text-md font-medium mb-2">
-                          Progresso do peso (Últimos 7 registros)
+                          Ver Progresso do peso
                         </h4>
-                        <ResponsiveContainer width="100%" height="100%">
+                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart
                             data={formatWeightHistory(
                               personalSnapshot.weightHistory
@@ -426,29 +440,40 @@ export default function HomePage() {
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
-                    )}
+                    )} */}
 
                   {/* Current Diet */}
                   {personalSnapshot?.currentDiet && (
                     <div className="p-3 bg-green-50 rounded-lg">
-                      <p className="text-md text-gray-600">Plano atual</p>
-                      <p className="font-medium">
+                      <p className="text-md">Plano atual:</p>
+                      <span className="font-bold">
                         {personalSnapshot.currentDiet.title}
-                      </p>
+                      </span>
+                    </div>
+                  )}
+
+                  {/** If no current diet, show a message to choose a diet */}
+                  {!personalSnapshot?.currentDiet && (
+                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                      {/* <p className="font-medium text-gray-600">Plano atual</p> */}
+                      <p className="font-medium">Escolha um plano!</p>
+                      {/** Button to redirect to diets page */}
+                      <Button size="sm" onClick={() => router.push("/diets")}>
+                        <LibraryBig className="h-6 w-6 text-white" />
+                        Ver catálogo
+                      </Button>
                     </div>
                   )}
 
                   {/* AI Recommendations Refresh */}
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                     <div>
-                      <p className="text-md text-gray-600">
-                        Recomendações da IA
-                      </p>
-                      <p className="text-md">
+                      <p className="text-md">Recomendações da IA</p>
+                      <span className="font-bold">
                         {personalSnapshot?.canRefreshRecommendations
-                          ? "Atualize seus dados para uma nova recomendação!"
-                          : "Você está indo bem, continue assim!"}
-                      </p>
+                          ? "Atualize seus dados!"
+                          : "Continue assim!"}
+                      </span>
                     </div>
                     <Button
                       size="sm"
