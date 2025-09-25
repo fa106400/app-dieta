@@ -1,45 +1,40 @@
 "use client";
 
-import { useState } from "react";
 import { Header } from "./Header";
-// import { Breadcrumbs } from "./Breadcrumbs";
 import { Sidebar } from "./Sidebar";
+import { FooterMenu } from "./FooterMenu";
+// import { Breadcrumbs } from "./Breadcrumbs";
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {/* Desktop Sidebar - always visible on lg+ screens */}
+      <div className="hidden lg:block">
+        <Sidebar isOpen={true} onClose={() => {}} />
+      </div>
 
       {/* Main content area */}
       <div className="lg:pl-64">
         {/* Header */}
-        <Header onMenuClick={() => setSidebarOpen(true)} />
+        <Header />
 
         {/* Breadcrumbs */}
         {/* <Breadcrumbs /> */}
 
         {/* Page content */}
-        <main className="py-4">
+        <main className="py-4 pb-16 md:pb-4">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile Footer Menu */}
+      <FooterMenu />
     </div>
   );
 }
