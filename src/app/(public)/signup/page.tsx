@@ -34,7 +34,7 @@ function SignupPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted!", { email, name, password: "***" });
+    console.debug("Form submitted!", { email, name, password: "***" });
 
     if (password !== confirmPassword) {
       const errorMsg = "As senhas não coincidem. Por favor, tente novamente.";
@@ -50,15 +50,15 @@ function SignupPageContent() {
       return;
     }
 
-    console.log("Starting signup process...");
+    console.debug("Starting signup process...");
     setIsLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      console.log("Calling signUp function...");
+      console.debug("Calling signUp function...");
       await signUp({ email, password, name });
-      console.log("Signup successful!");
+      console.debug("Signup successful!");
       const successMsg = "Conta criada com sucesso!";
       setSuccess(successMsg);
       toast.success(successMsg);
@@ -82,7 +82,7 @@ function SignupPageContent() {
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
-      console.log("Setting loading to false");
+      console.debug("Setting loading to false");
       setIsLoading(false);
     }
   };

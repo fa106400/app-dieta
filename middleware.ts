@@ -50,7 +50,7 @@ function hasAnySupabaseCookie(req: NextRequest): boolean {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   
-  console.log('🔍 Middleware - Processing request:', pathname)
+  console.debug('🔍 Middleware - Processing request:', pathname)
 
   const hasAuthTokens = hasAnySupabaseCookie(req)
   const isProtected = pathname.startsWith(protectedPrefix)
@@ -58,12 +58,12 @@ export function middleware(req: NextRequest) {
   const isAuthLanding = isAuthLandingPath(pathname)
   const isProtectedApi = isProtectedApiPath(pathname)
   
-  console.log('🔍 Middleware - Route analysis:')
-  console.log('  Is protected route:', isProtected)
-  console.log('  Is public route:', isPublic)
-  console.log('  Is auth landing:', isAuthLanding)
-  console.log('  Is protected API:', isProtectedApi)
-  console.log('  Has auth tokens:', hasAuthTokens)
+  console.debug('🔍 Middleware - Route analysis:')
+  console.debug('  Is protected route:', isProtected)
+  console.debug('  Is public route:', isPublic)
+  console.debug('  Is auth landing:', isAuthLanding)
+  console.debug('  Is protected API:', isProtectedApi)
+  console.debug('  Has auth tokens:', hasAuthTokens)
 
   // Gate protected routes by auth
   if (isProtected && !hasAuthTokens) {

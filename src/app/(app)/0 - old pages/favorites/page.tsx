@@ -129,34 +129,36 @@ export default function FavoritesPage() {
 
   // Toggle favorite status
   const toggleFavorite = async (dietId: string) => {
-    console.log(
+    console.debug(
       "🔍 FavoritesPage - toggleFavorite called with dietId:",
       dietId
     );
-    console.log(
+    console.debug(
       "🔍 FavoritesPage - user:",
       user ? `Present (${user.email})` : "Missing"
     );
-    console.log("🔍 FavoritesPage - supabase client:", !!supabase);
+    console.debug("🔍 FavoritesPage - supabase client:", !!supabase);
 
     if (!user || !supabase) {
-      console.log("🔍 FavoritesPage - Early return: user or supabase missing");
+      console.debug(
+        "🔍 FavoritesPage - Early return: user or supabase missing"
+      );
       return;
     }
 
-    console.log("🔍 FavoritesPage - Starting toggle process...");
+    console.debug("🔍 FavoritesPage - Starting toggle process...");
     setTogglingFavorites((prev) => new Set(prev).add(dietId));
 
     try {
       const existing = favorites.find((f) => f.id === dietId);
-      console.log("🔍 FavoritesPage - Existing favorite found:", !!existing);
-      console.log(
+      console.debug("🔍 FavoritesPage - Existing favorite found:", !!existing);
+      console.debug(
         "🔍 FavoritesPage - Current favorites count:",
         favorites.length
       );
 
       if (existing) {
-        console.log("🔍 FavoritesPage - Removing from favorites...");
+        console.debug("🔍 FavoritesPage - Removing from favorites...");
         // Remove from favorites
         const { error } = await supabase
           .from("favorites")
@@ -169,11 +171,11 @@ export default function FavoritesPage() {
           throw error;
         }
 
-        console.log("🔍 FavoritesPage - Successfully removed from favorites");
+        console.debug("🔍 FavoritesPage - Successfully removed from favorites");
         setFavorites((prev) => prev.filter((f) => f.id !== dietId));
         toast.success("Removed from favorites");
       } else {
-        console.log("🔍 FavoritesPage - Adding to favorites...");
+        console.debug("🔍 FavoritesPage - Adding to favorites...");
         // Add to favorites
         const { error } = await supabase.from("favorites").insert({
           user_id: user.id,
@@ -185,7 +187,7 @@ export default function FavoritesPage() {
           throw error;
         }
 
-        console.log("🔍 FavoritesPage - Successfully added to favorites");
+        console.debug("🔍 FavoritesPage - Successfully added to favorites");
         // Note: In a real app, you'd refetch or add the diet to the list
         toast.success("Added to favorites");
       }
@@ -198,7 +200,7 @@ export default function FavoritesPage() {
       });
       toast.error("Action failed, please retry.");
     } finally {
-      console.log(
+      console.debug(
         "🔍 FavoritesPage - Cleaning up toggling state for dietId:",
         dietId
       );

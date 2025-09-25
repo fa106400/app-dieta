@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       if (badgeResponse.ok) {
         const badgeData = await badgeResponse.json();
         if (badgeData.newlyUnlocked && badgeData.newlyUnlocked.length > 0) {
-          console.log(`User ${user.id} unlocked ${badgeData.newlyUnlocked.length} badges`);
+          console.debug(`User ${user.id} unlocked ${badgeData.newlyUnlocked.length} badges`);
         }
       }
     } catch (badgeError) {

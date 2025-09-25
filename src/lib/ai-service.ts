@@ -29,7 +29,7 @@ class AIService {
   private isConfigured: boolean = false;
 
   constructor() {
-    console.log('🔍 AI Service - AI debug mode:', AI_DEBUG_MODE);
+    console.debug('🔍 AI Service - AI debug mode:', AI_DEBUG_MODE);
     
     const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
     

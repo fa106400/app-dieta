@@ -161,20 +161,20 @@ function ProfilePageContent() {
   };
 
   const handleSave = async () => {
-    console.log("🔍 Profile - Starting profile update");
-    console.log("🔍 Profile - User state:", {
+    console.debug("🔍 Profile - Starting profile update");
+    console.debug("🔍 Profile - User state:", {
       user: user ? "Present" : "Missing",
       userMetadata: user?.user_metadata,
       email: user?.email,
     });
-    console.log("🔍 Profile - Profile data to update:", profileData);
+    console.debug("🔍 Profile - Profile data to update:", profileData);
 
     setIsSaving(true);
     setError(null);
     setSuccess(null);
 
     try {
-      console.log("🔍 Profile - Making API request to /api/auth/me");
+      console.debug("🔍 Profile - Making API request to /api/auth/me");
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
@@ -186,7 +186,7 @@ function ProfilePageContent() {
         }),
       });
 
-      console.log("🔍 Profile - API response status:", response.status);
+      console.debug("🔍 Profile - API response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -196,7 +196,7 @@ function ProfilePageContent() {
         );
       }
 
-      console.log("🔍 Profile - Profile updated successfully");
+      console.debug("🔍 Profile - Profile updated successfully");
       setSuccess("Profile updated successfully!");
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {

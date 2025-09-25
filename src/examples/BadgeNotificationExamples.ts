@@ -52,7 +52,7 @@ export function useShoppingExport() {
       type: 'callback',
       payload: () => {
         // Custom action after modal closes
-        console.log('Export completed, showing success message');
+        console.debug('Export completed, showing success message');
         // Could trigger additional UI updates, analytics, etc.
       }
     });
