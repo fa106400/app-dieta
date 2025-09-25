@@ -195,7 +195,7 @@ export default function BadgesPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Carregando medalhas...</p>
+              <p className="text-gray-600 font-lg">Carregando medalhas...</p>
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ export default function BadgesPage() {
               <h2 className="text-xl font-semibold mb-2">
                 Falha ao carregar medalhas
               </h2>
-              <p className="text-gray-600 mb-4">{error}</p>
+              <p className="text-gray-600 mb-4 font-lg">{error}</p>
               <Button onClick={() => fetchBadges("todas")} variant="outline">
                 Tentar novamente
               </Button>
@@ -237,7 +237,7 @@ export default function BadgesPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Minhas Medalhas
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 font-lg">
             Acompanhe suas conquistas e desbloqueie novas medalhas à medida que
             avança
           </p>
@@ -250,7 +250,7 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <Trophy className="h-8 w-8 text-yellow-500" />
                 <div>
-                  <p className="text-sm text-gray-600">Medalhas Recebidas</p>
+                  <p className="text-md text-gray-600">Medalhas Recebidas</p>
                   <p className="text-2xl font-bold">{earnedBadgesCount}</p>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <Target className="h-8 w-8 text-sky-500" />
                 <div>
-                  <p className="text-sm text-gray-600">Total de Medalhas</p>
+                  <p className="text-md text-gray-600">Total de Medalhas</p>
                   <p className="text-2xl font-bold">{totalBadgesCount}</p>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <TrendingUp className="h-8 w-8 text-green-500" />
                 <div>
-                  <p className="text-sm text-gray-600">Progresso</p>
+                  <p className="text-md text-gray-600">Progresso</p>
                   <p className="text-2xl font-bold">
                     {totalBadgesCount > 0
                       ? Math.round((earnedBadgesCount / totalBadgesCount) * 100)
@@ -311,7 +311,7 @@ export default function BadgesPage() {
                   <h3 className="text-lg font-semibold mb-2">
                     Nenhuma Medalha Ainda
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 mb-4 font-lg">
                     Comece sua jornada escolhendo uma dieta, acompanhando seu
                     peso, ou explorando o app!
                   </p>
@@ -359,11 +359,11 @@ export default function BadgesPage() {
                         <div className="space-y-2">
                           <div className="flex items-center text-sm text-gray-600">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <span>
+                            <span className="font-lg">
                               Recebida em {formatDate(status.awardedAt!)}
                             </span>
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-md text-gray-600">
                             <strong>Critério:</strong>{" "}
                             {getCriteriaDescription(badge.criteria)}
                           </div>
@@ -416,12 +416,12 @@ export default function BadgesPage() {
                         {status.earned && status.awardedAt && (
                           <div className="flex items-center text-sm text-gray-600">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <span>
+                            <span className="font-lg">
                               Recebida em {formatDate(status.awardedAt)}
                             </span>
                           </div>
                         )}
-                        <div className="text-sm text-gray-600">
+                        <div className="text-md text-gray-600">
                           <strong>Critério:</strong>{" "}
                           {getCriteriaDescription(badge.criteria)}
                         </div>

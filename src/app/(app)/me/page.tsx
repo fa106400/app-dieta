@@ -51,7 +51,7 @@ export default function MePage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Eu</h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 font-lg">
           Gerencie seu perfil, acompanhe seu progresso e personalize sua
           experiência.
         </p>
@@ -79,7 +79,7 @@ export default function MePage() {
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 text-sm">{item.description}</p>
+                    <p className="text-gray-600 text-md">{item.description}</p>
                   </div>
                 </div>
 
@@ -94,7 +94,7 @@ export default function MePage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 text-sm">{item.description}</p>
+                    <p className="text-gray-600 text-md">{item.description}</p>
                   </div>
                   <div className="text-gray-400">
                     <svg

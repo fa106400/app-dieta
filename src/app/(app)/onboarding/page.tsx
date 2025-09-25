@@ -696,7 +696,7 @@ function OnboardingPageContent() {
         {/* Header */}
         <div className="text-center mb-3">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Bem vindo!</h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-xl text-gray-600">
             Responda algumas perguntas para nossa IA recomendar as melhores
             opções para você.
           </p>
@@ -704,10 +704,10 @@ function OnboardingPageContent() {
         {/* Progress Bar */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-md font-medium text-gray-700">
               Passo {currentStep} de {totalSteps}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-md text-gray-500">
               {Math.round(progress)}%
             </span>
           </div>

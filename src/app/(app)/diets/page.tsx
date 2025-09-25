@@ -344,7 +344,7 @@ export default function DietCatalogPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">Carregando planos...</span>
+          <span className="text-center font-lg">Carregando planos...</span>
         </div>
       </div>
     );
@@ -359,7 +359,7 @@ export default function DietCatalogPage() {
             <h3 className="text-lg font-semibold mb-2">
               Não foi possível carregar os planos.
             </h3>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <p className="text-gray-600 mb-4 font-lg">{error}</p>
             <Button
               onClick={() => {
                 hasFetchedDiets.current = false;
@@ -383,7 +383,7 @@ export default function DietCatalogPage() {
           <h1 className="text-3xl font-bold text-gray-900">
             Catálogo de Planos
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 mt-1 font-lg">
             Descubra o plano perfeito para seus objetivos de saúde
           </p>
         </div>
@@ -396,7 +396,7 @@ export default function DietCatalogPage() {
             className="flex items-center space-x-2"
           >
             <Filter className="h-4 w-4" />
-            <span>Filtros</span>
+            <span className="font-lg">Filtros</span>
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-1">
                 {filters.category.length +
@@ -498,7 +498,7 @@ export default function DietCatalogPage() {
               <h3 className="text-lg font-semibold mb-2">
                 Nenhum plano encontrado
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 font-lg">
                 {hasActiveFilters
                   ? "Tente alterar seus filtros ou termos de busca."
                   : "Nenhum plano está disponível no momento."}

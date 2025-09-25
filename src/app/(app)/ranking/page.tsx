@@ -157,7 +157,7 @@ export default function RankingPage() {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-md font-medium text-gray-900 truncate">
               {userData.user_alias || "Anônimo"}
             </p>
             {/* {isCurrentUser && (
@@ -173,7 +173,7 @@ export default function RankingPage() {
 
         <div className="flex items-center space-x-2">
           {/* <Star className="h-4 w-4 text-yellow-500" /> */}
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="text-md font-semibold text-gray-900">
             {userData.exp.toLocaleString()} XP
           </span>
         </div>
@@ -186,7 +186,7 @@ export default function RankingPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">Carregando ranking...</span>
+          <span className="text-center font-lg">Carregando ranking...</span>
         </div>
       </div>
     );
@@ -201,7 +201,7 @@ export default function RankingPage() {
             <h3 className="text-lg font-semibold mb-2">
               Falha ao carregar o ranking
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 mb-4 font-lg">
               {error || "Ranking não disponível"}
             </p>
             <Button onClick={fetchLeaderboard} variant="outline">
@@ -246,13 +246,13 @@ export default function RankingPage() {
                 <div className="text-2xl font-bold text-sky-500">
                   #{currentUser[0].rank}
                 </div>
-                <div className="text-sm text-gray-600">Sua Posição</div>
+                <div className="text-md text-gray-600">Sua Posição</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
                   {currentUser[0].exp.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-md text-gray-600">
                   Pontos de Experiência
                 </div>
               </div>
@@ -260,7 +260,7 @@ export default function RankingPage() {
                 <div className="text-2xl font-bold text-purple-600">
                   {totalUsers}
                 </div>
-                <div className="text-sm text-gray-600">Total de Usuários</div>
+                <div className="text-md text-gray-600">Total de Usuários</div>
               </div>
             </div>
           </CardContent>
@@ -283,7 +283,7 @@ export default function RankingPage() {
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 Nenhum ranking ainda
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 font-lg">
                 Comece a ganhar experiência para aparecer no ranking!
               </p>
               <Button onClick={() => (window.location.href = "/onboarding")}>

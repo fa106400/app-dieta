@@ -274,7 +274,7 @@ export default function HomePage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Carregando seu dashboard...</p>
+            <p className="text-gray-600 font-lg">Carregando seu dashboard...</p>
           </div>
         </div>
       </div>
@@ -320,7 +320,7 @@ export default function HomePage() {
                       <h3 className="font-semibold text-sm mb-2">
                         {announcement.title}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-md text-gray-600">
                         {announcement.body}
                       </p>
                       {/*
@@ -392,7 +392,7 @@ export default function HomePage() {
                   {personalSnapshot?.currentWeight && (
                     <div className="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
                       <div>
-                        <p className="text-sm text-gray-600">Peso atual</p>
+                        <p className="text-md text-gray-600">Peso atual</p>
                         <p className="text-xl font-bold">
                           {personalSnapshot.currentWeight.weight_kg} kg
                         </p>
@@ -405,7 +405,7 @@ export default function HomePage() {
                   {personalSnapshot?.weightHistory &&
                     personalSnapshot.weightHistory.length > 1 && (
                       <div className="h-32">
-                        <h4 className="text-sm font-medium mb-2">
+                        <h4 className="text-md font-medium mb-2">
                           Progresso do peso (Últimos 7 registros)
                         </h4>
                         <ResponsiveContainer width="100%" height="100%">
@@ -431,7 +431,7 @@ export default function HomePage() {
                   {/* Current Diet */}
                   {personalSnapshot?.currentDiet && (
                     <div className="p-3 bg-green-50 rounded-lg">
-                      <p className="text-sm text-gray-600">Plano atual</p>
+                      <p className="text-md text-gray-600">Plano atual</p>
                       <p className="font-medium">
                         {personalSnapshot.currentDiet.title}
                       </p>
@@ -441,10 +441,10 @@ export default function HomePage() {
                   {/* AI Recommendations Refresh */}
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                     <div>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-md text-gray-600">
                         Recomendações da IA
                       </p>
-                      <p className="text-sm">
+                      <p className="text-md">
                         {personalSnapshot?.canRefreshRecommendations
                           ? "Atualize seus dados para uma nova recomendação!"
                           : "Você está indo bem, continue assim!"}
@@ -484,10 +484,10 @@ export default function HomePage() {
                         <Star className="h-5 w-5 text-yellow-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-sm">
+                        <p className="font-medium text-md">
                           {userBadge.badges.title}
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-sm text-gray-600">
                           {userBadge.awarded_at
                             ? new Date(
                                 userBadge.awarded_at
@@ -512,7 +512,7 @@ export default function HomePage() {
                   <h3 className="text-lg font-semibold mb-2">
                     Comece sua jornada
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 mb-4 font-lg">
                     Ganhe sua primeira medalha escolhendo um plano!
                   </p>
                   <Button

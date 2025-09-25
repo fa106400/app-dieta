@@ -214,7 +214,9 @@ export default function ShoppingListPage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Carregando sua lista de compras...</p>
+            <p className="text-gray-600 font-lg">
+              Carregando sua lista de compras...
+            </p>
           </div>
         </div>
       </div>
@@ -230,7 +232,7 @@ export default function ShoppingListPage() {
             <h2 className="text-xl font-semibold mb-2">
               Erro ao carregar lista de compras
             </h2>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <p className="text-gray-600 mb-4 font-lg">{error}</p>
             <Button onClick={fetchShoppingList} variant="outline">
               Tentar novamente
             </Button>
@@ -247,7 +249,7 @@ export default function ShoppingListPage() {
           <CardContent className="p-8 text-center">
             <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">Nenhum plano ativo</h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 mb-4 font-lg">
               Você precisa selecionar um plano primeiro para gerar sua lista de
               compras.
             </p>
@@ -276,7 +278,7 @@ export default function ShoppingListPage() {
           </Button> */}
           <div>
             <h1 className="text-2xl font-bold">Lista de compras</h1>
-            <p className="text-gray-600">{currentDiet.title}</p>
+            <p className="text-gray-600 font-lg">{currentDiet.title}</p>
           </div>
         </div>
       </div>
@@ -386,7 +388,7 @@ export default function ShoppingListPage() {
                 {currentDiet.shopping_plan.alt_items.length} itens)
               </span>
             </CardTitle>
-            <p className="text-sm text-gray-600">
+            <p className="text-md text-gray-600">
               Este plano contém sugestões de ingredientes alternativos listadas
               aqui para que você possa considerar comprar em pequenas
               quantidades para uso diário.
@@ -417,7 +419,7 @@ export default function ShoppingListPage() {
               <h2 className="text-xl font-semibold mb-2">
                 Nenhum ingrediente encontrado
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 font-lg">
                 Este plano não tem nenhum ingrediente definido em seu plano de
                 compras.
               </p>

@@ -154,7 +154,9 @@ export default function MyWeekPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center">Carregando seu plano atual...</span>
+          <span className="text-center font-lg">
+            Carregando seu plano atual...
+          </span>
         </div>
       </div>
     );
@@ -169,7 +171,7 @@ export default function MyWeekPage() {
             <h3 className="text-lg font-semibold mb-2">
               Não foi possível carregar o plano
             </h3>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <p className="text-gray-600 mb-4 font-lg">{error}</p>
             <Button
               onClick={() => {
                 hasFetchedDiet.current = false;
@@ -214,7 +216,7 @@ export default function MyWeekPage() {
           <CardContent className="p-12 text-center">
             <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Nenhum Plano Ativo</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-6 font-lg">
               Você não tem um plano ativo ainda. Escolha um para começar sua
               jornada!
             </p>

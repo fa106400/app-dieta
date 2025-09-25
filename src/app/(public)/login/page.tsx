@@ -68,7 +68,7 @@ function LoginPageContent() {
         <Card>
           <CardHeader>
             {/* <CardTitle className="text-center">Acessar sua conta</CardTitle> */}
-            <CardDescription className="text-center">
+            <CardDescription className="text-center font-lg">
               Digite suas credenciais para acessar sua conta
             </CardDescription>
           </CardHeader>
@@ -116,7 +116,7 @@ function LoginPageContent() {
               </div>
 
               {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                <div className="p-3 text-md text-red-600 bg-red-50 border border-red-200 rounded-md">
                   {error}
                 </div>
               )}
@@ -130,13 +130,13 @@ function LoginPageContent() {
               <div>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-sky-500 hover:text-sky-500"
+                  className="text-md text-sky-500 hover:text-sky-500"
                 >
                   Esqueceu sua senha?
                 </Link>
               </div>
 
-              <div className="text-sm text-gray-600">
+              <div className="text-md text-gray-600">
                 Não tem uma conta?{" "}
                 <Link
                   href="/signup"

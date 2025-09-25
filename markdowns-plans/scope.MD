@@ -268,10 +268,10 @@ This plan outlines the development of a complete nutrition and diet management p
 ## Phase 5.5: Styling
 
 ### 5.5.1 Menu Refactoring
-- **Sticky Footer Menu on Mobile**
+- **Sticky Footer Menu on Mobile** ✅
   - Create sticky footer menu for mobile only (hide side menu button) ✅
   - Logo on Header ✅
-  - ***EXP and alias outside header menu***
+  - EXP and alias outside header menu ✅
 
 ### 5.5.2 Translation ✅
 - **Translate every page and service classes to pt-BR** ✅

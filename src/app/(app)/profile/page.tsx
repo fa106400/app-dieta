@@ -476,7 +476,7 @@ export default function ProfileManagePage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Carregando perfil...</p>
+            <p className="text-gray-600 font-lg">Carregando perfil...</p>
           </div>
         </div>
       </div>
@@ -492,7 +492,7 @@ export default function ProfileManagePage() {
             <h2 className="text-xl font-semibold mb-2">
               Erro ao carregar perfil
             </h2>
-            <p className="text-gray-600 mb-4">{profileError}</p>
+            <p className="text-gray-600 mb-4 font-lg">{profileError}</p>
             <Button onClick={fetchProfile} variant="outline">
               Tentar novamente
             </Button>
@@ -528,7 +528,7 @@ export default function ProfileManagePage() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Perfil</h1>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <p className="text-gray-600 mb-4 lg:mb-0">
+            <p className="text-gray-600 mb-4 lg:mb-0 font-lg">
               Gerencie suas informações pessoais e acompanhe seu progresso
             </p>
 
@@ -946,7 +946,7 @@ export default function ProfileManagePage() {
                   </div>
                 </div>
                 {selectedDate && hasEntryForDate(selectedDate) && (
-                  <p className="text-sm text-amber-600 mt-2">
+                  <p className="text-md text-amber-600 mt-2">
                     Você já tem um registro de peso para esta data
                   </p>
                 )}
@@ -1029,7 +1029,7 @@ export default function ProfileManagePage() {
                 ) : weightError ? (
                   <div className="text-center py-8">
                     <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                    <p className="text-red-600 mb-4">{weightError}</p>
+                    <p className="text-red-600 mb-4 font-lg">{weightError}</p>
                     <Button onClick={fetchWeights} variant="outline">
                       Tentar Novamente
                     </Button>
@@ -1040,7 +1040,7 @@ export default function ProfileManagePage() {
                     <p className="text-gray-600">
                       Nenhum registro de peso ainda
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-md text-gray-500">
                       Adicione seu primeiro registro de peso acima para começar
                       a rastrear
                     </p>
@@ -1061,7 +1061,7 @@ export default function ProfileManagePage() {
                               <p className="font-medium">
                                 {entry.weight_kg} kg
                               </p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-md text-gray-600">
                                 {new Date(
                                   entry.measured_at + "T00:00:00"
                                 ).toLocaleDateString("pt-BR", {

@@ -199,7 +199,7 @@ export default function SecurityPage() {
           <div className="flex items-center space-x-3">
             <div>
               <h1 className="text-3xl font-bold">Segurança</h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 mt-1 font-lg">
                 Gerencie a segurança da sua conta e senha
               </p>
             </div>
@@ -270,7 +270,7 @@ export default function SecurityPage() {
               </div>
               {newPasswordValidation && (
                 <p
-                  className={`text-sm ${
+                  className={`text-md ${
                     newPasswordValidation.isValid
                       ? "text-green-600"
                       : "text-red-600"
@@ -310,7 +310,7 @@ export default function SecurityPage() {
               </div>
               {passwordsMatch !== null && (
                 <p
-                  className={`text-sm ${
+                  className={`text-md ${
                     passwordsMatch ? "text-green-600" : "text-red-600"
                   }`}
                 >
@@ -324,7 +324,7 @@ export default function SecurityPage() {
               <h4 className="font-medium text-gray-900 mb-2">
                 Requisitos de Senha:
               </h4>
-              <ul className="text-sm text-gray-600 space-y-1">
+              <ul className="text-md text-gray-600 space-y-1">
                 <li>• Pelo menos 8 caracteres</li>
                 <li>• Pelo menos uma letra minúscula</li>
                 <li>• Pelo menos uma letra maiúscula</li>

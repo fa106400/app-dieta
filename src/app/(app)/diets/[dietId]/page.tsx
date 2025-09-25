@@ -397,7 +397,7 @@ export default function DietDetailPage() {
             <h3 className="text-lg font-semibold mb-2">
               Falha ao carregar dieta
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 mb-4 font-lg">
               {error || "Dieta não encontrada"}
             </p>
             <Button
@@ -433,7 +433,7 @@ export default function DietDetailPage() {
             <h1 className="text-3xl font-bold text-gray-900">
               {diet.title || "Untitled Diet"}
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 mt-1 font-lg">
               {diet.description || "No description available"}
             </p>
           </div>
@@ -574,7 +574,7 @@ export default function DietDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700 whitespace-pre-line">
+            <p className="text-gray-700 whitespace-pre-line font-lg">
               {diet.recommendation_reasoning}
             </p>
           </CardContent>

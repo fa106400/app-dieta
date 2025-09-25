@@ -107,7 +107,7 @@ function SignupPageContent() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Criar Conta</CardTitle>
-            <CardDescription className="text-center">
+            <CardDescription className="text-center font-lg">
               Preencha seus detalhes para criar sua conta
             </CardDescription>
           </CardHeader>
@@ -167,7 +167,7 @@ function SignupPageContent() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-500">
                   A senha deve ter pelo menos 6 caracteres
                 </p>
               </div>
@@ -199,13 +199,13 @@ function SignupPageContent() {
               </div>
 
               {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                <div className="p-3 text-md text-red-600 bg-red-50 border border-red-200 rounded-md">
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+                <div className="p-3 text-md text-green-600 bg-green-50 border border-green-200 rounded-md">
                   {success}
                 </div>
               )}
@@ -216,7 +216,7 @@ function SignupPageContent() {
             </form>
 
             <div className="mt-4 text-center">
-              <div className="text-sm text-gray-600">
+              <div className="text-md text-gray-600">
                 Já tem uma conta?{" "}
                 <Link
                   href="/login"

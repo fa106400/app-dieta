@@ -77,7 +77,7 @@ function ForgotPasswordPageContent() {
         <Card>
           <CardHeader>
             {/* <CardTitle className="text-center">Redefinir Senha</CardTitle> */}
-            <CardDescription className="text-center">
+            <CardDescription className="text-center font-lg">
               Digite seu endereço de email e nós lhe enviaremos um link para
               redefinir sua senha.
             </CardDescription>
@@ -101,7 +101,7 @@ function ForgotPasswordPageContent() {
 
               {message && (
                 <div
-                  className={`p-3 text-sm border rounded-md ${
+                  className={`p-3 text-md border rounded-md ${
                     message.type === "success"
                       ? "text-green-600 bg-green-50 border-green-200"
                       : "text-red-600 bg-red-50 border-red-200"
@@ -119,7 +119,7 @@ function ForgotPasswordPageContent() {
             <div className="mt-4 text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center text-sm text-sky-500 hover:text-sky-500"
+                className="inline-flex items-center text-md text-sky-500 hover:text-sky-500"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar para Login
