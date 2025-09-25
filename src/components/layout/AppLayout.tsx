@@ -11,12 +11,13 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
+      {" "}
+      {/* old: bg-gray-50 */}
       {/* Desktop Sidebar - always visible on lg+ screens */}
       <div className="hidden lg:block">
         <Sidebar isOpen={true} onClose={() => {}} />
       </div>
-
       {/* Main content area */}
       <div className="lg:pl-64">
         {/* Header */}
@@ -32,7 +33,6 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
         </main>
       </div>
-
       {/* Mobile Footer Menu */}
       <FooterMenu />
     </div>
