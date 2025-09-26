@@ -2,6 +2,7 @@
 
 import { UserMenu } from "./UserMenu";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Header() {
   return (
@@ -10,14 +11,16 @@ export function Header() {
         <div className="flex h-14 items-center justify-between">
           {/* Mobile logo - left */}
           <div className="flex-1 flex justify-left md:hidden">
-            <Image
-              className="h-8 w-auto object-contain"
-              src="/imgs/logo/logo-rect.png"
-              alt="Logo"
-              width={225}
-              height={57}
-              priority
-            />
+            <Link href="/home">
+              <Image
+                className="h-8 w-auto object-contain"
+                src="/imgs/logo/logo-rect.png"
+                alt="Logo"
+                width={225}
+                height={57}
+                priority
+              />
+            </Link>
           </div>
 
           {/* Desktop - empty left side */}
