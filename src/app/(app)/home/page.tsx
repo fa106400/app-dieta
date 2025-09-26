@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 // import { Badge } from "@/components/ui/badge";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Bell,
   // Trophy,
@@ -21,6 +21,7 @@ import {
   AlertCircle,
   Loader2,
   LibraryBig,
+  Trophy,
 } from "lucide-react";
 // import { toast } from "react-toastify";
 // import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
@@ -67,6 +68,25 @@ interface PersonalSnapshot {
   canRefreshRecommendations: boolean;
 }
 
+interface MiniRankingData {
+  topUser: {
+    user_id: string;
+    exp: number;
+    user_alias: string;
+    avatar_url: string | null;
+    rank: number;
+  } | null;
+  currentUser: {
+    user_id: string;
+    exp: number;
+    user_alias: string;
+    avatar_url: string | null;
+    rank: number;
+  } | null;
+  isCurrentUserTop: boolean;
+  totalUsers: number;
+}
+
 export default function HomePage() {
   const { user } = useAuthContext();
   const router = useRouter();
@@ -76,6 +96,7 @@ export default function HomePage() {
   const [personalSnapshot, setPersonalSnapshot] =
     useState<PersonalSnapshot | null>(null);
   const [recentBadges, setRecentBadges] = useState<UserBadge[]>([]);
+  const [miniRanking, setMiniRanking] = useState<MiniRankingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -214,6 +235,24 @@ export default function HomePage() {
     }
   }, [user]);
 
+  // Fetch mini-ranking
+  const fetchMiniRanking = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const response = await fetch("/api/leaderboard?mini=true");
+      if (!response.ok) {
+        throw new Error("Falha ao carregar ranking");
+      }
+
+      const data = await response.json();
+      setMiniRanking(data);
+    } catch (err) {
+      console.error("Error fetching mini-ranking:", err);
+      // Don't throw, just show empty state
+    }
+  }, [user]);
+
   // Refresh AI recommendations
   /*const handleRefreshRecommendations = async () => {
     if (!personalSnapshot?.canRefreshRecommendations) return;
@@ -251,13 +290,19 @@ export default function HomePage() {
         fetchAnnouncements(),
         fetchPersonalSnapshot(),
         fetchRecentBadges(),
+        fetchMiniRanking(),
       ]);
 
       setLoading(false);
     };
 
     fetchAllData();
-  }, [fetchAnnouncements, fetchPersonalSnapshot, fetchRecentBadges]);
+  }, [
+    fetchAnnouncements,
+    fetchPersonalSnapshot,
+    fetchRecentBadges,
+    fetchMiniRanking,
+  ]);
 
   // Format weight history for chart
   // const formatWeightHistory = (weights: WeightEntry[]) => {
@@ -340,8 +385,8 @@ export default function HomePage() {
             </Card>
           )}
 
-          {/* Ranking Preview */}
-          {/* <Card>
+          {/* Ranking Preview - renders only on desktop */}
+          <Card className="hidden lg:block">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Trophy className="h-5 w-5" />
@@ -349,15 +394,135 @@ export default function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-6">
-                <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Em construção</h3>
-                <Button variant="outline" disabled>
-                  Ver Ranking completo
-                </Button>
-              </div>
+              {miniRanking ? (
+                <div className="space-y-4">
+                  {miniRanking.isCurrentUserTop ? (
+                    // Current user is #1
+                    <div className="text-center py-4">
+                      <div className="flex items-center justify-center space-x-3 mb-4">
+                        <Trophy className="h-8 w-8 text-yellow-500" />
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={
+                              miniRanking.currentUser?.avatar_url
+                                ? `/imgs/avatars/${miniRanking.currentUser.avatar_url}`
+                                : undefined
+                            }
+                          />
+                          <AvatarFallback className="bg-yellow-100 text-yellow-800">
+                            {miniRanking.currentUser?.user_alias
+                              ?.charAt(0)
+                              .toUpperCase() || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="text-left">
+                          <p className="font-medium text-md">
+                            {miniRanking.currentUser?.user_alias || "Você"}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {/* #{miniRanking.currentUser?.rank} •{" "} */}
+                            {miniRanking.currentUser?.exp.toLocaleString()} XP
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-md text-yellow-500 font-medium mb-4">
+                        Você está em 1º lugar! Continue assim!
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={() => router.push("/ranking")}
+                        className="w-full"
+                      >
+                        Ver Ranking completo
+                      </Button>
+                    </div>
+                  ) : (
+                    // Show top user and current user
+                    <div className="space-y-3">
+                      {/* Top User */}
+                      {miniRanking.topUser && (
+                        <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <Trophy className="h-6 w-6 text-yellow-500" />
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage
+                              src={
+                                miniRanking.topUser.avatar_url
+                                  ? `/imgs/avatars/${miniRanking.topUser.avatar_url}`
+                                  : undefined
+                              }
+                            />
+                            <AvatarFallback className="bg-yellow-100 text-yellow-800 text-sm">
+                              {miniRanking.topUser.user_alias
+                                ?.charAt(0)
+                                .toUpperCase() || "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex items-center justify-between p-3 w-full">
+                            <div className="font-medium text-md">
+                              {/* #{miniRanking.topUser.rank} •{" "} */}
+                              {miniRanking.topUser.user_alias || "Anônimo"}
+                            </div>
+                            <div className="font-medium text-md">
+                              {miniRanking.topUser.exp.toLocaleString()} XP
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Current User */}
+                      {miniRanking.currentUser && (
+                        <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <span className="text-lg font-semibold text-green-600 w-6 text-center">
+                            {miniRanking.currentUser.rank}
+                          </span>
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage
+                              src={
+                                miniRanking.currentUser.avatar_url
+                                  ? `/imgs/avatars/${miniRanking.currentUser.avatar_url}`
+                                  : undefined
+                              }
+                            />
+                            <AvatarFallback className="bg-green-100 text-green-800 text-sm">
+                              {miniRanking.currentUser.user_alias
+                                ?.charAt(0)
+                                .toUpperCase() || "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex items-center justify-between p-3 w-full">
+                            <p className="font-medium text-md">
+                              {miniRanking.currentUser.user_alias || "Você"}
+                            </p>
+                            <p className="font-medium text-md">
+                              {miniRanking.currentUser.exp.toLocaleString()} XP
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      <Button
+                        variant="outline"
+                        onClick={() => router.push("/ranking")}
+                        className="w-full"
+                      >
+                        Ver Ranking completo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    Carregando ranking...
+                  </h3>
+                  <Button variant="outline" disabled>
+                    Ver Ranking completo
+                  </Button>
+                </div>
+              )}
             </CardContent>
-          </Card> */}
+          </Card>
         </div>
 
         {/* Right Column */}

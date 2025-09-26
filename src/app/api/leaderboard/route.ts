@@ -22,6 +22,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Check if this is a mini-ranking request
+    const { searchParams } = new URL(request.url);
+    const isMini = searchParams.get('mini') === 'true';
+
     // Get all users with their ranks using window function
     const { data: allUsers, error: usersError } = await supabase
       .from("users_metrics_view")
@@ -67,6 +71,31 @@ export async function GET(request: NextRequest) {
     } else if (currentUserIndex >= 0) {
       // If current user is in top 5, get next 4 after top 5
       next4 = sortedUsers.slice(5, 9);
+    }
+
+    // Handle mini-ranking request
+    if (isMini) {
+      const currentUserData = currentUser.length > 0 ? currentUser[0] : null;
+      const isCurrentUserTop = currentUserData && currentUserData.rank === 1;
+      
+      if (isCurrentUserTop) {
+        // If current user is #1, return only them with a special message
+        return NextResponse.json({
+          topUser: currentUserData,
+          currentUser: currentUserData,
+          isCurrentUserTop: true,
+          totalUsers: sortedUsers.length,
+        });
+      } else {
+        // Return top user and current user
+        const topUser = top5.length > 0 ? top5[0] : null;
+        return NextResponse.json({
+          topUser,
+          currentUser: currentUserData,
+          isCurrentUserTop: false,
+          totalUsers: sortedUsers.length,
+        });
+      }
     }
 
     return NextResponse.json({
