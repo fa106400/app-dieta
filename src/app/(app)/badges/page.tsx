@@ -124,7 +124,7 @@ export default function BadgesPage() {
     if (badge.user_badges && badge.user_badges.length > 0) {
       return <Trophy className="h-8 w-8 text-yellow-500" />;
     }
-    return <Lock className="h-8 w-8 text-gray-400" />;
+    return <Lock className="h-8 w-8 " />;
   };
 
   // Get badge status
@@ -141,7 +141,7 @@ export default function BadgesPage() {
       earned: false,
       awardedAt: null,
       color: "bg-gray-50 border-gray-200",
-      textColor: "text-gray-600",
+      textColor: "",
     };
   };
 
@@ -195,7 +195,7 @@ export default function BadgesPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p className="text-gray-600 font-lg">Carregando medalhas...</p>
+              <p className=" text-lg">Carregando medalhas...</p>
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ export default function BadgesPage() {
               <h2 className="text-xl font-semibold mb-2">
                 Falha ao carregar medalhas
               </h2>
-              <p className="text-gray-600 mb-4 font-lg">{error}</p>
+              <p className=" mb-4 text-lg">{error}</p>
               <Button onClick={() => fetchBadges("todas")} variant="outline">
                 Tentar novamente
               </Button>
@@ -234,10 +234,8 @@ export default function BadgesPage() {
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Minhas Medalhas
-          </h1>
-          <p className="text-gray-600 font-lg">
+          <h1 className="text-2xl font-bold  mb-2">Minhas Medalhas</h1>
+          <p className=" text-lg">
             Acompanhe suas conquistas e desbloqueie novas medalhas à medida que
             avança
           </p>
@@ -250,7 +248,7 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <Trophy className="h-8 w-8 text-yellow-500" />
                 <div>
-                  <p className="text-md text-gray-600">Medalhas Recebidas</p>
+                  <p className="text-md ">Medalhas Recebidas</p>
                   <p className="text-2xl font-bold">{earnedBadgesCount}</p>
                 </div>
               </div>
@@ -261,7 +259,7 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <Target className="h-8 w-8 text-sky-500" />
                 <div>
-                  <p className="text-md text-gray-600">Total de Medalhas</p>
+                  <p className="text-md ">Total de Medalhas</p>
                   <p className="text-2xl font-bold">{totalBadgesCount}</p>
                 </div>
               </div>
@@ -272,7 +270,7 @@ export default function BadgesPage() {
               <div className="flex items-center space-x-3">
                 <TrendingUp className="h-8 w-8 text-green-500" />
                 <div>
-                  <p className="text-md text-gray-600">Progresso</p>
+                  <p className="text-md ">Progresso</p>
                   <p className="text-2xl font-bold">
                     {totalBadgesCount > 0
                       ? Math.round((earnedBadgesCount / totalBadgesCount) * 100)
@@ -307,11 +305,11 @@ export default function BadgesPage() {
             {earnedBadges.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <Sparkles className="h-12 w-12  mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">
                     Nenhuma Medalha Ainda
                   </h3>
-                  <p className="text-gray-600 mb-4 font-lg">
+                  <p className=" mb-4 text-lg">
                     Comece sua jornada escolhendo uma dieta, acompanhando seu
                     peso, ou explorando o app!
                   </p>
@@ -357,13 +355,13 @@ export default function BadgesPage() {
                       </CardHeader>
                       <CardContent className="pt-0">
                         <div className="space-y-2">
-                          <div className="flex items-center text-sm text-gray-600">
+                          <div className="flex items-center text-md ">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <span className="font-lg">
+                            <span className="text-lg">
                               Recebida em {formatDate(status.awardedAt!)}
                             </span>
                           </div>
-                          <div className="text-md text-gray-600">
+                          <div className="text-md ">
                             <strong>Critério:</strong>{" "}
                             {getCriteriaDescription(badge.criteria)}
                           </div>
@@ -395,10 +393,7 @@ export default function BadgesPage() {
                             Recebida
                           </Badge>
                         ) : (
-                          <Badge
-                            variant="outline"
-                            className="bg-gray-100 text-gray-600"
-                          >
+                          <Badge variant="outline" className="bg-gray-100 ">
                             <Lock className="h-3 w-3 mr-1" />
                             Bloqueada
                           </Badge>
@@ -414,14 +409,14 @@ export default function BadgesPage() {
                     <CardContent className="pt-0">
                       <div className="space-y-2">
                         {status.earned && status.awardedAt && (
-                          <div className="flex items-center text-sm text-gray-600">
+                          <div className="flex items-center text-md ">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <span className="font-lg">
+                            <span className="text-lg">
                               Recebida em {formatDate(status.awardedAt)}
                             </span>
                           </div>
                         )}
-                        <div className="text-md text-gray-600">
+                        <div className="text-md ">
                           <strong>Critério:</strong>{" "}
                           {getCriteriaDescription(badge.criteria)}
                         </div>

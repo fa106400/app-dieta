@@ -143,17 +143,17 @@ export function UserMenu() {
               }
               alt={userName}
             />
-            <AvatarFallback className="bg-sky-500 text-white text-sm">
+            <AvatarFallback className="bg-sky-500 text-white text-md">
               {userInitials}
             </AvatarFallback>
           </Avatar>
           <div className="block text-left">
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-md font-medium ">
               {aliasLoading ? "Carregando..." : userAlias}
             </p>
             <div className="flex items-center space-x-1">
               <Star className="h-3 w-3 text-yellow-500" />
-              <span className="text-xs text-gray-600">
+              <span className="text-sm ">
                 {xpLoading ? "..." : `${userXP.toLocaleString()} XP`}
               </span>
             </div>
@@ -163,15 +163,15 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            {/* <p className="text-sm font-medium leading-none">
+            {/* <p className="text-md font-medium leading-none">
               {aliasLoading ? "Carregando..." : userAlias}
             </p> */}
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-sm leading-none text-muted-foreground">
               {user?.email}
             </p>
             {/* <div className="flex items-center space-x-1 mt-1">
               <Star className="h-3 w-3 text-yellow-500" />
-              <span className="text-xs text-muted-foreground">
+              <span className="text-sm text-muted-foreground">
                 {xpLoading ? "..." : `${userXP.toLocaleString()} XP`}
               </span>
             </div> */}

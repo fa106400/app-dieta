@@ -57,7 +57,7 @@ export function DietSorting({ value, onChange }: DietSortingProps) {
             className="flex flex-col items-start space-y-1 p-3"
           >
             <div className="font-medium">{option.label}</div>
-            <div className="text-xs text-gray-500">{option.description}</div>
+            <div className="text-sm ">{option.description}</div>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

@@ -29,17 +29,14 @@ export function FooterMenu() {
                 "flex flex-col items-center justify-center p-2 rounded-lg transition-colors",
                 isActive
                   ? "bg-sky-50 text-sky-500"
-                  : "text-gray-600 hover:text-sky-500 hover:bg-gray-50"
+                  : " hover:text-sky-500 hover:bg-gray-50"
               )}
             >
               <item.icon
-                className={cn(
-                  "h-7 w-7",
-                  isActive ? "text-sky-500" : "text-gray-400"
-                )}
+                className={cn("h-7 w-7", isActive ? "text-sky-500" : "")}
                 aria-hidden="true"
               />
-              {/* <span className="text-xs mt-1 font-medium">{item.name}</span> */}
+              {/* <span className="text-sm mt-1 font-medium">{item.name}</span> */}
             </Link>
           );
         })}

@@ -476,7 +476,7 @@ export default function ProfileManagePage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-gray-600 font-lg">Carregando perfil...</p>
+            <p className=" text-lg">Carregando perfil...</p>
           </div>
         </div>
       </div>
@@ -492,7 +492,7 @@ export default function ProfileManagePage() {
             <h2 className="text-xl font-semibold mb-2">
               Erro ao carregar perfil
             </h2>
-            <p className="text-gray-600 mb-4 font-lg">{profileError}</p>
+            <p className=" mb-4 text-lg">{profileError}</p>
             <Button onClick={fetchProfile} variant="outline">
               Tentar novamente
             </Button>
@@ -507,11 +507,11 @@ export default function ProfileManagePage() {
       <div className="container mx-auto px-4 py-6">
         <Card>
           <CardContent className="p-8 text-center">
-            <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <User className="h-12 w-12  mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">
               Nenhum perfil encontrado
             </h2>
-            <p className="text-gray-600">
+            <p className="">
               Por favor, complete sua configuração de perfil primeiro.
             </p>
           </CardContent>
@@ -526,9 +526,9 @@ export default function ProfileManagePage() {
         {/* Header */}
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Perfil</h1>
+          <h1 className="text-2xl font-bold  mb-2">Perfil</h1>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <p className="text-gray-600 mb-4 lg:mb-0 font-lg">
+            <p className=" mb-4 lg:mb-0 text-lg">
               Gerencie suas informações pessoais e acompanhe seu progresso
             </p>
 
@@ -554,7 +554,7 @@ export default function ProfileManagePage() {
               </div>
               <div className="flex items-center space-x-2">
                 {aiCooldownHours && aiCooldownHours > 0 && (
-                  <Badge variant="secondary" className="text-sm">
+                  <Badge variant="secondary" className="text-md">
                     {formatCooldown(aiCooldownHours)}
                   </Badge>
                 )}
@@ -761,7 +761,7 @@ export default function ProfileManagePage() {
                         />
                         <Label
                           htmlFor={preference.value}
-                          className="text-sm capitalize"
+                          className="text-md capitalize"
                         >
                           {preference.label}
                         </Label>
@@ -1029,18 +1029,16 @@ export default function ProfileManagePage() {
                 ) : weightError ? (
                   <div className="text-center py-8">
                     <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                    <p className="text-red-600 mb-4 font-lg">{weightError}</p>
+                    <p className="text-red-600 mb-4 text-lg">{weightError}</p>
                     <Button onClick={fetchWeights} variant="outline">
                       Tentar Novamente
                     </Button>
                   </div>
                 ) : weightEntries.length === 0 ? (
                   <div className="text-center py-8">
-                    <Weight className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">
-                      Nenhum registro de peso ainda
-                    </p>
-                    <p className="text-md text-gray-500">
+                    <Weight className="h-8 w-8  mx-auto mb-2" />
+                    <p className="">Nenhum registro de peso ainda</p>
+                    <p className="text-md ">
                       Adicione seu primeiro registro de peso acima para começar
                       a rastrear
                     </p>
@@ -1056,12 +1054,12 @@ export default function ProfileManagePage() {
                           className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
                         >
                           <div className="flex items-center space-x-3">
-                            <Calendar className="h-4 w-4 text-gray-500" />
+                            <Calendar className="h-4 w-4 " />
                             <div>
                               <p className="font-medium">
                                 {entry.weight_kg} kg
                               </p>
-                              <p className="text-md text-gray-600">
+                              <p className="text-md ">
                                 {new Date(
                                   entry.measured_at + "T00:00:00"
                                 ).toLocaleDateString("pt-BR", {
@@ -1260,13 +1258,13 @@ function ProfilePrivacyDisplayInline({
               />
               {isValidating && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                  <Loader2 className="h-4 w-4 animate-spin " />
                 </div>
               )}
             </div>
             {aliasValidation.message && (
               <p
-                className={`text-sm ${
+                className={`text-md ${
                   aliasValidation.isValid === true
                     ? "text-green-600"
                     : "text-red-600"

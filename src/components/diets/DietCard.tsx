@@ -58,7 +58,7 @@ export function DietCard({
        case "advanced":
          return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 ";
     }
   };*/
 
@@ -73,7 +73,7 @@ export function DietCard({
        case "balanced":
          return "bg-orange-100 text-orange-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 ";
     }
   };*/
 
@@ -100,7 +100,7 @@ export function DietCard({
   //             <div className="flex items-start justify-between">
   //               <div className="space-y-2">
   //                 <div className="flex items-center space-x-2">
-  //                   <h3 className="text-lg font-semibold text-gray-900">
+  //                   <h3 className="text-lg font-semibold ">
   //                     {diet.title || "Dieta Genérica"}
   //                   </h3>
   //                   {isRecommended && (
@@ -113,11 +113,11 @@ export function DietCard({
   //                     </Badge>
   //                   )}
   //                 </div>
-  //                 <p className="text-gray-600 text-sm line-clamp-2">
+  //                 <p className=" text-md line-clamp-2">
   //                   {diet.description || "Nenhuma descrição disponível"}
   //                 </p>
   //               </div>
-  //               <div className="flex items-center space-x-1 text-sm text-gray-500">
+  //               <div className="flex items-center space-x-1 text-md ">
   //                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
   //                 <span>{diet.popularity_score || 0}</span>
   //               </div>
@@ -130,12 +130,12 @@ export function DietCard({
   //               {/* <Badge className={getDifficultyColor(diet.difficulty)}>
   //                 {diet.difficulty || "Desconhecida"}
   //               </Badge> */}
-  //               <div className="flex items-center text-sm text-gray-500">
+  //               <div className="flex items-center text-md ">
   //                 <Clock className="h-4 w-4 mr-1" />
   //                 {diet.duration_weeks || 0} semanas
   //               </div>
   //               {diet.calories_total && (
-  //                 <div className="flex items-center text-sm text-gray-500">
+  //                 <div className="flex items-center text-md ">
   //                   <Flame className="h-4 w-4 mr-1" />
   //                   {diet.calories_total} kcal
   //                 </div>
@@ -145,12 +145,12 @@ export function DietCard({
   //             {diet.tags && diet.tags.length > 0 && (
   //               <div className="flex flex-wrap gap-1">
   //                 {diet.tags.slice(0, 3).map((tag) => (
-  //                   <Badge key={tag} variant="outline" className="text-xs">
+  //                   <Badge key={tag} variant="outline" className="text-sm">
   //                     {tag.replaceAll("_", " ")}
   //                   </Badge>
   //                 ))}
   //                 {diet.tags.length > 3 && (
-  //                   <Badge variant="outline" className="text-xs">
+  //                   <Badge variant="outline" className="text-sm">
   //                     +{diet.tags.length - 3}+
   //                   </Badge>
   //                 )}
@@ -166,7 +166,7 @@ export function DietCard({
   //               </Link>
   //             </Button>
   //             {isRecommended && diet.recommendation_score && (
-  //               <div className="text-xs text-gray-500">
+  //               <div className="text-sm ">
   //                 {Math.round(diet.recommendation_score * 100)}% match
   //               </div>
   //             )}
@@ -190,14 +190,14 @@ export function DietCard({
         <div className="flex items-start justify-between">
           <div className="space-y-2 flex-1">
             <div className="flex items-center space-x-2">
-              <h3 className="font-semibold text-gray-900 line-clamp-1">
+              <h3 className="font-semibold  line-clamp-1">
                 {diet.title || "Dieta Genérica"}
               </h3>
               {isRecommended && (
                 <Sparkles className="h-4 w-4 text-yellow-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex items-center space-x-1 text-sm text-gray-500">
+            <div className="flex items-center space-x-1 text-md ">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span>{diet.popularity_score || 0}</span>
               <Users className="h-4 w-4 ml-2" />
@@ -208,7 +208,7 @@ export function DietCard({
       </CardHeader>
 
       <CardContent className="pt-0 space-y-4">
-        <p className="text-gray-600 text-sm line-clamp-3">
+        <p className=" text-md line-clamp-3">
           {diet.description || "Nenhuma descrição disponível"}
         </p>
 
@@ -222,7 +222,7 @@ export function DietCard({
             </Badge>
           </div> */}
 
-          {/* <div className="flex items-center justify-between text-sm text-gray-500">
+          {/* <div className="flex items-center justify-between text-md ">
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               {diet.duration_weeks || 0} semanas
@@ -239,14 +239,14 @@ export function DietCard({
             <div className="flex flex-wrap gap-1">
               {/* mostra até 3 tags */}
               {diet.tags.slice(0, 3).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
+                <Badge key={tag} variant="outline" className="text-sm">
                   {/*tag.replaceAll("_", " ")*/}
                   {getTagLabel(tag)}
                 </Badge>
               ))}
               {/* sempre teremos no max 3 tags ja exibidas acima */}
               {/*diet.tags.length > 3 && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-sm">
                   +{diet.tags.length - 2}
                 </Badge>
               )*/}
@@ -262,7 +262,7 @@ export function DietCard({
             </Link>
           </Button>
           {isRecommended && diet.recommendation_score && (
-            <div className="text-center text-xs text-gray-500 mt-2">
+            <div className="text-center text-md  mt-2">
               {Math.round(diet.recommendation_score * 100)}% match para você
             </div>
           )}

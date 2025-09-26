@@ -39,7 +39,7 @@ export function FavoriteDietCard({
       case "advanced":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 ";
     }
   };
 
@@ -54,7 +54,7 @@ export function FavoriteDietCard({
       case "balanced":
         return "bg-orange-100 text-orange-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 ";
     }
   };
 
@@ -112,7 +112,7 @@ export function FavoriteDietCard({
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold ">
                       {diet.title || "Untitled Diet"}
                     </h3>
                     {isRecommended && (
@@ -125,12 +125,12 @@ export function FavoriteDietCard({
                       </Badge>
                     )}
                   </div>
-                  <p className="text-gray-600 text-sm line-clamp-2">
+                  <p className=" text-md line-clamp-2">
                     {diet.description || "No description available"}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-1 text-sm text-gray-500">
+                  <div className="flex items-center space-x-1 text-md ">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span>{diet.popularity_score || 0}</span>
                   </div>
@@ -143,7 +143,7 @@ export function FavoriteDietCard({
                       className={`${
                         diet.is_favorited
                           ? "text-red-500 hover:text-red-600"
-                          : "text-gray-400 hover:text-red-500"
+                          : " hover:text-red-500"
                       }`}
                     >
                       <Heart
@@ -163,12 +163,12 @@ export function FavoriteDietCard({
                 <Badge className={getDifficultyColor(diet.difficulty)}>
                   {diet.difficulty || "Unknown"}
                 </Badge>
-                <div className="flex items-center text-sm text-gray-500">
+                <div className="flex items-center text-md ">
                   <Clock className="h-4 w-4 mr-1" />
                   {diet.duration_weeks || 0} weeks
                 </div>
                 {diet.calories_total && (
-                  <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex items-center text-md ">
                     <Flame className="h-4 w-4 mr-1" />
                     {diet.calories_total} cal
                   </div>
@@ -178,12 +178,12 @@ export function FavoriteDietCard({
               {diet.tags && diet.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {diet.tags.slice(0, 3).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
+                    <Badge key={tag} variant="outline" className="text-sm">
                       {tag.replace("_", " ")}
                     </Badge>
                   ))}
                   {diet.tags.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-sm">
                       +{diet.tags.length - 3} more
                     </Badge>
                   )}
@@ -199,7 +199,7 @@ export function FavoriteDietCard({
                 </Link>
               </Button>
               {isRecommended && diet.recommendation_score && (
-                <div className="text-xs text-gray-500">
+                <div className="text-sm ">
                   {Math.round(diet.recommendation_score * 100)}% match
                 </div>
               )}
@@ -223,14 +223,14 @@ export function FavoriteDietCard({
         <div className="flex items-start justify-between">
           <div className="space-y-2 flex-1">
             <div className="flex items-center space-x-2">
-              <h3 className="font-semibold text-gray-900 line-clamp-1">
+              <h3 className="font-semibold  line-clamp-1">
                 {diet.title || "Untitled Diet"}
               </h3>
               {isRecommended && (
                 <Sparkles className="h-4 w-4 text-yellow-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex items-center space-x-1 text-sm text-gray-500">
+            <div className="flex items-center space-x-1 text-md ">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span>{diet.popularity_score || 0}</span>
               <Users className="h-4 w-4 ml-2" />
@@ -246,7 +246,7 @@ export function FavoriteDietCard({
               className={`${
                 diet.is_favorited
                   ? "text-red-500 hover:text-red-600"
-                  : "text-gray-400 hover:text-red-500"
+                  : " hover:text-red-500"
               }`}
             >
               <Heart
@@ -258,7 +258,7 @@ export function FavoriteDietCard({
       </CardHeader>
 
       <CardContent className="pt-0 space-y-4">
-        <p className="text-gray-600 text-sm line-clamp-3">
+        <p className=" text-md line-clamp-3">
           {diet.description || "No description available"}
         </p>
 
@@ -272,7 +272,7 @@ export function FavoriteDietCard({
             </Badge>
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-500">
+          <div className="flex items-center justify-between text-md ">
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               {diet.duration_weeks || 0} weeks
@@ -288,12 +288,12 @@ export function FavoriteDietCard({
           {diet.tags && diet.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {diet.tags.slice(0, 2).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
+                <Badge key={tag} variant="outline" className="text-sm">
                   {tag.replace("_", " ")}
                 </Badge>
               ))}
               {diet.tags.length > 2 && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-sm">
                   +{diet.tags.length - 2}
                 </Badge>
               )}
@@ -309,7 +309,7 @@ export function FavoriteDietCard({
             </Link>
           </Button>
           {isRecommended && diet.recommendation_score && (
-            <div className="text-center text-xs text-gray-500 mt-2">
+            <div className="text-center text-sm  mt-2">
               {Math.round(diet.recommendation_score * 100)}% match for you
             </div>
           )}

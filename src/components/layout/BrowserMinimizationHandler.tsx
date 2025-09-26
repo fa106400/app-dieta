@@ -66,12 +66,12 @@ export function BrowserMinimizationHandler() {
               <Sticker className="h-8 w-8 text-green-600" />
             </div>
           </div>
-          <CardTitle className="text-xl font-bold text-gray-900">
+          <CardTitle className="text-xl font-bold ">
             Poxa vida, atualiza pra gente?
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
-          <p className="text-gray-600 leading-relaxed">
+          <p className=" leading-relaxed">
             O seu navegador perdeu o foco. Por favor, atualize a página para
             continuar.
           </p>

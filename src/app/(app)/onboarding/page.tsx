@@ -352,7 +352,7 @@ function OnboardingPageContent() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold mb-4">Informações básicas</h3>
-        {/* <p className="text-gray-600 mb-6">
+        {/* <p className=" mb-6">
           Vamos começar com algumas informações básicas sobre você.
         </p> */}
       </div>
@@ -411,7 +411,7 @@ function OnboardingPageContent() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold mb-4">Qual é o seu objetivo?</h3>
-        {/* <p className="text-gray-600 mb-6">
+        {/* <p className=" mb-6">
           Qual é o seu objetivo?
         </p> */}
       </div>
@@ -427,7 +427,7 @@ function OnboardingPageContent() {
           <RadioGroupItem value="lose_weight" id="lose_weight" />
           <Label htmlFor="lose_weight" className="flex-1 cursor-pointer">
             <div className="font-medium">Perder peso</div>
-            <div className="hidden lg:block text-sm text-gray-500">
+            <div className="hidden lg:block text-md ">
               Reduzir o peso e melhorar a composição corporal
             </div>
           </Label>
@@ -437,7 +437,7 @@ function OnboardingPageContent() {
           <RadioGroupItem value="maintain" id="maintain" />
           <Label htmlFor="maintain" className="flex-1 cursor-pointer">
             <div className="font-medium">Manter peso</div>
-            <div className="hidden lg:block text-sm text-gray-500">
+            <div className="hidden lg:block text-md ">
               Manter o peso atual enquanto melhora a saúde
             </div>
           </Label>
@@ -447,7 +447,7 @@ function OnboardingPageContent() {
           <RadioGroupItem value="gain_muscle" id="gain_muscle" />
           <Label htmlFor="gain_muscle" className="flex-1 cursor-pointer">
             <div className="font-medium">Ganhar massa</div>
-            <div className="hidden lg:block text-sm text-gray-500">
+            <div className="hidden lg:block text-md ">
               Construir massa muscular e força
             </div>
           </Label>
@@ -457,7 +457,7 @@ function OnboardingPageContent() {
           <RadioGroupItem value="health" id="health" />
           <Label htmlFor="health" className="flex-1 cursor-pointer">
             <div className="font-medium">Melhorar saúde</div>
-            <div className="hidden lg:block text-sm text-gray-500">
+            <div className="hidden lg:block text-md ">
               Foco na saúde e bem-estar geral
             </div>
           </Label>
@@ -470,7 +470,7 @@ function OnboardingPageContent() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold mb-4">Nível de atividade</h3>
-        {/* <p className="text-gray-600 mb-6">
+        {/* <p className=" mb-6">
           Quão ativo você é em uma semana típica?
         </p> */}
       </div>
@@ -536,7 +536,7 @@ function OnboardingPageContent() {
         <h3 className="text-lg font-semibold mb-4">
           Preferências e restrições alimentares
         </h3>
-        {/* <p className="text-gray-600 mb-6">
+        {/* <p className=" mb-6">
           Help us customize your diet recommendations.
         </p> */}
       </div>
@@ -566,7 +566,7 @@ function OnboardingPageContent() {
                 />
                 <Label
                   htmlFor={preference.value}
-                  className="text-sm capitalize cursor-pointer"
+                  className="text-md capitalize cursor-pointer"
                 >
                   {preference.label}
                 </Label>
@@ -610,7 +610,7 @@ function OnboardingPageContent() {
               />
               {isValidatingAlias && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                  <Loader2 className="h-4 w-4 animate-spin " />
                 </div>
               )}
               {!isValidatingAlias && aliasValidation.isValid === true && (
@@ -626,7 +626,7 @@ function OnboardingPageContent() {
             </div>
             {aliasValidation.message && (
               <p
-                className={`text-sm ${
+                className={`text-md ${
                   aliasValidation.isValid === true
                     ? "text-green-600"
                     : "text-red-600"
@@ -695,8 +695,8 @@ function OnboardingPageContent() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-3">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Bem vindo!</h1>
-          <p className="text-xl text-gray-600">
+          <h1 className="text-2xl font-bold  mb-2">Bem vindo!</h1>
+          <p className="text-xl ">
             Responda algumas perguntas para nossa IA recomendar as melhores
             opções para você.
           </p>
@@ -704,12 +704,10 @@ function OnboardingPageContent() {
         {/* Progress Bar */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-md font-medium text-gray-700">
+            <span className="text-md font-medium ">
               Passo {currentStep} de {totalSteps}
             </span>
-            <span className="text-md text-gray-500">
-              {Math.round(progress)}%
-            </span>
+            <span className="text-md ">{Math.round(progress)}%</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
@@ -719,7 +717,7 @@ function OnboardingPageContent() {
             {renderCurrentStep()}
 
             {error && (
-              <div className="mt-6 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              <div className="mt-6 p-3 text-md text-red-600 bg-red-50 border border-red-200 rounded-md">
                 {error}
               </div>
             )}

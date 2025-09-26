@@ -80,12 +80,8 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
       <CardContent className="space-y-4">
         {/* Diet Info */}
         <div>
-          <h3 className="font-semibold text-lg text-gray-900">
-            {currentDiet.title}
-          </h3>
-          <p className="text-gray-600 text-sm mt-1">
-            {currentDiet.description}
-          </p>
+          <h3 className="font-semibold text-lg ">{currentDiet.title}</h3>
+          <p className=" text-md mt-1">{currentDiet.description}</p>
         </div>
 
         {/* Diet Stats */}
@@ -93,9 +89,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Flame className="h-4 w-4 text-orange-500" />
-              <span className="text-xs text-gray-600">Calorias</span>
+              <span className="text-sm ">Calorias</span>
             </div>
-            <div className="text-sm font-semibold">
+            <div className="text-md font-semibold">
               {currentDiet.calories_total}
             </div>
           </div>
@@ -103,9 +99,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Users className="h-4 w-4 text-green-500" />
-              <span className="text-xs text-gray-600">Dificuldade</span>
+              <span className="text-sm ">Dificuldade</span>
             </div>
-            <div className="text-sm font-semibold">
+            <div className="text-md font-semibold">
               {currentDiet.difficulty?.toUpperCase()}
             </div>
           </div>
@@ -113,9 +109,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Calendar className="h-4 w-4 text-purple-500" />
-              <span className="text-xs text-gray-600">Duração</span>
+              <span className="text-sm ">Duração</span>
             </div>
-            <div className="text-sm font-semibold">
+            <div className="text-md font-semibold">
               {currentDiet.duration_weeks}w
             </div>
           </div>
@@ -123,9 +119,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Star className="h-4 w-4 text-yellow-500" />
-              <span className="text-xs text-gray-600">Popularidade</span>
+              <span className="text-sm ">Popularidade</span>
             </div>
-            <div className="text-sm font-semibold">
+            <div className="text-md font-semibold">
               {currentDiet.popularity_score}
             </div>
           </div>
@@ -133,14 +129,14 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
 
         {/* Progress Info */}
         <div className="bg-white rounded-lg p-3 border">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Iniciado em</span>
+          <div className="flex items-center justify-between text-md">
+            <span className="">Iniciado em</span>
             <span className="font-medium">
               {formatDate(currentDiet.started_at)}
             </span>
           </div>
-          <div className="flex items-center justify-between text-sm mt-1">
-            <span className="text-gray-600">Dias seguindo</span>
+          <div className="flex items-center justify-between text-md mt-1">
+            <span className="">Dias seguindo</span>
             <span className="font-medium">{getDaysSinceStart()} dia(s)</span>
           </div>
         </div>
@@ -149,12 +145,12 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
         {currentDiet.tags && currentDiet.tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {currentDiet.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={index} variant="secondary" className="text-sm">
                 {tag}
               </Badge>
             ))}
             {currentDiet.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-sm">
                 +{currentDiet.tags.length - 3}
               </Badge>
             )}

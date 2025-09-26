@@ -127,7 +127,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
         <CardContent className="space-y-6">
           {/* Category Filter */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Categoria</Label>
+            <Label className="text-md font-medium">Categoria</Label>
             <div className="grid grid-cols-2 gap-2">
               {categories.map((category) => (
                 <div
@@ -143,7 +143,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                   />
                   <Label
                     htmlFor={`category-${category.value}`}
-                    className="text-sm cursor-pointer"
+                    className="text-md cursor-pointer"
                   >
                     {category.label}
                   </Label>
@@ -154,7 +154,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
 
           {/* Difficulty Filter */}
           {/* <div className="space-y-3">
-            <Label className="text-sm font-medium">Dificuldade</Label>
+            <Label className="text-md font-medium">Dificuldade</Label>
             <div className="flex flex-wrap gap-2">
               {difficulties.map((difficulty) => (
                 <div
@@ -173,7 +173,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                   />
                   <Label
                     htmlFor={`difficulty-${difficulty.value}`}
-                    className="text-sm cursor-pointer"
+                    className="text-md cursor-pointer"
                   >
                     {difficulty.label}
                   </Label>
@@ -184,7 +184,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
 
           {/* Duration Filter 
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Duration</Label>
+            <Label className="text-md font-medium">Duration</Label>
             <div className="space-y-2">
               {durations.map((duration) => (
                 <div
@@ -200,7 +200,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                   />
                   <Label
                     htmlFor={`duration-${duration.value}`}
-                    className="text-sm cursor-pointer"
+                    className="text-md cursor-pointer"
                   >
                     {duration.label}
                   </Label>
@@ -211,7 +211,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
 
           {/* Goal Filter */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Objetivo</Label>
+            <Label className="text-md font-medium">Objetivo</Label>
             <div className="grid grid-cols-2 gap-2">
               {goals.map((goal) => (
                 <div key={goal.value} className="flex items-center space-x-2">
@@ -224,7 +224,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                   />
                   <Label
                     htmlFor={`goal-${goal.value}`}
-                    className="text-sm cursor-pointer"
+                    className="text-md cursor-pointer"
                   >
                     {goal.label}
                   </Label>
@@ -239,7 +239,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
       {hasActiveFilters && (
         <CardContent className="pt-0">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Filtros selecionados:</Label>
+            <Label className="text-md font-medium">Filtros selecionados:</Label>
             <div className="flex flex-wrap gap-2">
               {filters.category.map((category) => (
                 <Badge

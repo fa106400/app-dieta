@@ -28,7 +28,7 @@
 //             AI Powered
 //           </Badge>
 //         </CardTitle>
-//         <p className="text-sm text-gray-600">
+//         <p className="text-md ">
 //           Based on your profile and preferences, these diets are tailored for
 //           your goals.
 //         </p>
@@ -42,12 +42,12 @@
 //               onClick={() => onDietClick(diet)}
 //             >
 //               <div className="flex items-center space-x-3">
-//                 <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+//                 <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-800 rounded-full text-md font-semibold">
 //                   {index + 1}
 //                 </div>
 //                 <div>
-//                   <h4 className="font-medium text-gray-900">{diet.title}</h4>
-//                   <p className="text-sm text-gray-600 line-clamp-1">
+//                   <h4 className="font-medium ">{diet.title}</h4>
+//                   <p className="text-md  line-clamp-1">
 //                     {diet.description}
 //                   </p>
 //                 </div>
@@ -55,16 +55,16 @@
 //               <div className="flex items-center space-x-2">
 //                 {diet.recommendation_score && (
 //                   <div className="text-right">
-//                     <div className="text-sm font-medium text-yellow-700">
+//                     <div className="text-md font-medium text-yellow-700">
 //                       {Math.round(diet.recommendation_score * 100)}% match
 //                     </div>
-//                     <div className="flex items-center text-xs text-gray-500">
+//                     <div className="flex items-center text-sm ">
 //                       <TrendingUp className="h-3 w-3 mr-1" />
 //                       High match
 //                     </div>
 //                   </div>
 //                 )}
-//                 <Badge variant="outline" className="text-xs">
+//                 <Badge variant="outline" className="text-sm">
 //                   {diet.category?.replace("_", " ") || "Unknown"}
 //                 </Badge>
 //               </div>

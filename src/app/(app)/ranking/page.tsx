@@ -81,11 +81,11 @@ export default function RankingPage() {
       case 1:
         return <Crown className="h-6 w-6 text-yellow-500" />;
       case 2:
-        return <Crown className="h-6 w-6 text-gray-400" />;
+        return <Crown className="h-6 w-6 " />;
       case 3:
         return <Crown className="h-6 w-6 text-amber-600" />;
       default:
-        return <Trophy className="h-6 w-6 text-gray-400" />;
+        return <Trophy className="h-6 w-6 " />;
     }
   };
 
@@ -107,11 +107,11 @@ export default function RankingPage() {
   //     case 1:
   //       return "bg-yellow-100 text-yellow-800 border-yellow-200";
   //     case 2:
-  //       return "bg-gray-100 text-gray-800 border-gray-200";
+  //       return "bg-gray-100  border-gray-200";
   //     case 3:
   //       return "bg-amber-100 text-amber-800 border-amber-200";
   //     default:
-  //       return "bg-gray-100 text-gray-800 border-gray-200";
+  //       return "bg-gray-100  border-gray-200";
   //   }
   // };
 
@@ -139,7 +139,7 @@ export default function RankingPage() {
             )}
             {/* <Badge
               variant={getRankBadgeVariant(userData.rank)}
-              className={`text-xs font-medium ${getRankBadgeColor(
+              className={`text-sm font-medium ${getRankBadgeColor(
                 userData.rank
               )}`}
             >
@@ -150,20 +150,20 @@ export default function RankingPage() {
 
         <Avatar className="h-10 w-10">
           <AvatarImage src={avatar_path + userData.avatar_url || undefined} />
-          <AvatarFallback className="bg-gray-200 text-gray-600">
+          <AvatarFallback className="bg-gray-200 ">
             {userData.user_alias?.charAt(0).toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
-            <p className="text-md font-medium text-gray-900 truncate">
+            <p className="text-md font-medium  truncate">
               {userData.user_alias || "Anônimo"}
             </p>
             {/* {isCurrentUser && (
               <Badge
                 variant="outline"
-                className="text-xs bg-sky-100 text-sky-500 border-blue-200"
+                className="text-sm bg-sky-100 text-sky-500 border-blue-200"
               >
                 You
               </Badge>
@@ -173,7 +173,7 @@ export default function RankingPage() {
 
         <div className="flex items-center space-x-2">
           {/* <Star className="h-4 w-4 text-yellow-500" /> */}
-          <span className="text-md font-semibold text-gray-900">
+          <span className="text-md font-semibold ">
             {userData.exp.toLocaleString()} XP
           </span>
         </div>
@@ -186,7 +186,7 @@ export default function RankingPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center font-lg">Carregando ranking...</span>
+          <span className="text-center text-lg">Carregando ranking...</span>
         </div>
       </div>
     );
@@ -201,9 +201,7 @@ export default function RankingPage() {
             <h3 className="text-lg font-semibold mb-2">
               Falha ao carregar o ranking
             </h3>
-            <p className="text-gray-600 mb-4 font-lg">
-              {error || "Ranking não disponível"}
-            </p>
+            <p className=" mb-4 text-lg">{error || "Ranking não disponível"}</p>
             <Button onClick={fetchLeaderboard} variant="outline">
               Tentar Novamente
             </Button>
@@ -220,13 +218,13 @@ export default function RankingPage() {
     <div className="container mx-auto px-4 py-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Ranking</h1>
-        {/* <p className="text-gray-600">Top usuários por experiência</p> 
+        <h1 className="text-2xl font-bold  mb-4">Ranking</h1>
+        {/* <p className="">Top usuários por experiência</p> 
         <div className="flex items-center justify-center space-x-4 mt-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-500">
+          <div className="flex items-center space-x-2 text-md ">
             <span>Top usuários por experiência</span>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-gray-500">
+          <div className="flex items-center space-x-2 text-md ">
             <Users className="h-4 w-4" />
             <span>{totalUsers} usuários</span>
           </div>
@@ -246,21 +244,19 @@ export default function RankingPage() {
                 <div className="text-2xl font-bold text-sky-500">
                   #{currentUser[0].rank}
                 </div>
-                <div className="text-md text-gray-600">Sua Posição</div>
+                <div className="text-md ">Sua Posição</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
                   {currentUser[0].exp.toLocaleString()}
                 </div>
-                <div className="text-md text-gray-600">
-                  Pontos de Experiência
-                </div>
+                <div className="text-md ">Pontos de Experiência</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
                   {totalUsers}
                 </div>
-                <div className="text-md text-gray-600">Total de Usuários</div>
+                <div className="text-md ">Total de Usuários</div>
               </div>
             </div>
           </CardContent>
@@ -279,11 +275,11 @@ export default function RankingPage() {
         <CardContent>
           {allUsers.length === 0 ? (
             <div className="text-center py-8">
-              <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Trophy className="h-12 w-12  mx-auto mb-4" />
+              <h3 className="text-lg font-medium  mb-2">
                 Nenhum ranking ainda
               </h3>
-              <p className="text-gray-600 mb-4 font-lg">
+              <p className=" mb-4 text-lg">
                 Comece a ganhar experiência para aparecer no ranking!
               </p>
               <Button onClick={() => (window.location.href = "/onboarding")}>

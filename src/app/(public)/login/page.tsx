@@ -68,7 +68,7 @@ function LoginPageContent() {
         <Card>
           <CardHeader>
             {/* <CardTitle className="text-center">Acessar sua conta</CardTitle> */}
-            <CardDescription className="text-center font-lg">
+            <CardDescription className="text-center text-lg">
               Digite suas credenciais para acessar sua conta
             </CardDescription>
           </CardHeader>
@@ -77,7 +77,7 @@ function LoginPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="email">Endereço de Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="email"
                     type="email"
@@ -92,7 +92,7 @@ function LoginPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -104,7 +104,7 @@ function LoginPageContent() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3  hover:"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -136,7 +136,7 @@ function LoginPageContent() {
                 </Link>
               </div>
 
-              <div className="text-md text-gray-600">
+              <div className="text-md ">
                 Não tem uma conta?{" "}
                 <Link
                   href="/signup"

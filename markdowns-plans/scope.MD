@@ -5213,7 +5213,7 @@ export default function AchievementToast({ achievement }) {
         <img src={achievement.icon} alt={achievement.title} className="w-6 h-6" />
         <div>
           <p className="font-bold">{achievement.title}</p>
-          <p className="text-sm">{achievement.description}</p>
+          <p className="text-md">{achievement.description}</p>
         </div>
       </div>
     </Toast>

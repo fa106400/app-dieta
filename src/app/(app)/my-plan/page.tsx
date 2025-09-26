@@ -154,7 +154,7 @@ export default function MyWeekPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center font-lg">
+          <span className="text-center text-lg">
             Carregando seu plano atual...
           </span>
         </div>
@@ -171,7 +171,7 @@ export default function MyWeekPage() {
             <h3 className="text-lg font-semibold mb-2">
               Não foi possível carregar o plano
             </h3>
-            <p className="text-gray-600 mb-4 font-lg">{error}</p>
+            <p className=" mb-4 text-lg">{error}</p>
             <Button
               onClick={() => {
                 hasFetchedDiet.current = false;
@@ -192,8 +192,8 @@ export default function MyWeekPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Meu plano atual</h1>
-          {/*<p className="text-gray-600 mt-1">Acompanhe seu plano atual</p>*/}
+          <h1 className="text-2xl font-bold ">Meu plano atual</h1>
+          {/*<p className=" mt-1">Acompanhe seu plano atual</p>*/}
         </div>
       </div>
 
@@ -202,7 +202,7 @@ export default function MyWeekPage() {
         <div className="space-y-4">
           {/*<div className="flex items-center space-x-2">
             <Target className="h-5 w-5 text-sky-500" />
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold ">
               Seu Plano Atual
             </h2>
           </div>*/}
@@ -214,9 +214,9 @@ export default function MyWeekPage() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <Target className="h-12 w-12  mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Nenhum Plano Ativo</h3>
-            <p className="text-gray-600 mb-6 font-lg">
+            <p className=" mb-6 text-lg">
               Você não tem um plano ativo ainda. Escolha um para começar sua
               jornada!
             </p>

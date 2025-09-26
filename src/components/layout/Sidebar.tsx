@@ -58,7 +58,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 height={113}
                 priority
               />
-              {/* <span className="text-xl font-bold text-gray-900">[LOGO]</span> */}
+              {/* <span className="text-xl font-bold ">[LOGO]</span> */}
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">
@@ -74,15 +74,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           className={cn(
                             isActive
                               ? "bg-sky-50 text-sky-500"
-                              : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                              : " hover:text-sky-500 hover:bg-gray-50",
+                            "group flex gap-x-3 rounded-md p-2 text-md leading-6 font-semibold"
                           )}
                         >
                           <item.icon
                             className={cn(
                               isActive
                                 ? "text-sky-500"
-                                : "text-gray-400 group-hover:text-sky-500",
+                                : " group-hover:text-sky-500",
                               "h-6 w-6 shrink-0"
                             )}
                             aria-hidden="true"
@@ -96,7 +96,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </li>
               {/*
               <li>
-                <div className="text-xs font-semibold leading-6 text-gray-400">
+                <div className="text-sm font-semibold leading-6 ">
                   Account
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
@@ -109,15 +109,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           className={cn(
                             isActive
                               ? "bg-sky-50 text-sky-500"
-                              : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                              : " hover:text-sky-500 hover:bg-gray-50",
+                            "group flex gap-x-3 rounded-md p-2 text-md leading-6 font-semibold"
                           )}
                         >
                           <item.icon
                             className={cn(
                               isActive
                                 ? "text-sky-500"
-                                : "text-gray-400 group-hover:text-sky-500",
+                                : " group-hover:text-sky-500",
                               "h-6 w-6 shrink-0"
                             )}
                             aria-hidden="true"
@@ -156,11 +156,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 height={113}
                 priority
               />
-              {/* <span className="text-xl font-bold text-gray-900">[LOGO]</span> */}
+              {/* <span className="text-xl font-bold ">[LOGO]</span> */}
             </Link>
             <button
               onClick={onClose}
-              className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded-md p-2  hover:bg-gray-100 hover:"
             >
               <X className="h-6 w-6" />
               <span className="sr-only">Close sidebar</span>
@@ -179,15 +179,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       className={cn(
                         isActive
                           ? "bg-sky-50 text-sky-500"
-                          : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
-                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                          : " hover:text-sky-500 hover:bg-gray-50",
+                        "group flex gap-x-3 rounded-md p-2 text-md leading-6 font-semibold"
                       )}
                     >
                       <item.icon
                         className={cn(
                           isActive
                             ? "text-sky-500"
-                            : "text-gray-400 group-hover:text-sky-500",
+                            : " group-hover:text-sky-500",
                           "h-6 w-6 shrink-0"
                         )}
                         aria-hidden="true"
@@ -201,7 +201,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             {/*
             <div className="mt-8">
-              <div className="text-xs font-semibold leading-6 text-gray-400">
+              <div className="text-sm font-semibold leading-6 ">
                 Account
               </div>
               <ul role="list" className="mt-2 space-y-1">
@@ -215,15 +215,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         className={cn(
                           isActive
                             ? "bg-sky-50 text-sky-500"
-                            : "text-gray-700 hover:text-sky-500 hover:bg-gray-50",
-                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                            : " hover:text-sky-500 hover:bg-gray-50",
+                          "group flex gap-x-3 rounded-md p-2 text-md leading-6 font-semibold"
                         )}
                       >
                         <item.icon
                           className={cn(
                             isActive
                               ? "text-sky-500"
-                              : "text-gray-400 group-hover:text-sky-500",
+                              : " group-hover:text-sky-500",
                             "h-6 w-6 shrink-0"
                           )}
                           aria-hidden="true"

@@ -112,7 +112,7 @@ function ResetPasswordPageContent() {
             height={113}
             priority
           />
-          {/* <p className="mt-2 text-sm text-gray-600">
+          {/* <p className="mt-2 text-md ">
             Enter your new password below.
           </p>*/}
         </div>
@@ -120,7 +120,7 @@ function ResetPasswordPageContent() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Nova Senha</CardTitle>
-            <CardDescription className="text-center font-lg">
+            <CardDescription className="text-center text-lg">
               Escolha uma senha forte para sua conta.
             </CardDescription>
           </CardHeader>
@@ -129,7 +129,7 @@ function ResetPasswordPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="password">Nova Senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -141,7 +141,7 @@ function ResetPasswordPageContent() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3  hover:"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -155,7 +155,7 @@ function ResetPasswordPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
@@ -167,7 +167,7 @@ function ResetPasswordPageContent() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3  hover:"
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="h-4 w-4" />

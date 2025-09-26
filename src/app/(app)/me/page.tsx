@@ -50,8 +50,8 @@ export default function MePage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Eu</h1>
-        <p className="text-gray-600 font-lg">
+        <h1 className="text-2xl font-bold  mb-2">Eu</h1>
+        <p className=" text-lg">
           Gerencie seu perfil, acompanhe seu progresso e personalize sua
           experiência.
         </p>
@@ -76,10 +76,10 @@ export default function MePage() {
                     <Icon className={`h-8 w-8 ${item.color}`} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-semibold  mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 text-md">{item.description}</p>
+                    <p className=" text-md">{item.description}</p>
                   </div>
                 </div>
 
@@ -91,12 +91,12 @@ export default function MePage() {
                     <Icon className={`h-6 w-6 ${item.color}`} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    <h3 className="text-lg font-semibold  mb-1">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 text-md">{item.description}</p>
+                    <p className=" text-md">{item.description}</p>
                   </div>
-                  <div className="text-gray-400">
+                  <div className="">
                     <svg
                       className="h-5 w-5"
                       fill="none"

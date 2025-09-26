@@ -344,7 +344,7 @@ export default function DietCatalogPage() {
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-center font-lg">Carregando planos...</span>
+          <span className="text-center text-lg">Carregando planos...</span>
         </div>
       </div>
     );
@@ -359,7 +359,7 @@ export default function DietCatalogPage() {
             <h3 className="text-lg font-semibold mb-2">
               Não foi possível carregar os planos.
             </h3>
-            <p className="text-gray-600 mb-4 font-lg">{error}</p>
+            <p className=" mb-4 text-lg">{error}</p>
             <Button
               onClick={() => {
                 hasFetchedDiets.current = false;
@@ -380,10 +380,8 @@ export default function DietCatalogPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Catálogo de Planos
-          </h1>
-          <p className="text-gray-600 mt-1 font-lg">
+          <h1 className="text-2xl font-bold ">Catálogo de Planos</h1>
+          <p className=" mt-1 text-lg">
             Descubra o plano perfeito para seus objetivos de saúde
           </p>
         </div>
@@ -396,7 +394,7 @@ export default function DietCatalogPage() {
             className="flex items-center space-x-2"
           >
             <Filter className="h-4 w-4" />
-            <span className="font-lg">Filtros</span>
+            <span className="text-lg">Filtros</span>
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-1">
                 {filters.category.length +
@@ -455,7 +453,7 @@ export default function DietCatalogPage() {
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Sparkles className="h-5 w-5 text-yellow-500" />
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold ">
               Recommended for You
             </h2>
           </div>
@@ -475,10 +473,10 @@ export default function DietCatalogPage() {
       {/* All Diets Section - already sorted by recommendations first */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold ">
             {/* Todos os Planos */}
             {hasActiveFilters && (
-              <span className="text-sm font-normal text-gray-500 ml-2">
+              <span className="text-md font-normal  ml-2">
                 ({filteredDiets.length} de {diets.length} planos)
               </span>
             )}
@@ -494,11 +492,11 @@ export default function DietCatalogPage() {
         {filteredDiets.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <AlertCircle className="h-12 w-12  mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">
                 Nenhum plano encontrado
               </h3>
-              <p className="text-gray-600 mb-4 font-lg">
+              <p className=" mb-4 text-lg">
                 {hasActiveFilters
                   ? "Tente alterar seus filtros ou termos de busca."
                   : "Nenhum plano está disponível no momento."}

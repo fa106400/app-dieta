@@ -99,7 +99,7 @@ function SignupPageContent() {
             height={113}
             priority
           />
-          {/* <p className="mt-2 text-sm text-gray-600">
+          {/* <p className="mt-2 text-md ">
             Junte-se a nós e comece sua jornada de saúde hoje
           </p>*/}
         </div>
@@ -107,7 +107,7 @@ function SignupPageContent() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Criar Conta</CardTitle>
-            <CardDescription className="text-center font-lg">
+            <CardDescription className="text-center text-lg">
               Preencha seus detalhes para criar sua conta
             </CardDescription>
           </CardHeader>
@@ -116,7 +116,7 @@ function SignupPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="name">Nome Completo</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="name"
                     type="text"
@@ -131,7 +131,7 @@ function SignupPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="email">Endereço de Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="email"
                     type="email"
@@ -146,7 +146,7 @@ function SignupPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -158,7 +158,7 @@ function SignupPageContent() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3  hover:"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -167,7 +167,7 @@ function SignupPageContent() {
                     )}
                   </button>
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className="text-md ">
                   A senha deve ter pelo menos 6 caracteres
                 </p>
               </div>
@@ -175,7 +175,7 @@ function SignupPageContent() {
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 " />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
@@ -187,7 +187,7 @@ function SignupPageContent() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3  hover:"
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -216,7 +216,7 @@ function SignupPageContent() {
             </form>
 
             <div className="mt-4 text-center">
-              <div className="text-md text-gray-600">
+              <div className="text-md ">
                 Já tem uma conta?{" "}
                 <Link
                   href="/login"

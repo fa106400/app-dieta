@@ -198,8 +198,8 @@ export default function SecurityPage() {
           </Button> */}
           <div className="flex items-center space-x-3">
             <div>
-              <h1 className="text-3xl font-bold">Segurança</h1>
-              <p className="text-gray-600 mt-1 font-lg">
+              <h1 className="text-2xl font-bold">Segurança</h1>
+              <p className=" mt-1 text-lg">
                 Gerencie a segurança da sua conta e senha
               </p>
             </div>
@@ -321,10 +321,8 @@ export default function SecurityPage() {
 
             {/* Password Requirements */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">
-                Requisitos de Senha:
-              </h4>
-              <ul className="text-md text-gray-600 space-y-1">
+              <h4 className="font-medium  mb-2">Requisitos de Senha:</h4>
+              <ul className="text-md  space-y-1">
                 <li>• Pelo menos 8 caracteres</li>
                 <li>• Pelo menos uma letra minúscula</li>
                 <li>• Pelo menos uma letra maiúscula</li>

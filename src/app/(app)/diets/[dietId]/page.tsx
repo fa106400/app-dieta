@@ -397,9 +397,7 @@ export default function DietDetailPage() {
             <h3 className="text-lg font-semibold mb-2">
               Falha ao carregar dieta
             </h3>
-            <p className="text-gray-600 mb-4 font-lg">
-              {error || "Dieta não encontrada"}
-            </p>
+            <p className=" mb-4 text-lg">{error || "Dieta não encontrada"}</p>
             <Button
               onClick={() => {
                 hasFetchedDiet.current = false;
@@ -430,10 +428,10 @@ export default function DietDetailPage() {
             <span>Voltar</span>
           </Button> */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold ">
               {diet.title || "Untitled Diet"}
             </h1>
-            <p className="text-gray-600 mt-1 font-lg">
+            <p className=" mt-1 text-lg">
               {diet.description || "No description available"}
             </p>
           </div>
@@ -449,7 +447,7 @@ export default function DietDetailPage() {
             className={`${
               diet.is_favorited
                 ? "text-red-500 hover:text-red-600"
-                : "text-gray-400 hover:text-red-500"
+                : " hover:text-red-500"
             }`}
           >
             {isTogglingFavorite ? (
@@ -469,9 +467,7 @@ export default function DietDetailPage() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Target className="h-5 w-5 text-sky-500" />
-              <span className="text-sm font-medium text-gray-600">
-                Categoria
-              </span>
+              <span className="text-md font-medium ">Categoria</span>
             </div>
             <Badge variant="secondary">
               {diet.category?.replace("_", " ").toUpperCase() || "Desconhecido"}
@@ -483,9 +479,7 @@ export default function DietDetailPage() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Users className="h-5 w-5 text-green-500" />
-              <span className="text-sm font-medium text-gray-600">
-                Dificuldade
-              </span>
+              <span className="text-md font-medium ">Dificuldade</span>
             </div>
             <Badge variant="secondary">
               {diet.difficulty?.toUpperCase() || "Desconhecido"}
@@ -497,7 +491,7 @@ export default function DietDetailPage() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Calendar className="h-5 w-5 text-purple-500" />
-              <span className="text-sm font-medium text-gray-600">Duração</span>
+              <span className="text-md font-medium ">Duração</span>
             </div>
             <div className="text-lg font-semibold">
               {diet.duration_weeks || 0} semana(s)
@@ -509,9 +503,7 @@ export default function DietDetailPage() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Star className="h-5 w-5 text-yellow-500" />
-              <span className="text-sm font-medium text-gray-600">
-                Popularidade
-              </span>
+              <span className="text-md font-medium ">Popularidade</span>
             </div>
             <div className="text-lg font-semibold">
               {diet.popularity_score || 0}
@@ -538,8 +530,8 @@ export default function DietDetailPage() {
               </div>
               {diet.macros && (
                 <div className="text-center space-y-2">
-                  <div className="text-sm text-gray-600">Macros</div>
-                  <div className="text-sm">
+                  <div className="text-md ">Macros</div>
+                  <div className="text-md">
                     <div>
                       Proteína:{" "}
                       {(diet.macros as Json & { proteina?: number })?.proteina}g
@@ -574,7 +566,7 @@ export default function DietDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700 whitespace-pre-line font-lg">
+            <p className=" whitespace-pre-line text-lg">
               {diet.recommendation_reasoning}
             </p>
           </CardContent>
@@ -661,7 +653,7 @@ export default function DietDetailPage() {
                               <div className="flex items-center justify-between mb-3">
                                 <div>
                                   <h4 className="font-medium">{meal.name}</h4>
-                                  <div className="text-sm text-gray-600">
+                                  <div className="text-md ">
                                     {meal.calories} kcal
                                   </div>
                                 </div>
@@ -688,10 +680,10 @@ export default function DietDetailPage() {
                                       className="flex items-center justify-between p-2 bg-white rounded border"
                                     >
                                       <div className="flex-1">
-                                        <div className="font-medium text-sm">
+                                        <div className="font-medium text-md">
                                           {currentItem.name}
                                         </div>
-                                        <div className="text-xs text-gray-500">
+                                        <div className="text-md ">
                                           {converteMedidas(
                                             currentItem.quantity,
                                             currentItem.unit

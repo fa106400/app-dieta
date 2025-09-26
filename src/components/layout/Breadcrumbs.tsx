@@ -38,12 +38,9 @@ export function Breadcrumbs() {
   return (
     <nav className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <ol className="flex items-center space-x-2 py-3 text-sm">
+        <ol className="flex items-center space-x-2 py-3 text-md">
           <li>
-            <Link
-              href="/home"
-              className="flex items-center text-gray-500 hover:text-gray-700"
-            >
+            <Link href="/home" className="flex items-center  hover:">
               <Home className="h-4 w-4" />
               <span className="sr-only">Home</span>
             </Link>
@@ -58,14 +55,11 @@ export function Breadcrumbs() {
 
             return (
               <li key={segment} className="flex items-center space-x-2">
-                <ChevronRight className="h-4 w-4 text-gray-400" />
+                <ChevronRight className="h-4 w-4 " />
                 {isLast ? (
-                  <span className="font-medium text-gray-900">{label}</span>
+                  <span className="font-medium ">{label}</span>
                 ) : (
-                  <Link
-                    href={href}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
+                  <Link href={href} className=" hover:">
                     {label}
                   </Link>
                 )}

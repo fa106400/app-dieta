@@ -212,20 +212,18 @@ export function BadgeAchievementPopup({
                 </div>
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              🎉 Parabéns!
-            </CardTitle>
-            <CardDescription className="text-lg text-gray-600">
+            <CardTitle className="text-2xl font-bold ">🎉 Parabéns!</CardTitle>
+            <CardDescription className="text-lg ">
               {badges.length === 1
                 ? "Você desbloqueou uma nova conquista!"
                 : `Você desbloqueou ${badges.length} novas conquistas!`}
               {badges.length > 1 && (
-                <div className="mt-2 text-sm text-gray-500">
+                <div className="mt-2 text-md ">
                   Conquista {currentBadgeIndex + 1} de {badges.length}
                 </div>
               )}
               {/* {deferredAction && (
-                <div className="mt-2 text-sm text-sky-500 font-medium">
+                <div className="mt-2 text-md text-sky-500 font-medium">
                   ⏳ Aguardando sua ação para continuar...
                 </div>
               )} */}
@@ -241,21 +239,19 @@ export function BadgeAchievementPopup({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold ">
                       {currentBadge.title}
                     </h3>
                     <Badge
                       variant="secondary"
-                      className="bg-yellow-100 text-yellow-800 text-xs"
+                      className="bg-yellow-100 text-yellow-800 text-sm"
                     >
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Nova!
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">
-                    {currentBadge.description}
-                  </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-md  mb-2">{currentBadge.description}</p>
+                  <p className="text-sm ">
                     <strong>Critério:</strong>{" "}
                     {getCriteriaDescription(currentBadge.criteria)}
                   </p>
