@@ -14,7 +14,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Trophy,
+  // Trophy,
+  // Medal,
   Award,
   //   Star,
   Target,
@@ -122,7 +123,7 @@ export default function BadgesPage() {
   // Get badge icon
   const getBadgeIcon = (badge: BadgeData) => {
     if (badge.user_badges && badge.user_badges.length > 0) {
-      return <Trophy className="h-8 w-8 text-yellow-500" />;
+      return <Award className="h-8 w-8 text-yellow-500" />;
     }
     return <Lock className="h-8 w-8 " />;
   };
@@ -149,7 +150,7 @@ export default function BadgesPage() {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
       year: "numeric",
-      month: "long",
+      month: "numeric",
       day: "numeric",
     });
   };
@@ -242,24 +243,25 @@ export default function BadgesPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center space-x-3">
-                <Trophy className="h-8 w-8 text-yellow-500" />
+              <div className="flex items-center space-x-1">
+                <Award className="h-8 w-8 text-yellow-500" />
                 <div>
-                  <p className="text-md ">Medalhas Recebidas</p>
+                  <p className="text-md ">Recebidas</p>
                   <p className="text-2xl font-bold">{earnedBadgesCount}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          {/* hidden on mobile */}
+          <Card className="hidden md:block">
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
                 <Target className="h-8 w-8 text-sky-500" />
                 <div>
-                  <p className="text-md ">Total de Medalhas</p>
+                  <p className="text-md ">Total</p>
                   <p className="text-2xl font-bold">{totalBadgesCount}</p>
                 </div>
               </div>
@@ -290,18 +292,21 @@ export default function BadgesPage() {
           className="space-y-6"
         >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="earned" className="flex items-center space-x-2">
-              <Trophy className="h-4 w-4" />
-              <span>Medalhas Recebidas</span>
-            </TabsTrigger>
-            <TabsTrigger value="all" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="recebidas"
+              className="flex items-center space-x-2"
+            >
               <Award className="h-4 w-4" />
-              <span>Todas as Medalhas</span>
+              <span>Recebidas</span>
+            </TabsTrigger>
+            <TabsTrigger value="todas" className="flex items-center space-x-2">
+              <Award className="h-4 w-4" />
+              <span>Todas</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Earned Badges Tab */}
-          <TabsContent value="earned" className="space-y-6">
+          <TabsContent value="recebidas" className="space-y-6">
             {earnedBadges.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
@@ -335,7 +340,7 @@ export default function BadgesPage() {
                   const status = getBadgeStatus(badge);
                   return (
                     <Card key={badge.id} className={`${status.color} border-2`}>
-                      <CardHeader className="pb-3">
+                      <CardHeader className="pb-0">
                         <div className="flex items-center justify-between">
                           {getBadgeIcon(badge)}
                           <Badge
@@ -357,7 +362,7 @@ export default function BadgesPage() {
                         <div className="space-y-2">
                           <div className="flex items-center text-md ">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <span className="text-lg">
+                            <span className="text-md">
                               Recebida em {formatDate(status.awardedAt!)}
                             </span>
                           </div>
@@ -375,13 +380,13 @@ export default function BadgesPage() {
           </TabsContent>
 
           {/* All Badges Tab */}
-          <TabsContent value="all" className="space-y-6">
+          <TabsContent value="todas" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {allBadges.map((badge) => {
                 const status = getBadgeStatus(badge);
                 return (
                   <Card key={badge.id} className={`${status.color} border-2`}>
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-0">
                       <div className="flex items-center justify-between">
                         {getBadgeIcon(badge)}
                         {status.earned ? (
@@ -411,7 +416,7 @@ export default function BadgesPage() {
                         {status.earned && status.awardedAt && (
                           <div className="flex items-center text-md ">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <span className="text-lg">
+                            <span className="text-md">
                               Recebida em {formatDate(status.awardedAt)}
                             </span>
                           </div>

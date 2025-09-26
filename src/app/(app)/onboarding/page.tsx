@@ -54,7 +54,7 @@ const ACTIVITY_LEVELS = {
   sedentary: {
     label: "Sedentário",
     description:
-      "Pouco ou nenhum exercício e um trabalho que envolve sentar a maior parte do dia.",
+      "Pouco ou nenhum exercício e um trabalho que envolve ficar sentado na maior parte do dia.",
     examples:
       "Trabalho de escritório, recepcionistas, motoristas ou indivíduos que passam a maior parte do dia em frente ao computador com pouco movimento",
     multiplier: "BMR × 1.375",
@@ -136,6 +136,10 @@ function OnboardingPageContent() {
     { id: "avatar_2.png", path: "/imgs/avatars/avatar_2.png" },
     { id: "avatar_3.png", path: "/imgs/avatars/avatar_3.png" },
     { id: "avatar_4.png", path: "/imgs/avatars/avatar_4.png" },
+    { id: "avatar_5.png", path: "/imgs/avatars/avatar_5.png" },
+    { id: "avatar_6.png", path: "/imgs/avatars/avatar_6.png" },
+    { id: "avatar_7.png", path: "/imgs/avatars/avatar_7.png" },
+    { id: "avatar_8.png", path: "/imgs/avatars/avatar_8.png" },
   ];
   const [isValidatingAlias, setIsValidatingAlias] = useState(false);
   const [aliasValidation, setAliasValidation] = useState<{
@@ -642,7 +646,7 @@ function OnboardingPageContent() {
       {/* Avatar picker */}
       <Card>
         <CardContent className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4">
             {PREDEFINED_AVATARS.map((avatar) => (
               <div
                 key={avatar.id}
@@ -658,11 +662,11 @@ function OnboardingPageContent() {
                   alt={`Avatar ${avatar.id}`}
                   width={96}
                   height={96}
-                  className="w-full h-24 object-cover"
+                  className="object-cover"
                 />
                 {formData.avatar_url === avatar.id && (
-                  <div className="absolute opacity-70 inset-0 bg-sky-500 flex items-center justify-center">
-                    <Check className="h-6 w-6 text-sky-500" />
+                  <div className="absolute opacity-40 inset-0 bg-sky-500 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-white" />
                   </div>
                 )}
               </div>
@@ -696,10 +700,7 @@ function OnboardingPageContent() {
         {/* Header */}
         <div className="text-center mb-3">
           <h1 className="text-2xl font-bold  mb-2">Bem vindo!</h1>
-          <p className="text-xl ">
-            Responda algumas perguntas para nossa IA recomendar as melhores
-            opções para você.
-          </p>
+          <p className="text-xl ">Conte nos um pouco sobre você.</p>
         </div>
         {/* Progress Bar */}
         <div className="mb-4">
