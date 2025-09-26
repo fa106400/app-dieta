@@ -154,12 +154,12 @@ export default function MyWeekPage() {
     }
   }, [currentDiet, loading, router]);
 
-  const handleDietChange = () => {
-    // Refresh current diet after potential change
-    hasFetchedDiet.current = false;
-    hasRedirected.current = false;
-    fetchCurrentDiet();
-  };
+  // const handleDietChange = () => {
+  //   // Refresh current diet after potential change
+  //   hasFetchedDiet.current = false;
+  //   hasRedirected.current = false;
+  //   fetchCurrentDiet();
+  // };
 
   if (loading) {
     return (
