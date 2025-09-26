@@ -23,7 +23,7 @@ import {
   LibraryBig,
 } from "lucide-react";
 // import { toast } from "react-toastify";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+// import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 // Interfaces
 interface Announcement {
@@ -260,14 +260,14 @@ export default function HomePage() {
   }, [fetchAnnouncements, fetchPersonalSnapshot, fetchRecentBadges]);
 
   // Format weight history for chart
-  const formatWeightHistory = (weights: WeightEntry[]) => {
-    return weights
-      .reverse() // Show oldest to newest
-      .map((weight, index) => ({
-        day: `Dia ${index + 1}`,
-        weight: weight.weight_kg,
-      }));
-  };
+  // const formatWeightHistory = (weights: WeightEntry[]) => {
+  //   return weights
+  //     .reverse() // Show oldest to newest
+  //     .map((weight, index) => ({
+  //       day: `Dia ${index + 1}`,
+  //       weight: weight.weight_kg,
+  //     }));
+  // };
 
   if (loading) {
     return (
