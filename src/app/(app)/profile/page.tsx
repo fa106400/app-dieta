@@ -415,10 +415,11 @@ export default function ProfileManagePage() {
   };
 
   // Format cooldown display
-  const formatCooldown = (hours: number): string => {
-    if (hours < 1) return "Disponível agora";
-    if (hours < 24) return `${Math.ceil(hours)} hora(s) restantes`;
-    return `${Math.ceil(hours / 24)} dia(s) restantes`;
+  const formatCooldown = (hours: number | null): string => {
+    if (hours === null) return "";
+    if (hours < 1) return "";
+    if (hours < 24) return ` em ${Math.ceil(hours)}h`;
+    return ` em ${Math.ceil(hours / 24)}d`;
   };
 
   // Prepare chart data
@@ -549,16 +550,18 @@ export default function ProfileManagePage() {
                   ) : (
                     <Sparkles className="h-4 w-4" />
                   )}
-                  <span>Novas recomendações</span>
+                  <span>
+                    Novas recomendações{formatCooldown(aiCooldownHours)}
+                  </span>
                 </Button>
               </div>
-              <div className="flex items-center space-x-2">
-                {aiCooldownHours && aiCooldownHours > 0 && (
+              {/* <div className="flex items-center space-x-2">
+                {aiCooldownHours !== null && aiCooldownHours > 0 && (
                   <Badge variant="secondary" className="text-md">
                     {formatCooldown(aiCooldownHours)}
                   </Badge>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -964,7 +967,8 @@ export default function ProfileManagePage() {
                         Track your weight changes over time
                       </CardDescription> */}
                     </div>
-                    <div className="flex space-x-2">
+                    {/* disponivel somente no desktop */}
+                    <div className="hidden md:flex space-x-2">
                       {(["1w", "1m", "3m"] as const).map((period) => (
                         <Button
                           key={period}
@@ -979,6 +983,25 @@ export default function ProfileManagePage() {
                             : period === "1m"
                             ? "1 Mês"
                             : "3 Meses"}
+                        </Button>
+                      ))}
+                    </div>
+                    {/* disponivel somente no mobile */}
+                    <div className="flex md:hidden space-x-2">
+                      {(["1w", "1m", "3m"] as const).map((period) => (
+                        <Button
+                          key={period}
+                          variant={
+                            chartPeriod === period ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setChartPeriod(period)}
+                        >
+                          {period === "1w"
+                            ? "1sem"
+                            : period === "1m"
+                            ? "1m"
+                            : "3m"}
                         </Button>
                       ))}
                     </div>

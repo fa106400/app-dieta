@@ -568,10 +568,7 @@ export default function HomePage() {
                       </div>
                       {/* <TrendingUp className="h-6 w-6 text-sky-500" /> */}
                       {/** Button to redirect to weight history page */}
-                      <Button
-                        size="sm"
-                        onClick={() => router.push("/weight-history")}
-                      >
+                      <Button size="sm" onClick={() => router.push("/profile")}>
                         <TrendingUp className="h-6 w-6 text-white" />
                         Ver gráfico
                       </Button>

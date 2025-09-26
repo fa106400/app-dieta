@@ -13,7 +13,7 @@ import {
   Trophy,
   // Medal,
   // Award,
-  Crown,
+  // Crown,
   // Star,
   Loader2,
   AlertCircle,
@@ -79,11 +79,11 @@ export default function RankingPage() {
   const getTrophyIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="h-6 w-6 text-yellow-500" />;
+        return <Trophy className="h-6 w-6 text-yellow-500" />;
       case 2:
-        return <Crown className="h-6 w-6 " />;
+        return <Trophy className="h-6 w-6 " />;
       case 3:
-        return <Crown className="h-6 w-6 text-amber-600" />;
+        return <Trophy className="h-6 w-6 text-amber-600" />;
       default:
         return <Trophy className="h-6 w-6 " />;
     }
