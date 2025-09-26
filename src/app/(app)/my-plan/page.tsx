@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { CurrentDietCard } from "@/components/diets/CurrentDietCard";
+// import { CurrentDietCard } from "@/components/diets/CurrentDietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, AlertCircle, Target, Plus } from "lucide-react";
@@ -41,6 +42,7 @@ interface CurrentDiet {
 
 export default function MyWeekPage() {
   const { user } = useAuthContext();
+  const router = useRouter();
   const [currentDiet, setCurrentDiet] = useState<CurrentDiet | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +50,7 @@ export default function MyWeekPage() {
   // Refs to prevent unnecessary re-fetches
   const hasFetchedDiet = useRef(false);
   const isInitialized = useRef(false);
+  const hasRedirected = useRef(false);
 
   const fetchCurrentDiet = useCallback(async () => {
     // Prevent multiple simultaneous fetches
@@ -143,9 +146,18 @@ export default function MyWeekPage() {
     }
   }, [fetchCurrentDiet, user]);
 
+  // Redirect to diet details if user has an active diet
+  useEffect(() => {
+    if (currentDiet && !hasRedirected.current && !loading) {
+      hasRedirected.current = true;
+      router.push(`/diets/${currentDiet.id}`);
+    }
+  }, [currentDiet, loading, router]);
+
   const handleDietChange = () => {
     // Refresh current diet after potential change
     hasFetchedDiet.current = false;
+    hasRedirected.current = false;
     fetchCurrentDiet();
   };
 
@@ -189,13 +201,15 @@ export default function MyWeekPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold ">Meu plano atual</h1>
-          {/*<p className=" mt-1">Acompanhe seu plano atual</p>*/}
+      {/* Header if there is no current diet */}
+      {!currentDiet && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold ">Meu plano atual</h1>
+            {/*<p className=" mt-1">Acompanhe seu plano atual</p>*/}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Current Diet Section */}
       {currentDiet ? (
@@ -206,10 +220,10 @@ export default function MyWeekPage() {
               Seu Plano Atual
             </h2>
           </div>*/}
-          <CurrentDietCard
+          {/* <CurrentDietCard
             currentDiet={currentDiet}
-            onDietChange={handleDietChange}
-          />
+            onDietChange={handleDietChange} 
+          />*/}
         </div>
       ) : (
         <Card>
@@ -222,7 +236,7 @@ export default function MyWeekPage() {
             </p>
             <Button
               onClick={() => (window.location.href = "/diets")}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 mx-auto"
             >
               <Plus className="h-4 w-4" />
               <span>Escolha um plano</span>
