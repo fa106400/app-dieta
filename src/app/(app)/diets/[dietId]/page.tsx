@@ -8,20 +8,21 @@ import { supabase } from "@/lib/supabase";
 import type { Json } from "../../../../../supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import {
   // ArrowLeft,
   //Heart,
   Loader2,
   AlertCircle,
-  Users,
-  Star,
+  // Users,
+  // Star,
   ChevronDown,
-  ChevronRight,
   Flame,
   Utensils,
-  Calendar,
-  Target,
+  Sparkles,
+  EyeClosed,
+  // Calendar,
+  // Target,
 } from "lucide-react";
 import { Diet } from "@/app/(app)/diets/page";
 import { toast } from "react-toastify";
@@ -48,6 +49,7 @@ export default function DietDetailPage() {
   // Removed selectedVariant state - no longer needed with simplified schema
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0])); // Expand first day by default
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isDietInfoExpanded, setIsDietInfoExpanded] = useState(false); // Initialize as collapsed
   //const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   // State to track which alt_item index is currently shown for each item (dayIndex-mealIndex-itemIndex -> altIndex)
   const [itemAltIndex, setItemAltIndex] = useState<Map<string, number>>(
@@ -462,7 +464,7 @@ export default function DietDetailPage() {
       </div>
 
       {/* Diet Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
@@ -510,49 +512,65 @@ export default function DietDetailPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Diet Information */}
       {diet.calories_total && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Flame className="h-5 w-5" />
-              <span>Informações da Dieta</span>
+          <CardHeader
+            className="cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => setIsDietInfoExpanded(!isDietInfoExpanded)}
+          >
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Flame className="h-5 w-5" />
+                <span>Informações da Dieta</span>
+              </div>
+              {isDietInfoExpanded ? (
+                <ChevronDown className="h-5 w-5" />
+              ) : (
+                <EyeClosed className="h-5 w-5" />
+              )}
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="text-center space-y-2">
-                <div className="text-2xl font-bold text-sky-500">
-                  {diet.calories_total} kcal
-                </div>
-              </div>
-              {diet.macros && (
+          {isDietInfoExpanded && (
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="text-center space-y-2">
-                  <div className="text-md ">Macros</div>
-                  <div className="text-md">
-                    <div>
-                      Proteína:{" "}
-                      {(diet.macros as Json & { proteina?: number })?.proteina}g
-                    </div>
-                    <div>
-                      Carboidrato:{" "}
-                      {
-                        (diet.macros as Json & { carboidrato?: number })
-                          ?.carboidrato
-                      }
-                      g
-                    </div>
-                    <div>
-                      Gordura:{" "}
-                      {(diet.macros as Json & { gordura?: number })?.gordura}g
-                    </div>
+                  <div className="md:text-2xl text-xl font-bold text-sky-500">
+                    {diet.calories_total} kcal
                   </div>
                 </div>
-              )}
-            </div>
-          </CardContent>
+                {diet.macros && (
+                  <div className="text-center space-y-2">
+                    <div className="md:text-xl text-lg font-bold ">Macros</div>
+                    <div className="text-md">
+                      <div>
+                        <span className="font-semibold">Proteína:</span>{" "}
+                        {
+                          (diet.macros as Json & { proteina?: number })
+                            ?.proteina
+                        }
+                        g
+                      </div>
+                      <div>
+                        <span className="font-semibold">Carboidrato:</span>{" "}
+                        {
+                          (diet.macros as Json & { carboidrato?: number })
+                            ?.carboidrato
+                        }
+                        g
+                      </div>
+                      <div>
+                        <span className="font-semibold">Gordura:</span>{" "}
+                        {(diet.macros as Json & { gordura?: number })?.gordura}g
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          )}
         </Card>
       )}
 
@@ -561,8 +579,8 @@ export default function DietDetailPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-yellow-500" />
-              <span>Porque esta dieta foi recomendada</span>
+              <Sparkles className="h-5 w-5 text-yellow-500" />
+              <span>Porque este plano foi recomendado</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -637,7 +655,7 @@ export default function DietDetailPage() {
                         {expandedDays.has(dayIndex) ? (
                           <ChevronDown className="h-5 w-5" />
                         ) : (
-                          <ChevronRight className="h-5 w-5" />
+                          <EyeClosed className="h-5 w-5" />
                         )}
                       </div>
                     </CardHeader>
@@ -653,9 +671,9 @@ export default function DietDetailPage() {
                               <div className="flex items-center justify-between mb-3">
                                 <div>
                                   <h4 className="font-medium">{meal.name}</h4>
-                                  <div className="text-md ">
+                                  {/* <div className="text-md ">
                                     {meal.calories} kcal
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
 

@@ -9,7 +9,8 @@ import {
   Users,
   Star,
   Sparkles,
-  ChevronRight,
+  // ChevronRight,
+  EyeClosed,
   // Flame,
 } from "lucide-react";
 import { Diet } from "@/app/(app)/diets/page";
@@ -258,7 +259,7 @@ export function DietCard({
           <Button asChild className="w-full" size="sm">
             <Link href={`/diets/${diet.id}`}>
               Ver Detalhes
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <EyeClosed className="h-4 w-4 ml-1" />
             </Link>
           </Button>
           {isRecommended && diet.recommendation_score && (
