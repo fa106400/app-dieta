@@ -484,7 +484,7 @@ export default function DietCatalogPage() {
 
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters}>
-              Limpar todos os filtros
+              Limpar filtros
             </Button>
           )}
         </div>

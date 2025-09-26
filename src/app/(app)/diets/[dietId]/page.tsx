@@ -733,7 +733,7 @@ export default function DietDetailPage() {
             onClick={diet.is_currently_active ? unfollowDiet : followNow}
             disabled={!diet || isFollowing}
             size="lg"
-            className="px-8"
+            className="px-4"
           >
             {isFollowing ? (
               <>
@@ -755,7 +755,7 @@ export default function DietDetailPage() {
           <Button
             variant="outline"
             size="lg"
-            className="px-8"
+            className="px-4"
             onClick={() => router.push("/shopping-list")}
           >
             Lista de Compras

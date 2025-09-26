@@ -629,23 +629,24 @@ export default function HomePage() {
                   )}
 
                   {/* AI Recommendations Refresh */}
-                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                    <div>
-                      <p className="text-md">Recomendações da IA</p>
+                  <div className="flex-col items-center justify-between p-3 bg-purple-50 rounded-lg">
+                    <p className="text-md">Recomendações da IA</p>
+                    <div className="flex items-center justify-between">
                       <span className="font-bold">
                         {personalSnapshot?.canRefreshRecommendations
                           ? "Atualize seus dados!"
                           : "Continue assim!"}
                       </span>
+
+                      <Button
+                        size="sm"
+                        onClick={() => (window.location.href = "/profile")}
+                        disabled={!personalSnapshot?.canRefreshRecommendations}
+                      >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Atualizar
+                      </Button>
                     </div>
-                    <Button
-                      size="sm"
-                      onClick={() => (window.location.href = "/profile")}
-                      disabled={!personalSnapshot?.canRefreshRecommendations}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Atualizar
-                    </Button>
                   </div>
                 </div>
               )}

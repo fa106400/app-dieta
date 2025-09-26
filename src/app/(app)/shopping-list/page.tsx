@@ -284,7 +284,39 @@ export default function ShoppingListPage() {
       {/* Period Selection */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg">Período</CardTitle>
+          <CardTitle className="text-lg flex items-center justify-between">
+            <span>Período</span>
+            <Button
+              onClick={async () => {
+                try {
+                  // Generate PDF with current shopping list data
+                  generateShoppingListPDF({
+                    diet: currentDiet,
+                    selectedPeriod,
+                    calculateQuantity,
+                    converteMedidas,
+                  });
+
+                  toast.success("PDF exportado com sucesso!");
+
+                  // Trigger badge validation for shopping export
+                  try {
+                    await triggerBadgeValidation("shopping_exported");
+                  } catch (badgeError) {
+                    console.error("Error validating badges:", badgeError);
+                    // Don't fail the main operation if badge validation fails
+                  }
+                } catch (error) {
+                  console.error("Error generating PDF:", error);
+                  toast.error("Falha ao gerar PDF. Tente novamente.");
+                }
+              }}
+              className="flex items-center space-x-2"
+            >
+              <FileText className="h-4 w-4" />
+              <span className="text-sm">Exportar PDF</span>
+            </Button>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <RadioGroup
@@ -318,36 +350,6 @@ export default function ShoppingListPage() {
                   {currentDiet.shopping_plan.main_items.length} itens)
                 </span>
               </CardTitle>
-              <Button
-                onClick={async () => {
-                  try {
-                    // Generate PDF with current shopping list data
-                    generateShoppingListPDF({
-                      diet: currentDiet,
-                      selectedPeriod,
-                      calculateQuantity,
-                      converteMedidas,
-                    });
-
-                    toast.success("PDF exportado com sucesso!");
-
-                    // Trigger badge validation for shopping export
-                    try {
-                      await triggerBadgeValidation("shopping_exported");
-                    } catch (badgeError) {
-                      console.error("Error validating badges:", badgeError);
-                      // Don't fail the main operation if badge validation fails
-                    }
-                  } catch (error) {
-                    console.error("Error generating PDF:", error);
-                    toast.error("Falha ao gerar PDF. Tente novamente.");
-                  }
-                }}
-                className="flex items-center space-x-2"
-              >
-                <FileText className="h-4 w-4" />
-                <span>Exportar PDF</span>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
