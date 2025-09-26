@@ -79,13 +79,13 @@ export default function RankingPage() {
   const getTrophyIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Trophy className="h-6 w-6 text-yellow-500" />;
+        return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-yellow-500" />;
       case 2:
-        return <Trophy className="h-6 w-6 " />;
+        return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-gray-500" />;
       case 3:
-        return <Trophy className="h-6 w-6 text-amber-600" />;
+        return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-amber-600" />;
       default:
-        return <Trophy className="h-6 w-6 " />;
+        return <Trophy className="h-5 w-5 md:h-10 md:w-10 " />;
     }
   };
 
@@ -122,7 +122,7 @@ export default function RankingPage() {
     return (
       <div
         key={userData.user_id}
-        className={`flex items-center space-x-4 p-4 rounded-lg border ${
+        className={`flex items-center md:space-x-4 space-x-2 md:p-4 p-2 rounded-lg border ${
           isCurrentUser
             ? "bg-green-100 border-green-300 ring-2 ring-green-200"
             : "bg-white border-gray-200 hover:bg-gray-50"
@@ -148,7 +148,7 @@ export default function RankingPage() {
           </div>
         </div>
 
-        <Avatar className="h-10 w-10">
+        <Avatar className="h-8 w-8 md:h-12 md:w-12">
           <AvatarImage src={avatar_path + userData.avatar_url || undefined} />
           <AvatarFallback className="bg-gray-200 ">
             {userData.user_alias?.charAt(0).toUpperCase() || "U"}
@@ -157,7 +157,7 @@ export default function RankingPage() {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
-            <p className="text-md font-medium  truncate">
+            <p className="text-sm md:text-lg font-medium  truncate">
               {userData.user_alias || "Anônimo"}
             </p>
             {/* {isCurrentUser && (
@@ -173,7 +173,7 @@ export default function RankingPage() {
 
         <div className="flex items-center space-x-2">
           {/* <Star className="h-4 w-4 text-yellow-500" /> */}
-          <span className="text-md font-semibold ">
+          <span className="text-sm md:text-lg font-semibold ">
             {userData.exp.toLocaleString()} XP
           </span>
         </div>
@@ -239,24 +239,28 @@ export default function RankingPage() {
           </CardHeader> */}
           <CardContent>
             {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-sky-500">
+                <div className="md:text-3xl text-xl font-bold text-sky-500">
                   #{currentUser[0].rank}
                 </div>
-                <div className="text-md ">Sua Posição</div>
+                <div className="md:text-lg text-sm font-medium ">
+                  Sua Posição
+                </div>
               </div>
-              <div className="text-center">
+              {/* <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
                   {currentUser[0].exp.toLocaleString()}
                 </div>
                 <div className="text-md ">Pontos de Experiência</div>
-              </div>
+              </div> */}
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="md:text-3xl text-xl font-bold text-sky-500">
                   {totalUsers}
                 </div>
-                <div className="text-md ">Total de Usuários</div>
+                <div className="md:text-lg text-sm font-medium">
+                  Total de Usuários
+                </div>
               </div>
             </div>
           </CardContent>
