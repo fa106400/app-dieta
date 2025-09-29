@@ -3,12 +3,12 @@
 ## Overview
 This document outlines the detailed implementation plan for adding the `estimated_calories` column to the `profiles` table and externalizing the calorie calculation method from `ai-service.ts` to be used across the application.
 
-## Phase 1: Database Schema Updates
+## Phase 1: Database Schema Updates ✅ COMPLETED
 
-### 1. Update Supabase Type Definitions (`supabase.ts`)
-- Add `estimated_calories: number | null` to the `profiles` table Row type
-- Add `estimated_calories?: number | null` to the `profiles` table Insert type  
-- Add `estimated_calories?: number | null` to the `profiles` table Update type
+### 1. Update Supabase Type Definitions (`supabase.ts`) ✅
+- ✅ Add `estimated_calories: number | null` to the `profiles` table Row type
+- ✅ Add `estimated_calories?: number | null` to the `profiles` table Insert type  
+- ✅ Add `estimated_calories?: number | null` to the `profiles` table Update type
 
 ## Phase 2: Externalize Calorie Calculation Method
 

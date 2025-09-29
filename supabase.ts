@@ -247,6 +247,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string | null
           dietary_preferences: string[] | null
+          estimated_calories: number | null
           food_dislikes: string | null
           goal: string
           height_cm: number
@@ -263,6 +264,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           dietary_preferences?: string[] | null
+          estimated_calories?: number | null
           food_dislikes?: string | null
           goal: string
           height_cm: number
@@ -279,6 +281,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           dietary_preferences?: string[] | null
+          estimated_calories?: number | null
           food_dislikes?: string | null
           goal?: string
           height_cm?: number
