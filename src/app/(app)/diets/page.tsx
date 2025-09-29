@@ -52,10 +52,8 @@ export interface DietFilters {
 }
 
 export type SortOption =
-  | "popularity"
-  | "recommendation"
-  | "alphabetical"
-  | "recent";
+  // | "popularity"
+  "recommendation" | "alphabetical" | "recent";
 
 export default function DietCatalogPage() {
   const { user } = useAuthContext();
@@ -71,7 +69,7 @@ export default function DietCatalogPage() {
     // duration: [],
     goal: [],
   });
-  const [sortBy, setSortBy] = useState<SortOption>("popularity");
+  const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
   // const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -113,7 +111,7 @@ export default function DietCatalogPage() {
           slug
         `
         )
-        .order("popularity_score", { ascending: false });
+        .order("title", { ascending: true });
 
       if (error) throw error;
 
@@ -173,7 +171,7 @@ export default function DietCatalogPage() {
 
       setRecommendedDiets(recommended);
       // When we have recommendations, default sort by recommendation
-      setSortBy((prev) => (prev === "popularity" ? "recommendation" : prev));
+      setSortBy((prev) => (prev === "alphabetical" ? "recommendation" : prev));
     } catch (err) {
       console.error("Error fetching recommended diets:", err);
       hasFetchedRecommended.current = false; // Reset on error to allow retry
@@ -266,8 +264,8 @@ export default function DietCatalogPage() {
     // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case "popularity":
-          return (b.popularity_score || 0) - (a.popularity_score || 0);
+        // case "popularity":
+        //   return (b.popularity_score || 0) - (a.popularity_score || 0);
         case "recommendation":
           return (b.recommendation_score || 0) - (a.recommendation_score || 0);
         case "alphabetical":

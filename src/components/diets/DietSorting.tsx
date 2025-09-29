@@ -16,11 +16,11 @@ interface DietSortingProps {
 }
 
 const sortOptions = [
-  {
-    value: "popularity" as const,
-    label: "Popularidade",
-    description: "As mais populares primeiro",
-  },
+  // {
+  //   value: "popularity" as const,
+  //   label: "Popularidade",
+  //   description: "As mais populares primeiro",
+  // },
   {
     value: "recommendation" as const,
     label: "Recomendadas",

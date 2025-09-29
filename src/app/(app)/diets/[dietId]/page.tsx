@@ -32,7 +32,7 @@ import { toast } from "react-toastify";
 
 // Simplified DietDetail interface - no more variants or separate meals
 interface DietDetail extends Diet {
-  is_favorited?: boolean;
+  // is_favorited?: boolean;
   recommendation_reasoning?: string | null;
   is_currently_active?: boolean;
 }
@@ -194,18 +194,18 @@ export default function DietDetailPage() {
 
       // No need to fetch variants or meals - they are now part of the diet record
 
-      // Check if user has favorited this diet
-      let isFavorited = false;
-      if (user) {
-        const { data: favoriteData } = await supabase
-          .from("favorites")
-          .select("diet_id")
-          .eq("user_id", user.id)
-          .eq("diet_id", dietId)
-          .single();
+      // // Check if user has favorited this diet
+      // let isFavorited = false;
+      // if (user) {
+      //   const { data: favoriteData } = await supabase
+      //     .from("favorites")
+      //     .select("diet_id")
+      //     .eq("user_id", user.id)
+      //     .eq("diet_id", dietId)
+      //     .single();
 
-        isFavorited = !!favoriteData;
-      }
+      //   isFavorited = !!favoriteData;
+      // }
 
       // Check if this diet is currently active for the user
       let isCurrentlyActive = false;
@@ -223,7 +223,7 @@ export default function DietDetailPage() {
 
       const dietDetail: DietDetail = {
         ...dietData,
-        is_favorited: isFavorited,
+        // is_favorited: isFavorited,
         recommendation_reasoning,
         is_currently_active: isCurrentlyActive,
       };
