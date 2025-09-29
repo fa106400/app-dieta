@@ -198,12 +198,12 @@ export function DietCard({
                 <Sparkles className="h-4 w-4 text-yellow-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex items-center space-x-1 text-md ">
+            {/* <div className="flex items-center space-x-1 text-md ">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span>{diet.popularity_score || 0}</span>
               <Users className="h-4 w-4 ml-2" />
-              {/* <span>Popular</span> */}
-            </div>
+              <span>Popular</span>
+            </div> */}
           </div>
         </div>
       </CardHeader>
