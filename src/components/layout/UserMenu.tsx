@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 //import Link from "next/link";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useExperience } from "@/contexts/ExperienceContext";
@@ -15,10 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Star /*, User, Settings, Crown*/ } from "lucide-react";
+import { animate } from "motion";
 
 export function UserMenu() {
   const { user, signOut } = useAuthContext();
   const { userXP, loading: xpLoading } = useExperience();
+  const lastXPRef = useRef<number | null>(null);
+  const didHydrateRef = useRef<boolean>(false);
+  const xpAnchorRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [userAlias, setUserAlias] = useState<string>("");
   const [aliasLoading, setAliasLoading] = useState(true);
@@ -130,6 +134,72 @@ export function UserMenu() {
     }
   };
 
+  const triggerSparklesAtRect = (rect: DOMRect) => {
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "fixed";
+    wrapper.style.left = `${centerX}px`;
+    wrapper.style.top = `${centerY}px`;
+    wrapper.style.pointerEvents = "none";
+    wrapper.style.zIndex = "9999";
+    document.body.appendChild(wrapper);
+
+    const NUM_SPARKLES = 5;
+    const MAX_DISTANCE_PX = 96;
+    const animations: Promise<void>[] = [];
+    for (let i = 0; i < NUM_SPARKLES; i++) {
+      const sparkle = document.createElement("span");
+      sparkle.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="#fbbf24"><path d="M12 2l2.39 5.26L20 9l-5.2 2.26L12 16l-2.8-4.74L4 9l5.61-1.74L12 2z"/></svg>';
+      sparkle.style.position = "absolute";
+      sparkle.style.left = "0";
+      sparkle.style.top = "0";
+      wrapper.appendChild(sparkle);
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * MAX_DISTANCE_PX;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      const p = animate(
+        sparkle,
+        {
+          transform: [
+            "translate(0px,0px) scale(1)",
+            `translate(${x}px, ${y}px) scale(0)`,
+          ],
+          opacity: [1, 0],
+        } as unknown as Record<string, unknown>,
+        { duration: 2, ease: "easeOut" }
+      ).finished.then(() => sparkle.remove());
+      animations.push(p);
+    }
+    Promise.allSettled(animations).then(() => wrapper.remove());
+  };
+
+  // Fire sparkles when XP increases (ExperienceContext updated elsewhere)
+  useEffect(() => {
+    // Skip initial hydration/load so we don't fire on first fetch after F5
+    if (!didHydrateRef.current && !xpLoading) {
+      didHydrateRef.current = true;
+      lastXPRef.current = userXP;
+      return;
+    }
+
+    if (
+      didHydrateRef.current &&
+      lastXPRef.current !== null &&
+      userXP > lastXPRef.current
+    ) {
+      const el = xpAnchorRef.current;
+      if (el) {
+        triggerSparklesAtRect(el.getBoundingClientRect());
+      }
+    }
+    lastXPRef.current = userXP;
+  }, [userXP, xpLoading]);
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -151,7 +221,7 @@ export function UserMenu() {
             <p className="text-md font-medium ">
               {aliasLoading ? "Carregando..." : userAlias}
             </p>
-            <div className="flex items-center space-x-1">
+            <div ref={xpAnchorRef} className="flex items-center space-x-1">
               <Star className="h-3 w-3 text-yellow-500" />
               <span className="text-sm ">
                 {xpLoading ? "..." : `${userXP.toLocaleString()} XP`}

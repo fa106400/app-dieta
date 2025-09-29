@@ -281,9 +281,10 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Nunito font** ✅
 - **Increase font size on ALL pages, one by one** ✅
 - **Swap ingredients animation with 1sec fake loading** ✅
-- **Exp animation on header??**
+- **Exp animation on header** ✅
 - **Diet catalog grid refactor for better UX**
 - **Diet details refactor for better UX**
+- **Badge modal refactor for better UX**
 - **App colors**
 - **App menu icons** ✅
 
