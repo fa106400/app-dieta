@@ -144,9 +144,6 @@ export default function DietCatalogPage() {
             description,
             tags,
             category,
-            difficulty,
-            duration_weeks,
-            popularity_score,
             calories_total,
             macros,
             week_plan
