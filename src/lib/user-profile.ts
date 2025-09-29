@@ -15,6 +15,7 @@ export interface CreateProfileData {
   dietary_preferences?: string[]
   activity_level?: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active'
   food_dislikes?: string
+  estimated_calories?: number
 }
 
 export const userProfile = {

@@ -24,16 +24,16 @@ This document outlines the detailed implementation plan for adding the `estimate
 - ✅ Import and use the externalized function instead
 - ✅ Update any internal references
 
-## Phase 3: Update Profile Management
+## Phase 3: Update Profile Management ✅ COMPLETED
 
-### 4. Update User Profile Service (`src/lib/user-profile.ts`)
-- Add `estimated_calories` to the `CreateProfileData` interface
-- Update the `create` method to accept and store `estimated_calories`
-- Update the `update` method to handle `estimated_calories` updates
+### 4. Update User Profile Service (`src/lib/user-profile.ts`) ✅
+- ✅ Add `estimated_calories` to the `CreateProfileData` interface
+- ✅ Update the `create` method to accept and store `estimated_calories`
+- ✅ Update the `update` method to handle `estimated_calories` updates
 
-### 5. Update API Endpoint (`src/app/api/auth/me/route.ts`)
-- Add `estimated_calories` to the `validProfileFields` object in the PUT method
-- Ensure the field is properly handled in profile updates
+### 5. Update API Endpoint (`src/app/api/auth/me/route.ts`) ✅
+- ✅ Add `estimated_calories` to the `validProfileFields` object in the PUT method
+- ✅ Ensure the field is properly handled in profile updates
 
 ## Phase 4: Onboarding Integration
 

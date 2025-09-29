@@ -151,6 +151,7 @@ export async function PUT(_request: NextRequest) {
       dietary_preferences: otherProfileData.dietary_preferences,
       activity_level: otherProfileData.activity_level,
       food_dislikes: otherProfileData.food_dislikes,
+      estimated_calories: otherProfileData.estimated_calories,
       onboarding_completed: otherProfileData.onboarding_completed,
       user_alias: otherProfileData.user_alias,
       avatar_url: avatar_url, // Use avatar_url from main body, not otherProfileData
