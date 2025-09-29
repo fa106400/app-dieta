@@ -279,8 +279,8 @@ This plan outlines the development of a complete nutrition and diet management p
 ### 5.5.3 Visual Identity
 - **Logo** ✅
 - **Nunito font** ✅
-- **Increase font size on ALL pages, one by one**
-- **Swap ingredients animation with 1sec fake loading**
+- **Increase font size on ALL pages, one by one** ✅
+- **Swap ingredients animation with 1sec fake loading** ✅
 - **Exp animation on header??**
 - **Diet catalog grid refactor for better UX**
 - **Diet details refactor for better UX**

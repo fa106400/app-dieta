@@ -25,6 +25,7 @@ import {
   // Target,
 } from "lucide-react";
 import { Diet } from "@/app/(app)/diets/page";
+import { animate } from "motion";
 import { toast } from "react-toastify";
 
 // New interfaces for simplified schema - using Json types from Supabase
@@ -55,6 +56,81 @@ export default function DietDetailPage() {
   const [itemAltIndex, setItemAltIndex] = useState<Map<string, number>>(
     new Map()
   );
+  const [loadingSwapKey, setLoadingSwapKey] = useState<string | null>(null);
+
+  // Removed unused triggerSparkles function
+
+  const triggerSparklesAtRect = (rect: DOMRect) => {
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "fixed";
+    wrapper.style.left = `${centerX}px`;
+    wrapper.style.top = `${centerY}px`;
+    wrapper.style.pointerEvents = "none";
+    wrapper.style.zIndex = "9999";
+    document.body.appendChild(wrapper);
+
+    const NUM_SPARKLES = 5;
+    const MAX_DISTANCE_PX = 96;
+    const animations: Promise<void>[] = [];
+    for (let i = 0; i < NUM_SPARKLES; i++) {
+      const sparkle = document.createElement("span");
+      sparkle.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="#fbbf24"><path d="M12 2l2.39 5.26L20 9l-5.2 2.26L12 16l-2.8-4.74L4 9l5.61-1.74L12 2z"/></svg>';
+      sparkle.style.position = "absolute";
+      sparkle.style.left = "0";
+      sparkle.style.top = "0";
+      wrapper.appendChild(sparkle);
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * MAX_DISTANCE_PX;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      const p = animate(
+        sparkle,
+        {
+          transform: [
+            "translate(0px,0px) scale(1)",
+            `translate(${x}px, ${y}px) scale(0)`,
+          ],
+          opacity: [1, 0],
+        } as unknown as Record<string, unknown>,
+        { duration: 2, ease: "easeOut" }
+      ).finished.then(() => sparkle.remove());
+      animations.push(p);
+    }
+    Promise.allSettled(animations).then(() => wrapper.remove());
+  };
+
+  // Removed unused triggerSparklesAtViewportCenter function
+
+  const handleSwapClick = async (
+    dayIndex: number,
+    mealIndex: number,
+    itemIndex: number,
+    totalItems: number
+  ) => {
+    const key = `${dayIndex}-${mealIndex}-${itemIndex}`;
+    setLoadingSwapKey(key);
+    const before =
+      document.getElementById(`spark-${key}-anchor`) ||
+      document.getElementById(`spark-${key}`);
+    //get a random number between 500 and 1000
+    const randomNumber = Math.floor(Math.random() * 500) + 500;
+    await new Promise((r) => setTimeout(r, randomNumber));
+    setLoadingSwapKey(null);
+    cycleItemSwap(dayIndex, mealIndex, itemIndex, totalItems);
+    const after =
+      document.getElementById(`spark-${key}-anchor`) ||
+      document.getElementById(`spark-${key}`);
+    if (after) {
+      triggerSparklesAtRect(after.getBoundingClientRect());
+    } else if (before) {
+      triggerSparklesAtRect(before.getBoundingClientRect());
+    }
+  };
 
   // Refs to prevent unnecessary re-fetches
   const hasFetchedDiet = useRef(false);
@@ -698,7 +774,14 @@ export default function DietDetailPage() {
                                       className="flex items-center justify-between p-2 bg-white rounded border"
                                     >
                                       <div className="flex-1">
-                                        <div className="font-medium text-md">
+                                        <div
+                                          id={`spark-${dayIndex}-${mealIndex}-${itemIndex}-anchor`}
+                                          className="h-0 w-0"
+                                        />
+                                        <div
+                                          id={`spark-${dayIndex}-${mealIndex}-${itemIndex}`}
+                                          className="font-medium text-md"
+                                        >
                                           {currentItem.name}
                                         </div>
                                         <div className="text-md ">
@@ -715,16 +798,23 @@ export default function DietDetailPage() {
                                           variant="outline"
                                           size="sm"
                                           onClick={() =>
-                                            cycleItemSwap(
+                                            handleSwapClick(
                                               dayIndex,
                                               mealIndex,
                                               itemIndex,
                                               allItems.length
                                             )
                                           }
-                                          className="ml-2"
+                                          className="ml-2 min-w-[72px] justify-center"
                                         >
-                                          Trocar
+                                          {loadingSwapKey ===
+                                          `${dayIndex}-${mealIndex}-${itemIndex}` ? (
+                                            <>
+                                              <Loader2 className="h-4 w-4 animate-spin" />
+                                            </>
+                                          ) : (
+                                            "Trocar"
+                                          )}
                                         </Button>
                                       )}
                                     </div>
