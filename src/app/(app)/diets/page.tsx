@@ -96,7 +96,7 @@ export default function DietCatalogPage() {
       hasFetchedDiets.current = true;
 
       const { data, error } = await supabase
-        .from("diet_catalog_view")
+        .from("diets")
         .select(
           `
           id,
