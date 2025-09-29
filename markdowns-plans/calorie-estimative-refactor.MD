@@ -35,16 +35,16 @@ This document outlines the detailed implementation plan for adding the `estimate
 - ✅ Add `estimated_calories` to the `validProfileFields` object in the PUT method
 - ✅ Ensure the field is properly handled in profile updates
 
-## Phase 4: Onboarding Integration
+## Phase 4: Onboarding Integration ✅ COMPLETED
 
-### 6. Update Onboarding Page (`src/app/(app)/onboarding/page.tsx`)
-- Import the externalized calorie calculation function
-- Update the `OnboardingData` interface to include `estimated_calories`
-- In the `handleSubmit` function, after collecting all form data:
-  - Call `calculateEstimatedCalories(formData)` to get the estimated calories
-  - Include the calculated value in the profile data sent to the API
-  - **Error Handling**: If calculation fails, show error message to user and prevent onboarding completion
-  - **Retry Logic**: Allow user to try again if calculation fails
+### 6. Update Onboarding Page (`src/app/(app)/onboarding/page.tsx`) ✅
+- ✅ Import the externalized calorie calculation function
+- ✅ Update the `OnboardingData` interface to include `estimated_calories`
+- ✅ In the `handleSubmit` function, after collecting all form data:
+  - ✅ Call `calculateEstimatedCalories(formData)` to get the estimated calories
+  - ✅ Include the calculated value in the profile data sent to the API
+  - ✅ **Error Handling**: If calculation fails, show error message to user and prevent onboarding completion
+  - ✅ **Retry Logic**: Allow user to try again if calculation fails
 
 ## Phase 5: Profile Page Integration
 

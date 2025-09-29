@@ -20,6 +20,14 @@ export interface UserProfileForCalories {
  * @returns Estimated daily calorie needs in calories
  */
 export function calculateEstimatedCalories(userProfile: UserProfileForCalories): number {
+
+  //log profile fields used in the calculation
+  console.log('[calorieCalculator] Age:', userProfile.age);
+  console.log('[calorieCalculator] Weight:', userProfile.weight);
+  console.log('[calorieCalculator] Height:', userProfile.height);
+  console.log('[calorieCalculator] Activity Level:', userProfile.activityLevel);
+  console.log('[calorieCalculator] Goals:', userProfile.goals);
+
   if (!userProfile.age || !userProfile.weight || !userProfile.height || !userProfile.activityLevel) {
     return 2000; // Default fallback
   }
@@ -51,6 +59,8 @@ export function calculateEstimatedCalories(userProfile: UserProfileForCalories):
   } else if (userProfile.goals?.includes('gain_muscle')) {
     adjustedCalories = tdee + 300; // Surplus for muscle gain
   }
+
+  console.log('[calorieCalculator] Adjusted Calories:', adjustedCalories);
   
   return Math.round(adjustedCalories);
 }

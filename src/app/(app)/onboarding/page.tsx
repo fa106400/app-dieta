@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { useExperience } from "@/contexts/ExperienceContext";
 import { ExperienceService } from "@/lib/experience-service";
+import { calculateEstimatedCalories } from "@/lib/calorie-calculator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,6 +49,7 @@ interface OnboardingData {
   //food_dislikes: string; //nao vou mais usar dado que tem swap na diet details
   user_alias: string;
   avatar_url: string;
+  estimated_calories?: number;
 }
 
 const ACTIVITY_LEVELS = {
@@ -236,6 +238,23 @@ function OnboardingPageContent() {
     setError(null);
 
     try {
+      // Calculate estimated calories based on user profile data
+      let estimatedCalories: number;
+      try {
+        estimatedCalories = calculateEstimatedCalories({
+          age: formData.age,
+          weight: formData.weight_start_kg,
+          height: formData.height_cm,
+          activityLevel: formData.activity_level,
+          goals: [formData.goal],
+        });
+      } catch (calorieError) {
+        console.error("Error calculating estimated calories:", calorieError);
+        throw new Error(
+          "Falha ao calcular estimativa de calorias. Tente novamente."
+        );
+      }
+
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
@@ -244,6 +263,7 @@ function OnboardingPageContent() {
         body: JSON.stringify({
           name: user?.user_metadata?.name || user?.email?.split("@")[0],
           ...formData,
+          estimated_calories: estimatedCalories,
           onboarding_completed: true,
         }),
       });
