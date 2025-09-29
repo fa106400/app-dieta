@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI, GenerativeModel, GenerationConfig } from '@google/generative-ai';
+import { calculateEstimatedCalories } from './calorie-calculator';
 
 // Feature flag: AI debug mode
 const AI_DEBUG_MODE = String(process.env.AI_DEBUG_MODE || '').toLowerCase() === 'true';
@@ -249,7 +250,7 @@ class AIService {
     ).join('\n');
 
     // Calculate user's estimated daily calorie needs
-    const estimatedCalories = this.calculateEstimatedCalories(userProfile);
+    const estimatedCalories = calculateEstimatedCalories(userProfile);
 
     return `
 You are a nutrition expert AI assistant specializing in personalized diet recommendations. Analyze the user profile and available diets to recommend the best 3 diets with detailed matching logic.
@@ -302,44 +303,6 @@ Return only the JSON response, no additional text.
     `.trim();
   }
 
-  /**
-   * Calculate estimated daily calorie needs based on user profile
-   */
-  private calculateEstimatedCalories(userProfile: UserProfile): number {
-    if (!userProfile.age || !userProfile.weight || !userProfile.height || !userProfile.activityLevel) {
-      return 2000; // Default fallback
-    }
-
-    // Calculate BMR using Mifflin-St Jeor Equation
-    const age = userProfile.age;
-    const weight = userProfile.weight;
-    const height = userProfile.height;
-    
-    // BMR calculation (simplified - using average for gender)
-    const bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    
-    // Activity level multipliers
-    const activityMultipliers = {
-      'sedentary': 1.2,
-      'lightly_active': 1.375,
-      'moderately_active': 1.55,
-      'very_active': 1.725,
-      'extra_active': 1.9
-    };
-    
-    const multiplier = activityMultipliers[userProfile.activityLevel as keyof typeof activityMultipliers] || 1.55;
-    const tdee = bmr * multiplier;
-    
-    // Adjust based on goals
-    let adjustedCalories = tdee;
-    if (userProfile.goals?.includes('lose_weight')) {
-      adjustedCalories = tdee - 500; // 1 lb per week deficit
-    } else if (userProfile.goals?.includes('gain_muscle')) {
-      adjustedCalories = tdee + 300; // Surplus for muscle gain
-    }
-    
-    return Math.round(adjustedCalories);
-  }
 
   /**
    * Parse AI response into structured recommendations
@@ -578,7 +541,7 @@ Return only the JSON response, no additional text.
     difficultySuitability: number;
     tagRelevance: number;
   } {
-    const estimatedCalories = this.calculateEstimatedCalories(userProfile);
+    const estimatedCalories = calculateEstimatedCalories(userProfile);
     
     // Calculate average matching factors across all diets
     let totalDietaryCompatibility = 0;

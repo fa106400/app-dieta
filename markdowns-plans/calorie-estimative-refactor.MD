@@ -10,19 +10,19 @@ This document outlines the detailed implementation plan for adding the `estimate
 - ✅ Add `estimated_calories?: number | null` to the `profiles` table Insert type  
 - ✅ Add `estimated_calories?: number | null` to the `profiles` table Update type
 
-## Phase 2: Externalize Calorie Calculation Method
+## Phase 2: Externalize Calorie Calculation Method ✅ COMPLETED
 
-### 2. Create New Utility Service (`src/lib/calorie-calculator.ts`)
-- Extract the `calculateEstimatedCalories` method from `ai-service.ts`
-- Make it a standalone, reusable function
-- Define proper TypeScript interfaces for the user profile data
-- Keep the existing default value logic (returns 2000 if missing required fields)
-- Export the function for use across the application
+### 2. Create New Utility Service (`src/lib/calorie-calculator.ts`) ✅
+- ✅ Extract the `calculateEstimatedCalories` method from `ai-service.ts`
+- ✅ Make it a standalone, reusable function
+- ✅ Define proper TypeScript interfaces for the user profile data
+- ✅ Keep the existing default value logic (returns 2000 if missing required fields)
+- ✅ Export the function for use across the application
 
-### 3. Update AI Service (`src/lib/ai-service.ts`)
-- Remove the private `calculateEstimatedCalories` method
-- Import and use the externalized function instead
-- Update any internal references
+### 3. Update AI Service (`src/lib/ai-service.ts`) ✅
+- ✅ Remove the private `calculateEstimatedCalories` method
+- ✅ Import and use the externalized function instead
+- ✅ Update any internal references
 
 ## Phase 3: Update Profile Management
 
