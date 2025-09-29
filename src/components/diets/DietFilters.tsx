@@ -29,11 +29,11 @@ const categories = [
   { value: "high_protein", label: "Bastante proteína" },
 ];
 
-const difficulties = [
-  { value: "beginner", label: "Iniciante" },
-  { value: "intermediate", label: "Intermediário" },
-  { value: "advanced", label: "Avançado" },
-];
+// const difficulties = [
+//   { value: "beginner", label: "Iniciante" },
+//   { value: "intermediate", label: "Intermediário" },
+//   { value: "advanced", label: "Avançado" },
+// ];
 
 /*const durations = [
   { value: "short", label: "Short-term (≤4 weeks)" },
@@ -59,13 +59,13 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
     onChange({ ...filters, category: newCategories });
   };
 
-  const handleDifficultyChange = (difficulty: string, checked: boolean) => {
-    const newDifficulties = checked
-      ? [...filters.difficulty, difficulty]
-      : filters.difficulty.filter((d) => d !== difficulty);
+  // const handleDifficultyChange = (difficulty: string, checked: boolean) => {
+  //   const newDifficulties = checked
+  //     ? [...filters.difficulty, difficulty]
+  //     : filters.difficulty.filter((d) => d !== difficulty);
 
-    onChange({ ...filters, difficulty: newDifficulties });
-  };
+  //   onChange({ ...filters, difficulty: newDifficulties });
+  // };
 
   /*const handleDurationChange = (duration: string, checked: boolean) => {
     const newDurations = checked
@@ -85,13 +85,13 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
 
   const hasActiveFilters =
     filters.category.length > 0 ||
-    filters.difficulty.length > 0 ||
+    // filters.difficulty.length > 0 ||
     // filters.duration.length > 0 ||
     filters.goal.length > 0;
 
   const activeFilterCount =
     filters.category.length +
-    filters.difficulty.length +
+    // filters.difficulty.length +
     // filters.duration.length +
     filters.goal.length;
 
@@ -256,7 +256,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                   />
                 </Badge>
               ))}
-              {filters.difficulty.map((difficulty) => (
+              {/* {filters.difficulty.map((difficulty) => (
                 <Badge
                   key={difficulty}
                   variant="secondary"
@@ -270,7 +270,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
                     onClick={() => handleDifficultyChange(difficulty, false)}
                   />
                 </Badge>
-              ))}
+              ))} */}
               {/*filters.duration.map((duration) => (
                 <Badge
                   key={duration}

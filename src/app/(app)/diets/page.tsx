@@ -47,7 +47,7 @@ export interface Diet {
 
 export interface DietFilters {
   category: string[];
-  difficulty: string[];
+  // difficulty: string[];
   goal: string[];
 }
 
@@ -65,7 +65,7 @@ export default function DietCatalogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<DietFilters>({
     category: [],
-    difficulty: [],
+    // difficulty: [],
     // duration: [],
     goal: [],
   });
@@ -323,7 +323,7 @@ export default function DietCatalogPage() {
   const clearFilters = () => {
     setFilters({
       category: [],
-      difficulty: [],
+      // difficulty: [],
       // duration: [],
       goal: [],
     });
@@ -333,7 +333,7 @@ export default function DietCatalogPage() {
   const hasActiveFilters =
     searchQuery.trim() ||
     filters.category.length > 0 ||
-    filters.difficulty.length > 0 ||
+    // filters.difficulty.length > 0 ||
     // filters.duration.length > 0 ||
     filters.goal.length > 0;
 
@@ -392,11 +392,11 @@ export default function DietCatalogPage() {
             className="flex items-center space-x-2"
           >
             <Filter className="h-4 w-4" />
-            <span className="text-lg">Filtros</span>
+            <span className="text-md">Filtros</span>
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-1">
                 {filters.category.length +
-                  filters.difficulty.length +
+                  // filters.difficulty.length +
                   // filters.duration.length +
                   filters.goal.length}
               </Badge>
