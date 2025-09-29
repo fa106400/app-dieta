@@ -22,8 +22,8 @@ import {
   Star,
   CheckCircle,
   ChevronLeft,
-  // ChevronRight,
-  EyeClosed,
+  ChevronRight,
+  //EyeClosed,
 } from "lucide-react";
 
 interface BadgeData {
@@ -278,7 +278,7 @@ export function BadgeAchievementPopup({
                     disabled={isLastBadge}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 rounded-full"
                   >
-                    <EyeClosed className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4" />
                   </Button>
                 </>
               )}
