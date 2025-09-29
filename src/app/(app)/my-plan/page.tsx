@@ -15,9 +15,9 @@ interface DietFromQuery {
   title: string;
   description: string;
   category: string;
-  difficulty: string;
-  duration_weeks: number;
-  popularity_score: number;
+  // difficulty: string;
+  // duration_weeks: number;
+  // popularity_score: number;
   calories_total: number;
   shopping_plan: Json;
   tags: string[];
@@ -29,9 +29,9 @@ interface CurrentDiet {
   title: string;
   description: string;
   category: string;
-  difficulty: string;
-  duration_weeks: number;
-  popularity_score: number;
+  // difficulty: string;
+  // duration_weeks: number;
+  // popularity_score: number;
   calories_total: number;
   shopping_plan: Json;
   tags: string[];
@@ -79,9 +79,6 @@ export default function MyWeekPage() {
             title,
             description,
             category,
-            difficulty,
-            duration_weeks,
-            popularity_score,
             calories_total,
             shopping_plan,
             tags,
@@ -106,9 +103,9 @@ export default function MyWeekPage() {
           title: string;
           description: string;
           category: string;
-          difficulty: string;
-          duration_weeks: number;
-          popularity_score: number;
+          // difficulty: string;
+          // duration_weeks: number;
+          // popularity_score: number;
           calories_total: number;
           tags: string[];
           slug: string;
@@ -118,9 +115,9 @@ export default function MyWeekPage() {
           title: diet.title,
           description: diet.description,
           category: diet.category,
-          difficulty: diet.difficulty,
-          duration_weeks: diet.duration_weeks,
-          popularity_score: diet.popularity_score,
+          // difficulty: diet.difficulty,
+          // duration_weeks: diet.duration_weeks,
+          // popularity_score: diet.popularity_score,
           calories_total: diet.calories_total,
           shopping_plan: (diet as DietFromQuery).shopping_plan || [],
           tags: diet.tags || [],

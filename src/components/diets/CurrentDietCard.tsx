@@ -21,9 +21,9 @@ interface CurrentDiet {
   title: string;
   description: string;
   category: string;
-  difficulty: string;
-  duration_weeks: number;
-  popularity_score: number;
+  // difficulty: string;
+  // duration_weeks: number;
+  // popularity_score: number;
   calories_total: number;
   shopping_plan: Json;
   tags: string[];
@@ -101,9 +101,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
               <Users className="h-4 w-4 text-green-500" />
               <span className="text-sm ">Dificuldade</span>
             </div>
-            <div className="text-md font-semibold">
+            {/* <div className="text-md font-semibold">
               {currentDiet.difficulty?.toUpperCase()}
-            </div>
+            </div> */}
           </div>
 
           <div className="text-center">
@@ -111,9 +111,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
               <Calendar className="h-4 w-4 text-purple-500" />
               <span className="text-sm ">Duração</span>
             </div>
-            <div className="text-md font-semibold">
+            {/* <div className="text-md font-semibold">
               {currentDiet.duration_weeks}w
-            </div>
+            </div> */}
           </div>
 
           <div className="text-center">
@@ -121,9 +121,9 @@ export function CurrentDietCard({ currentDiet }: CurrentDietCardProps) {
               <Star className="h-4 w-4 text-yellow-500" />
               <span className="text-sm ">Popularidade</span>
             </div>
-            <div className="text-md font-semibold">
+            {/* <div className="text-md font-semibold">
               {currentDiet.popularity_score}
-            </div>
+            </div> */}
           </div>
         </div>
 

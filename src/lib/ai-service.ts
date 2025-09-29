@@ -126,7 +126,7 @@ class AIService {
       title: string;
       description: string;
       category: string;
-      difficulty: string;
+      // difficulty: string;
       calories_total: number;
       tags: string[];
     }>
@@ -219,14 +219,14 @@ class AIService {
    * Build mocked recommendations for debug mode
    */
   private buildMockRecommendations(
-    availableDiets: Array<{ id: string; title: string; description: string; category: string; difficulty: string; calories_total: number; tags: string[] }>
+    availableDiets: Array<{ id: string; title: string; description: string; category: string; calories_total: number; tags: string[] }>
   ): Array<{ dietId: string; score: number; reasoning: string }> {
     // Pick up to 4 diets deterministically
     const picks = availableDiets.slice(0, Math.min(4, availableDiets.length));
     return picks.map((diet, index) => ({
       dietId: diet.id,
       score: Math.max(0.45, 0.8 - index * 0.1),
-      reasoning: `Mocked: The ${diet.title} (${diet.calories_total} kcal) is a suitable option based on category '${diet.category}', difficulty '${diet.difficulty}', and tags ${diet.tags.slice(0,2).join(', ')}.`,
+      reasoning: `Mocked: The ${diet.title} (${diet.calories_total} kcal) is a suitable option based on category '${diet.category}', and tags ${diet.tags.slice(0,2).join(', ')}.`,
     }));
   }
 
@@ -239,13 +239,13 @@ class AIService {
       id: string;
       title: string;
       category: string;
-      difficulty: string;
+      // difficulty: string;
       calories_total: number;
       tags: string[];
     }>
   ): string {
     const dietList = availableDiets.map(diet => 
-      `ID: ${diet.id}, Title: ${diet.title}, Category: ${diet.category}, Difficulty: ${diet.difficulty}, Calories: ${diet.calories_total}, Tags: ${diet.tags.join(', ')}`
+      `ID: ${diet.id}, Title: ${diet.title}, Category: ${diet.category}, Calories: ${diet.calories_total}, Tags: ${diet.tags.join(', ')}`
     ).join('\n');
 
     // Calculate user's estimated daily calorie needs
@@ -271,15 +271,13 @@ MATCHING CRITERIA (in order of importance):
 1. DIETARY COMPATIBILITY: Match dietary restrictions and preferences
 2. CALORIE ALIGNMENT: Compare diet calories with user's estimated needs (±200 calories ideal)
 3. GOAL ALIGNMENT: Match diet category with user's health goals
-4. DIFFICULTY SUITABILITY: Match diet difficulty with user's experience level
-5. TAG RELEVANCE: Consider diet tags for additional personalization
+4. TAG RELEVANCE: Consider diet tags for additional personalization
 
 SCORING METHODOLOGY:
 - Base score: 0.0 to 1.0
 - Dietary compatibility: +0.3 if perfect match, +0.2 if partial match
 - Calorie alignment: +0.25 if within ±200 calories, +0.15 if within ±400 calories
 - Goal alignment: +0.2 if category matches goal, +0.1 if related
-- Difficulty suitability: +0.15 if appropriate for user level
 - Tag relevance: +0.1 for each relevant tag match
 
 Please provide your recommendations in the following JSON format:
@@ -451,7 +449,7 @@ Return only the JSON response, no additional text.
       title: string;
       description: string;
       category: string;
-      difficulty: string;
+      // difficulty: string;
       calories_total: number;
       tags: string[];
     }>

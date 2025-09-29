@@ -74,13 +74,12 @@ export async function POST(request: NextRequest) {
         title,
         description,
         category,
-        difficulty,
         calories_total,
         shopping_plan,
         tags
       `)
       .eq('is_public', true)
-      .order('popularity_score', { ascending: false })
+      .order('title', { ascending: true })
       .limit(50); // Limit to top 50 diets for AI processing
 
     if (dietsError || !diets) {
@@ -105,13 +104,13 @@ export async function POST(request: NextRequest) {
     // Filter out diets with null values and generate recommendations using AI service
     const validDiets = diets.filter(diet => 
       diet.id && diet.title && diet.description && diet.category && 
-      diet.difficulty && diet.calories_total && diet.tags
+      diet.calories_total && diet.tags
     ) as Array<{
       id: string;
       title: string;
       description: string;
       category: string;
-      difficulty: string;
+      // difficulty: string;
       calories_total: number;
       tags: string[];
     }>;
@@ -172,7 +171,7 @@ export async function POST(request: NextRequest) {
           title: diet.title,
           description: diet.description,
           category: diet.category,
-          difficulty: diet.difficulty,
+          // difficulty: diet.difficulty,
           calories_total: diet.calories_total,
           tags: diet.tags,
         } : null,
@@ -226,7 +225,6 @@ export async function GET(_request: NextRequest) {
           title,
           description,
           category,
-          difficulty,
           calories_total,
           tags
         )

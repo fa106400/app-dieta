@@ -12,7 +12,7 @@ export interface DietRecommendation {
     title: string;
     description: string;
     category: string;
-    difficulty: string;
+    // difficulty: string;
     calories_total: number;
     shopping_plan: Json;
     tags: string[];

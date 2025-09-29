@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Clock,
-  Users,
-  Star,
+  // Clock,
+  // Users,
+  // Star,
   Sparkles,
   ChevronRight,
   Flame,
@@ -30,18 +30,18 @@ export function FavoriteDietCard({
   onToggleFavorite,
   isToggling = false,
 }: FavoriteDietCardProps) {
-  const getDifficultyColor = (difficulty: string | null) => {
-    switch (difficulty) {
-      case "beginner":
-        return "bg-green-100 text-green-800";
-      case "intermediate":
-        return "bg-yellow-100 text-yellow-800";
-      case "advanced":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 ";
-    }
-  };
+  // const getDifficultyColor = (difficulty: string | null) => {
+  //   switch (difficulty) {
+  //     case "beginner":
+  //       return "bg-green-100 text-green-800";
+  //     case "intermediate":
+  //       return "bg-yellow-100 text-yellow-800";
+  //     case "advanced":
+  //       return "bg-red-100 text-red-800";
+  //     default:
+  //       return "bg-gray-100 ";
+  //   }
+  // };
 
   const getCategoryColor = (category: string | null) => {
     switch (category) {
@@ -130,10 +130,10 @@ export function FavoriteDietCard({
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-1 text-md ">
+                  {/* <div className="flex items-center space-x-1 text-md ">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span>{diet.popularity_score || 0}</span>
-                  </div>
+                  </div> */}
                   {onToggleFavorite && (
                     <Button
                       variant="ghost"
@@ -160,13 +160,13 @@ export function FavoriteDietCard({
                 <Badge className={getCategoryColor(diet.category)}>
                   {formatCategory(diet.category)}
                 </Badge>
-                <Badge className={getDifficultyColor(diet.difficulty)}>
+                {/* <Badge className={getDifficultyColor(diet.difficulty)}>
                   {diet.difficulty || "Unknown"}
-                </Badge>
-                <div className="flex items-center text-md ">
+                </Badge> */}
+                {/* <div className="flex items-center text-md ">
                   <Clock className="h-4 w-4 mr-1" />
                   {diet.duration_weeks || 0} weeks
-                </div>
+                </div> */}
                 {diet.calories_total && (
                   <div className="flex items-center text-md ">
                     <Flame className="h-4 w-4 mr-1" />
@@ -230,12 +230,12 @@ export function FavoriteDietCard({
                 <Sparkles className="h-4 w-4 text-yellow-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex items-center space-x-1 text-md ">
+            {/* <div className="flex items-center space-x-1 text-md ">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span>{diet.popularity_score || 0}</span>
               <Users className="h-4 w-4 ml-2" />
               <span>Popular</span>
-            </div>
+            </div> */}
           </div>
           {onToggleFavorite && (
             <Button
@@ -267,16 +267,16 @@ export function FavoriteDietCard({
             <Badge className={getCategoryColor(diet.category)}>
               {formatCategory(diet.category)}
             </Badge>
-            <Badge className={getDifficultyColor(diet.difficulty)}>
+            {/* <Badge className={getDifficultyColor(diet.difficulty)}>
               {diet.difficulty || "Unknown"}
-            </Badge>
+            </Badge> */}
           </div>
 
           <div className="flex items-center justify-between text-md ">
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               {diet.duration_weeks || 0} weeks
-            </div>
+            </div> */}
             {diet.calories_total && (
               <div className="flex items-center">
                 <Flame className="h-4 w-4 mr-1" />

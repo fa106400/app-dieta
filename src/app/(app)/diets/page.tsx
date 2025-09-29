@@ -28,9 +28,9 @@ export interface Diet {
   description: string | null;
   tags: string[] | null;
   category: string | null;
-  difficulty: string | null;
-  duration_weeks: number | null;
-  popularity_score: number | null;
+  // difficulty: string | null;
+  // duration_weeks: number | null;
+  // popularity_score: number | null;
   is_public?: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
@@ -101,9 +101,6 @@ export default function DietCatalogPage() {
           title,
           description,
           category,
-          difficulty,
-          duration_weeks,
-          popularity_score,
           calories_total,
           macros,
           week_plan,
