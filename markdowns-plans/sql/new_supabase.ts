@@ -105,7 +105,7 @@ export type Database = {
             foreignKeyName: "diet_recommendations_diet_id_fkey"
             columns: ["diet_id"]
             isOneToOne: false
-            referencedRelation: "diet_catalog_view"
+            referencedRelation: "diets"
             referencedColumns: ["id"]
           },
           {
@@ -192,7 +192,7 @@ export type Database = {
             foreignKeyName: "favorites_diet_id_fkey"
             columns: ["diet_id"]
             isOneToOne: false
-            referencedRelation: "diet_catalog_view"
+            referencedRelation: "diets"
             referencedColumns: ["id"]
           },
           {
@@ -371,7 +371,7 @@ export type Database = {
             foreignKeyName: "user_current_diet_diet_id_fkey"
             columns: ["diet_id"]
             isOneToOne: false
-            referencedRelation: "diet_catalog_view"
+            referencedRelation: "diets"
             referencedColumns: ["id"]
           },
           {

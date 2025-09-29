@@ -415,26 +415,6 @@ INSERT INTO diet_variants (diet_id, calories_total, macros, week_plan) VALUES
     '{"days": [{"meals": [{"name": "Breakfast", "calories": 450}, {"name": "Lunch", "calories": 600}, {"name": "Dinner", "calories": 750}]}]}'
 );
 
--- Create a view for easy diet browsing
-CREATE VIEW diet_catalog_view AS
-SELECT 
-    d.id,
-    d.slug,
-    d.title,
-    d.description,
-    d.tags,
-    d.category,
-    d.difficulty,
-    d.duration_weeks,
-    d.popularity_score,
-    COUNT(dv.id) as variant_count,
-    MIN(dv.calories_total) as min_calories,
-    MAX(dv.calories_total) as max_calories
-FROM diets d
-LEFT JOIN diet_variants dv ON d.id = dv.diet_id
-WHERE d.is_public = TRUE
-GROUP BY d.id, d.slug, d.title, d.description, d.tags, d.category, d.difficulty, d.duration_weeks, d.popularity_score;
-
 -- 12. Announcements table (for admin-managed messages)
 create table if not exists announcements (
   id uuid primary key default gen_random_uuid(),
@@ -451,5 +431,4 @@ GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON profiles, favorites, user_current_diet, user_meal_log, weights, user_badges, diet_recommendations, user_metrics TO authenticated;
 GRANT SELECT ON users_metrics_view TO anon, authenticated;
-GRANT SELECT ON diet_catalog_view TO anon, authenticated;
 GRANT SELECT ON announcements TO anon, authenticated;
