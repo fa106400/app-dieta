@@ -262,6 +262,106 @@ export default function ProfileManagePage() {
     }
   }, [user]);
 
+  // Update diet recommendations when estimated calories change
+  const updateDietRecommendationsForNewCalories = async (
+    userId: string,
+    oldCalories: number | null | undefined,
+    newCalories: number
+  ): Promise<void> => {
+    // 1. Early exits
+    if (oldCalories === newCalories) return;
+    if (!supabase) {
+      console.warn("[updateDietRecs] Supabase not available");
+      return;
+    }
+
+    try {
+      console.log(
+        `[updateDietRecs] Updating recommendations: ${oldCalories} → ${newCalories} kcal`
+      );
+
+      // 2. Fetch recommendations
+      const { data: recommendations, error: recError } = await supabase
+        .from("diet_recommendations")
+        .select("id, diet_id, score, reasoning")
+        .eq("user_id", userId);
+
+      if (recError) throw recError;
+
+      if (!recommendations || recommendations.length === 0) {
+        console.log("[updateDietRecs] No recommendations to update");
+        return;
+      }
+
+      // 3. Process each recommendation individually (safer than batch)
+      for (const rec of recommendations) {
+        try {
+          // 3a. Get current diet
+          const { data: currentDiet, error: dietError } = await supabase
+            .from("diets")
+            .select("id, title, calories_total")
+            .eq("id", rec.diet_id)
+            .single();
+
+          if (dietError || !currentDiet) {
+            console.warn(`[updateDietRecs] Diet ${rec.diet_id} not found`);
+            continue;
+          }
+
+          // 3b. Find equivalent at new calorie level
+          const { data: newDiet, error: newDietError } = await supabase
+            .from("diets")
+            .select("id")
+            .eq("title", currentDiet.title)
+            .eq("calories_total", newCalories)
+            .single();
+
+          //log newDietError only if error exists
+          if (newDietError) {
+            console.log("newDietError", newDietError);
+          }
+
+          // 3c. Update or keep
+          if (newDiet && newDiet.id !== rec.diet_id) {
+            const { error: updateError } = await supabase
+              .from("diet_recommendations")
+              .update({
+                diet_id: newDiet.id,
+                last_refreshed: new Date().toISOString(),
+              })
+              .eq("id", rec.id);
+
+            if (updateError) {
+              console.error(
+                `[updateDietRecs] Failed to update rec ${rec.id}:`,
+                updateError
+              );
+            } else {
+              console.log(
+                `✅ Updated: "${currentDiet.title}" ${currentDiet.calories_total} → ${newCalories} kcal`
+              );
+            }
+          } else if (!newDiet) {
+            console.error(
+              `⚠️ No equivalent: "${currentDiet.title}" at ${newCalories} kcal. Keeping ${currentDiet.calories_total} kcal.`
+            );
+          }
+        } catch (recError) {
+          console.error(
+            `[updateDietRecs] Error processing recommendation ${rec.id}:`,
+            recError
+          );
+          // Continue with next recommendation
+        }
+      }
+
+      console.log(`[updateDietRecs] Completed for user ${userId}`);
+    } catch (error) {
+      console.error("[updateDietRecs] Fatal error:", error);
+      // Don't throw - fail silently to not break profile update
+    }
+  };
+
   // Save profile
   const saveProfile = async (updatedProfile: Partial<ProfileData>) => {
     if (!user) return;
@@ -303,6 +403,9 @@ export default function ProfileManagePage() {
         // Keep the old value by not including estimated_calories in the update
       }
 
+      // Store old value before update for recommendation migration
+      const oldEstimatedCalories = profile?.estimated_calories;
+
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
@@ -320,6 +423,18 @@ export default function ProfileManagePage() {
         const errorData = await response.json();
         throw new Error(
           errorData.error || "Falha ao salvar perfil. Tente novamente."
+        );
+      }
+
+      // Update diet recommendations if calories changed
+      if (
+        estimatedCalories !== undefined &&
+        estimatedCalories !== oldEstimatedCalories
+      ) {
+        await updateDietRecommendationsForNewCalories(
+          user.id,
+          oldEstimatedCalories,
+          estimatedCalories
         );
       }
 
@@ -386,8 +501,11 @@ export default function ProfileManagePage() {
             goals: [profile.goal],
           });
 
+          // Store old value before update for recommendation migration
+          const oldEstimatedCalories = profile.estimated_calories;
+
           // Update profile with new estimated calories
-          await fetch("/api/auth/me", {
+          const response = await fetch("/api/auth/me", {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -396,6 +514,15 @@ export default function ProfileManagePage() {
               estimated_calories: estimatedCalories,
             }),
           });
+
+          // Update diet recommendations if calories changed and update succeeded
+          if (response.ok && estimatedCalories !== oldEstimatedCalories) {
+            await updateDietRecommendationsForNewCalories(
+              user.id,
+              oldEstimatedCalories,
+              estimatedCalories
+            );
+          }
         }
       } catch (calorieError) {
         console.error(
