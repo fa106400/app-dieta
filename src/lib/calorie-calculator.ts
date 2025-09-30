@@ -60,7 +60,37 @@ export function calculateEstimatedCalories(userProfile: UserProfileForCalories):
     adjustedCalories = tdee + 300; // Surplus for muscle gain
   }
 
-  console.log('[calorieCalculator] Adjusted Calories:', adjustedCalories);
+  console.log('[calorieCalculator] Adjusted Calories (before rounding):', adjustedCalories);
   
-  return Math.round(adjustedCalories);
+  // Available diet calorie levels (1400 to 4000, increments of 200)
+  const availableCalorieLevels = [
+    1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 
+    3000, 3200, 3400, 3600, 3800, 4000
+  ];
+  
+  // Find the closest calorie level from available diets
+  let closestLevel = availableCalorieLevels[0];
+  let minDifference = Math.abs(adjustedCalories - closestLevel);
+  
+  for (const level of availableCalorieLevels) {
+    const difference = Math.abs(adjustedCalories - level);
+    
+    if (difference < minDifference) {
+      closestLevel = level;
+      minDifference = difference;
+    } else if (difference === minDifference) {
+      // Exactly between two numbers - use goal to decide
+      if (userProfile.goals?.includes('gain_muscle')) {
+        // For gain_muscle, prefer the higher value
+        closestLevel = Math.max(closestLevel, level);
+      } else {
+        // For lose_weight, maintain, health, or any other goal, prefer the lower value
+        closestLevel = Math.min(closestLevel, level);
+      }
+    }
+  }
+  
+  console.log('[calorieCalculator] Rounded to closest diet level:', closestLevel);
+  
+  return closestLevel;
 }
