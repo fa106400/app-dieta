@@ -61,58 +61,93 @@ This document outlines the detailed implementation plan for adding the `estimate
   - ✅ Update the profile with the new estimated calories
   - ✅ **Error Handling**: If calculation fails, keep the old value in the database
 
-### 8. Update Weight API (`src/app/api/me/weight/route.ts`)
-- In the POST method (after successful weight insertion):
-  - Fetch the user's current profile data
-  - **Use the newly inserted weight** for calorie calculation (not `weight_start_kg`)
-  - Calculate new estimated calories using the externalized function
-  - Update the profile with the new `estimated_calories` value
-  - **Error Handling**: If calculation fails, log error but don't fail the weight insertion
-- In the PUT method (after successful weight update):
-  - Same logic as POST method
-  - **Use the updated weight** for calorie calculation
+### 8. Update Weight API (`src/app/api/me/weight/route.ts`) ❌ SKIPPED
+- ❌ **Decision: Not implemented to maintain clean API responsibilities**
+- **Reason**: The Weight API is only used by:
+  - Onboarding process (which already calculates calories before calling the API)
+  - Profile page uses direct Supabase queries (not this API)
+- **Result**: No calorie calculation logic added to this API to:
+  - Avoid redundant calculations during onboarding
+  - Keep API responsibilities focused (weight management only)
+  - Prevent unnecessary database operations
 
-## Phase 6: Specific Tab Integration
+## Phase 6: Specific Tab Integration ✅ COMPLETED
 
-### 9. Personal Tab Integration
-- When "Salvar" button is clicked on Personal tab:
-  - Recalculate `estimated_calories` using updated personal data
-  - Update the profile with new estimated calories
-  - **Error Handling**: Keep old value if calculation fails
+### 9. Personal Tab Integration ✅
+- ✅ When "Salvar" button is clicked on Personal tab (line 791):
+  - ✅ Recalculate `estimated_calories` using updated personal data
+  - ✅ Update the profile with new estimated calories
+  - ✅ **Error Handling**: Keep old value if calculation fails
+- ✅ **Implementation**: Uses `saveProfile()` function which already includes calorie calculation logic
 
-### 10. Activity Tab Integration
-- When "Salvar" button is clicked on Activity tab:
-  - Recalculate `estimated_calories` using updated activity level
-  - Update the profile with new estimated calories
-  - **Error Handling**: Keep old value if calculation fails
+### 10. Activity Tab Integration ✅
+- ✅ When "Salvar" button is clicked on Activity tab (line 964):
+  - ✅ Recalculate `estimated_calories` using updated activity level
+  - ✅ Update the profile with new estimated calories
+  - ✅ **Error Handling**: Keep old value if calculation fails
+- ✅ **Implementation**: Uses `saveProfile()` function which already includes calorie calculation logic
 
-### 11. Weight and Progress Tab Integration
-- When new weight entry is added:
-  - **Use the new weight value** for calorie calculation
-  - Recalculate `estimated_calories` using the new weight
-  - Update the profile with new estimated calories
-  - **Error Handling**: Keep old value if calculation fails
+### 11. Weight and Progress Tab Integration ✅
+- ✅ When new weight entry is added (via `addWeight()` function):
+  - ✅ **Use the new weight value** for calorie calculation (line 383)
+  - ✅ Recalculate `estimated_calories` using the new weight (lines 374-387)
+  - ✅ Update the profile with new estimated calories (lines 390-397)
+  - ✅ **Error Handling**: Keep old value if calculation fails (lines 375-378)
 
-## Phase 7: Interface Updates
+## Phase 7: Interface Updates ✅ COMPLETED
 
-### 12. Update Profile Interfaces
-- Update any TypeScript interfaces that reference profile data
-- Ensure `estimated_calories` is included in all relevant type definitions
-- Update any components that display or use profile data
+### 12. Update Profile Interfaces ✅
+- ✅ Update any TypeScript interfaces that reference profile data
+- ✅ Ensure `estimated_calories` is included in all relevant type definitions
+- ✅ Update any components that display or use profile data
 
-## Phase 8: Error Handling Implementation
+**Interfaces Updated:**
+- ✅ `supabase.ts` - profiles table Row, Insert, Update types (Phase 1)
+- ✅ `src/lib/user-profile.ts` - CreateProfileData interface (Phase 3)
+- ✅ `src/app/(app)/onboarding/page.tsx` - OnboardingData interface (Phase 4)
+- ✅ `src/app/(app)/profile/page.tsx` - ProfileData interface (Phase 5)
+- ✅ `src/lib/calorie-calculator.ts` - UserProfileForCalories interface (Phase 2)
 
-### 13. Onboarding Error Handling
-- Wrap calorie calculation in try-catch
-- Display user-friendly error message if calculation fails
-- Prevent form submission until calculation succeeds
-- Provide retry mechanism
+**Other Components Checked:**
+- ✅ `src/components/layout/UserMenu.tsx` - Only fetches alias/avatar, no changes needed
+- ✅ `src/components/auth/OnboardingGuard.tsx` - Only checks onboarding_completed, no changes needed
 
-### 14. Profile Page Error Handling
-- Wrap calorie calculations in try-catch blocks
-- Log errors for debugging
-- **Preserve existing `estimated_calories` value** if calculation fails
-- Continue with normal profile update flow even if calorie calculation fails
+## Phase 8: Error Handling Implementation ✅ COMPLETED
+
+### 13. Onboarding Error Handling ✅
+- ✅ Wrap calorie calculation in try-catch (lines 243-256)
+- ✅ Display user-friendly error message if calculation fails (line 253-255)
+- ✅ Prevent form submission until calculation succeeds (throws error, stops execution)
+- ✅ Provide retry mechanism (error displayed to user, they can try again)
+
+**Implementation**: `/onboarding/page.tsx` lines 241-256
+```typescript
+try {
+  estimatedCalories = calculateEstimatedCalories({...});
+} catch (calorieError) {
+  console.error("Error calculating estimated calories:", calorieError);
+  throw new Error("Falha ao calcular estimativa de calorias. Tente novamente.");
+}
+```
+
+### 14. Profile Page Error Handling ✅
+- ✅ Wrap calorie calculations in try-catch blocks
+- ✅ Log errors for debugging
+- ✅ **Preserve existing `estimated_calories` value** if calculation fails
+- ✅ Continue with normal profile update flow even if calorie calculation fails
+
+**Implementations:**
+1. ✅ **saveProfile() function** (lines 275-304):
+   - Try-catch around calorie calculation
+   - Logs errors: `console.error("Error calculating estimated calories:", calorieError)`
+   - Preserves old value by not including `estimated_calories` in update if calculation fails
+   - Profile update continues normally
+
+2. ✅ **addWeight() function** (lines 374-405):
+   - Try-catch around calorie calculation
+   - Logs errors: `console.error("Error updating estimated calories after weight entry:", calorieError)`
+   - Preserves old value (doesn't send update if calculation fails)
+   - Weight entry operation continues successfully
 
 ## Phase 9: Testing and Validation
 
