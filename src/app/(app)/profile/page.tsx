@@ -406,21 +406,27 @@ export default function ProfileManagePage() {
       // Store old value before update for recommendation migration
       const oldEstimatedCalories = profile?.estimated_calories;
 
+      const requestBody = {
+        ...updatedProfile,
+        ...(estimatedCalories !== undefined && {
+          estimated_calories: estimatedCalories,
+        }),
+      };
+
+      console.log("[saveProfile] Request body being sent to API:", requestBody);
+
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...updatedProfile,
-          ...(estimatedCalories !== undefined && {
-            estimated_calories: estimatedCalories,
-          }),
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("[saveProfile] API error response:", errorData);
+        console.error("[saveProfile] Response status:", response.status);
         throw new Error(
           errorData.error || "Falha ao salvar perfil. Tente novamente."
         );
