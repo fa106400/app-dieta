@@ -781,11 +781,6 @@ export default function ProfileManagePage() {
                       </div>
                     ))}
                   </RadioGroup>
-                  <p className="text-sm text-yellow-500 mt-4 font-bold">
-                    Dica: altere seu objetivo apenas no dia de solicitar novas
-                    recomendações.
-                    <Sparkles className="h-4 w-4 inline-block ml-2" />
-                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -858,6 +853,11 @@ export default function ProfileManagePage() {
                       </div>
                     ))}
                   </div>
+
+                  <p className="text-sm text-yellow-500 mt-4 font-bold">
+                    Dica: Altere suas preferências alimentares apenas no dia de
+                    solicitar novas recomendações de IA.
+                  </p>
                 </div>
 
                 {/* <div>
@@ -960,11 +960,6 @@ export default function ProfileManagePage() {
                     </CardContent>
                   </Card>
                 )}
-                <p className="text-sm text-yellow-500 mt-4 font-bold">
-                  Dica: altere seu nível de atividade apenas no dia de solicitar
-                  novas recomendações.
-                  <Sparkles className="h-4 w-4 inline-block ml-2" />
-                </p>
               </CardContent>
             </Card>
             <div className="flex justify-end">

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   // Clock,
   // Users,
-  // Star,
+  Star,
   Sparkles,
   // ChevronRight,
   // EyeClosed,
@@ -222,7 +222,6 @@ export function DietCard({
               {diet.difficulty || "Desconhecida"}
             </Badge>
           </div> */}
-
           {/* <div className="flex items-center justify-between text-md ">
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
@@ -235,7 +234,6 @@ export function DietCard({
               </div>
             )}
           </div> */}
-
           {diet.tags && diet.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {/* mostra até 3 tags */}
@@ -253,6 +251,11 @@ export function DietCard({
               )*/}
             </div>
           )}
+
+          {/*showing slug for debugging*/}
+          <div className="flex items-center justify-between text-md bg-yellow-400 p-2 rounded-md">
+            {diet.slug && <div className="flex items-center">{diet.slug}</div>}
+          </div>
         </div>
 
         <div className="pt-2">
