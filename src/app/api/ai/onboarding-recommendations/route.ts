@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get available diets
-    const { data: diets, error: dietsError } = await supabase
+    // Get available diets filtered by user's estimated calories
+    let dietsQuery = supabase
       .from('diets')
       .select(`
         id,
@@ -72,7 +72,14 @@ export async function POST(request: NextRequest) {
         shopping_plan,
         tags
       `)
-      .eq('is_public', true)
+      .eq('is_public', true);
+
+    // Filter by estimated_calories if available
+    if (profile.estimated_calories) {
+      dietsQuery = dietsQuery.eq('calories_total', profile.estimated_calories);
+    }
+
+    const { data: diets, error: dietsError } = await dietsQuery
       .order('title', { ascending: true })
       .limit(50);
 

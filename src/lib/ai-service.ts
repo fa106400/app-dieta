@@ -222,8 +222,8 @@ class AIService {
   private buildMockRecommendations(
     availableDiets: Array<{ id: string; title: string; description: string; category: string; calories_total: number; tags: string[] }>
   ): Array<{ dietId: string; score: number; reasoning: string }> {
-    // Pick up to 4 diets deterministically
-    const picks = availableDiets.slice(0, Math.min(4, availableDiets.length));
+    // Pick up to 2 diets deterministically
+    const picks = availableDiets.slice(0, Math.min(2, availableDiets.length));
     return picks.map((diet, index) => ({
       dietId: diet.id,
       score: Math.max(0.45, 0.8 - index * 0.1),
@@ -253,7 +253,7 @@ class AIService {
     const estimatedCalories = calculateEstimatedCalories(userProfile);
 
     return `
-You are a nutrition expert AI assistant specializing in personalized diet recommendations. Analyze the user profile and available diets to recommend the best 3 diets with detailed matching logic.
+You are a nutrition expert AI assistant specializing in personalized diet recommendations. Analyze the user profile and available diets to recommend the best 2 diets with detailed matching logic.
 
 USER PROFILE ANALYSIS:
 - Age: ${userProfile.age || 'Not specified'} years
@@ -293,7 +293,7 @@ Please provide your recommendations in the following JSON format:
 }
 
 REQUIREMENTS:
-- Provide exactly 3 recommendations
+- Provide exactly 2 recommendations
 - Scores should be between 0.0 and 1.0
 - Reasoning should be specific, detailed (2-3 sentences) and in pt-BR language 
 - Prioritize diets that best match the user's profile
