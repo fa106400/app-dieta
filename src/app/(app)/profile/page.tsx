@@ -756,7 +756,6 @@ export default function ProfileManagePage() {
                     />
                   </div>
                 </div>
-
                 <div>
                   <Label className="text-base font-medium">
                     Objetivo Principal
@@ -782,6 +781,11 @@ export default function ProfileManagePage() {
                       </div>
                     ))}
                   </RadioGroup>
+                  <p className="text-sm text-yellow-500 mt-4 font-bold">
+                    Dica: altere seu objetivo apenas no dia de solicitar novas
+                    recomendações.
+                    <Sparkles className="h-4 w-4 inline-block ml-2" />
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -932,7 +936,6 @@ export default function ProfileManagePage() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 {profile.activity_level && (
                   <Card className="bg-green-50 border-green-200">
                     {/* <h4 className="font-semibold text-green-900 mb-2">
@@ -957,6 +960,11 @@ export default function ProfileManagePage() {
                     </CardContent>
                   </Card>
                 )}
+                <p className="text-sm text-yellow-500 mt-4 font-bold">
+                  Dica: altere seu nível de atividade apenas no dia de solicitar
+                  novas recomendações.
+                  <Sparkles className="h-4 w-4 inline-block ml-2" />
+                </p>
               </CardContent>
             </Card>
             <div className="flex justify-end">

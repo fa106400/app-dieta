@@ -122,6 +122,10 @@ export async function POST(request: NextRequest) {
       tags: string[];
     }>;
 
+    //logar cada dieta valida antes de mandar para ai
+    console.log('[route.ts] User calories:', profile.estimated_calories);
+    console.log('[route.ts] Diets before sending to AI:', validDiets);
+
     const aiResponse = await aiService.generateDietRecommendations(
       userProfile,
       validDiets
