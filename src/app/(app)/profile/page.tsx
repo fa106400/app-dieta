@@ -160,6 +160,7 @@ export default function ProfileManagePage() {
 
   // Weight state
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
+  const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [weightLoading, setWeightLoading] = useState(true);
   const [weightError, setWeightError] = useState<string | null>(null);
   const [newWeight, setNewWeight] = useState("");
@@ -214,6 +215,13 @@ export default function ProfileManagePage() {
       if (error) throw error;
 
       setWeightEntries(data || []);
+
+      // Set the latest weight (last entry in the array since it's sorted ascending)
+      if (data && data.length > 0) {
+        setLatestWeight(data[data.length - 1].weight_kg);
+      } else {
+        setLatestWeight(null);
+      }
     } catch (err) {
       console.error("Error fetching weights:", err);
       setWeightError("Falha ao carregar peso. Tente novamente.");
@@ -266,9 +274,10 @@ export default function ProfileManagePage() {
       let estimatedCalories: number | undefined;
       try {
         // Merge current profile with updates to get complete data for calculation
+        // Use latestWeight from weights table instead of weight_start_kg
         const profileForCalculation = {
           age: updatedProfile.age ?? profile?.age,
-          weight: updatedProfile.weight_start_kg ?? profile?.weight_start_kg,
+          weight: latestWeight ?? profile?.weight_start_kg,
           height: updatedProfile.height_cm ?? profile?.height_cm,
           activityLevel:
             updatedProfile.activity_level ?? profile?.activity_level,
@@ -708,12 +717,12 @@ export default function ProfileManagePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="weight_start">Peso Inicial (kg):</Label>
+                    <Label htmlFor="weight_start">Peso Atual (kg):</Label>
                     <Input
                       id="weight_start"
                       type="number"
                       step="0.1"
-                      value={profile.weight_start_kg || ""}
+                      value={latestWeight ?? profile.weight_start_kg ?? ""}
                       disabled={true}
                       onChange={(e) =>
                         setProfile((prev) =>
