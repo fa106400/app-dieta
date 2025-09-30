@@ -82,7 +82,7 @@ export default function DietCatalogPage() {
     // Prevent multiple simultaneous fetches
     if (hasFetchedDiets.current) return;
 
-    if (!supabase) {
+    if (!supabase || !user) {
       setError("Erro ao conectar ao banco de dados. Tente novamente.");
       setLoading(false);
       return;
@@ -93,26 +93,82 @@ export default function DietCatalogPage() {
       setError(null);
       hasFetchedDiets.current = true;
 
-      const { data, error } = await supabase
-        .from("diets")
-        .select(
+      // First, get the user's estimated calories from profiles
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("estimated_calories")
+        .eq("user_id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching user profile:", profileError);
+        // If profile fetch fails, fetch all diets as fallback
+        const { data, error } = await supabase
+          .from("diets")
+          .select(
+            `
+            id,
+            title,
+            description,
+            category,
+            calories_total,
+            macros,
+            week_plan,
+            tags,
+            slug
           `
-          id,
-          title,
-          description,
-          category,
-          calories_total,
-          macros,
-          week_plan,
-          tags,
-          slug
-        `
-        )
-        .order("title", { ascending: true });
+          )
+          .order("title", { ascending: true });
 
-      if (error) throw error;
+        if (error) throw error;
+        setDiets(data || []);
+        return;
+      }
 
-      setDiets(data || []);
+      // If user has estimated_calories, filter diets by matching calories_total
+      if (profileData?.estimated_calories) {
+        const { data, error } = await supabase
+          .from("diets")
+          .select(
+            `
+            id,
+            title,
+            description,
+            category,
+            calories_total,
+            macros,
+            week_plan,
+            tags,
+            slug
+          `
+          )
+          .eq("calories_total", profileData.estimated_calories)
+          .order("title", { ascending: true });
+
+        if (error) throw error;
+        setDiets(data || []);
+      } else {
+        // If no estimated_calories, fetch all diets
+        const { data, error } = await supabase
+          .from("diets")
+          .select(
+            `
+            id,
+            title,
+            description,
+            category,
+            calories_total,
+            macros,
+            week_plan,
+            tags,
+            slug
+          `
+          )
+          .order("title", { ascending: true });
+
+        if (error) throw error;
+        setDiets(data || []);
+      }
     } catch (err) {
       console.error("Erro ao buscar planos:", err);
       setError("Não foi possível carregar os planos. Tente novamente.");
@@ -120,7 +176,7 @@ export default function DietCatalogPage() {
     } finally {
       setLoading(false);
     }
-  }, []); // No dependencies to prevent re-creation
+  }, [user]); // Added user as dependency
 
   const fetchRecommendedDiets = useCallback(async () => {
     // Prevent multiple simultaneous fetches
