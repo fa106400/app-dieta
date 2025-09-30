@@ -7,6 +7,7 @@ import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { useExperience } from "@/contexts/ExperienceContext";
 import { ExperienceService } from "@/lib/experience-service";
 import { supabase } from "@/lib/supabase";
+import { calculateEstimatedCalories } from "@/lib/calorie-calculator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,6 +76,7 @@ interface ProfileData {
   onboarding_completed: boolean;
   user_alias?: string;
   avatar_url?: string;
+  estimated_calories?: number;
 }
 
 interface WeightEntry {
@@ -260,12 +262,49 @@ export default function ProfileManagePage() {
       setProfileSaving(true);
       setProfileError(null);
 
+      // Calculate estimated calories if relevant fields are being updated
+      let estimatedCalories: number | undefined;
+      try {
+        // Merge current profile with updates to get complete data for calculation
+        const profileForCalculation = {
+          age: updatedProfile.age ?? profile?.age,
+          weight: updatedProfile.weight_start_kg ?? profile?.weight_start_kg,
+          height: updatedProfile.height_cm ?? profile?.height_cm,
+          activityLevel:
+            updatedProfile.activity_level ?? profile?.activity_level,
+          goals: updatedProfile.goal
+            ? [updatedProfile.goal]
+            : profile?.goal
+            ? [profile.goal]
+            : undefined,
+        };
+
+        // Only calculate if we have the required fields
+        if (
+          profileForCalculation.age &&
+          profileForCalculation.weight &&
+          profileForCalculation.height &&
+          profileForCalculation.activityLevel
+        ) {
+          estimatedCalories = calculateEstimatedCalories(profileForCalculation);
+        }
+      } catch (calorieError) {
+        console.error("Error calculating estimated calories:", calorieError);
+        // Don't fail the profile update if calorie calculation fails
+        // Keep the old value by not including estimated_calories in the update
+      }
+
       const response = await fetch("/api/auth/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedProfile),
+        body: JSON.stringify({
+          ...updatedProfile,
+          ...(estimatedCalories !== undefined && {
+            estimated_calories: estimatedCalories,
+          }),
+        }),
       });
 
       if (!response.ok) {
@@ -321,6 +360,41 @@ export default function ProfileManagePage() {
       setSelectedDate("");
       await fetchWeights();
       toast.success("Registro de peso adicionado com sucesso!");
+
+      // Recalculate estimated calories with the new weight
+      try {
+        if (
+          profile?.age &&
+          profile?.height_cm &&
+          profile?.activity_level &&
+          profile?.goal
+        ) {
+          const estimatedCalories = calculateEstimatedCalories({
+            age: profile.age,
+            weight: weight, // Use the new weight entry
+            height: profile.height_cm,
+            activityLevel: profile.activity_level,
+            goals: [profile.goal],
+          });
+
+          // Update profile with new estimated calories
+          await fetch("/api/auth/me", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              estimated_calories: estimatedCalories,
+            }),
+          });
+        }
+      } catch (calorieError) {
+        console.error(
+          "Error updating estimated calories after weight entry:",
+          calorieError
+        );
+        // Don't fail the weight entry operation if calorie update fails
+      }
 
       // Increase XP for weight logging
       try {

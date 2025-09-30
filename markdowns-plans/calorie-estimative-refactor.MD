@@ -48,18 +48,18 @@ This document outlines the detailed implementation plan for adding the `estimate
 
 ## Phase 5: Profile Page Integration
 
-### 7. Update Profile Page (`src/app/(app)/profile/page.tsx`)
-- Import the externalized calorie calculation function
-- Update the `ProfileData` interface to include `estimated_calories`
-- Modify the `saveProfile` function to:
-  - Calculate estimated calories using current profile data
-  - Include `estimated_calories` in the update payload
-  - **Error Handling**: If calculation fails, keep the old value in the database (don't update the field)
-- Update the `addWeight` function to:
-  - **Use the new weight entry** (not `weight_start_kg`) for calorie calculation
-  - Recalculate estimated calories after adding a new weight entry
-  - Update the profile with the new estimated calories
-  - **Error Handling**: If calculation fails, keep the old value in the database
+### 7. Update Profile Page (`src/app/(app)/profile/page.tsx`) ✅
+- ✅ Import the externalized calorie calculation function
+- ✅ Update the `ProfileData` interface to include `estimated_calories`
+- ✅ Modify the `saveProfile` function to:
+  - ✅ Calculate estimated calories using current profile data
+  - ✅ Include `estimated_calories` in the update payload
+  - ✅ **Error Handling**: If calculation fails, keep the old value in the database (don't update the field)
+- ✅ Update the `addWeight` function to:
+  - ✅ **Use the new weight entry** (not `weight_start_kg`) for calorie calculation
+  - ✅ Recalculate estimated calories after adding a new weight entry
+  - ✅ Update the profile with the new estimated calories
+  - ✅ **Error Handling**: If calculation fails, keep the old value in the database
 
 ### 8. Update Weight API (`src/app/api/me/weight/route.ts`)
 - In the POST method (after successful weight insertion):
