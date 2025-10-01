@@ -455,9 +455,9 @@ export default function DietCatalogPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold ">Catálogo de Planos</h1>
           <p className=" mt-1 text-lg">
@@ -506,8 +506,8 @@ export default function DietCatalogPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="space-y-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1">
             <DietSearch
               value={searchQuery}
@@ -551,12 +551,12 @@ export default function DietCatalogPage() {
       )*/}
 
       {/* All Diets Section - already sorted by recommendations first */}
-      <div className="space-y-4">
+      <div className="space-y-2 mb-2">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold ">
             {/* Todos os Planos */}
             {hasActiveFilters && (
-              <span className="text-md font-normal  ml-2">
+              <span className="text-[1.0rem] font-normal  ml-2">
                 ({filteredDiets.length} de {diets.length} planos)
               </span>
             )}

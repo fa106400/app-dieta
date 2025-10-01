@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Filter } from "lucide-react";
+import { X, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -117,7 +117,7 @@ export function DietFilters({ filters, onChange, onClear }: DietFiltersProps) {
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
             >
-              {isExpanded ? "Colapsar" : "Expandir"}
+              {isExpanded ? <ChevronUp /> : <ChevronDown />}
             </Button>
           </div>
         </div>
