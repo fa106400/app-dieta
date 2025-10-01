@@ -315,8 +315,7 @@ export function BadgeAchievementPopup({
                 <>
                   <Button
                     onClick={handleProceed}
-                    variant="outline"
-                    className="flex-1 text-[1.1rem] md:text-[1.2rem]"
+                    className="flex-1 font-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
                   >
                     Continuar
                   </Button>
