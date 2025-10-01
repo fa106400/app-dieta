@@ -17,8 +17,9 @@ import {
   // Users,
   // Star,
   ChevronDown,
-  Flame,
-  Utensils,
+  // Flame,
+  Info,
+  // Utensils,
   Sparkles,
   EyeClosed,
   // Calendar,
@@ -51,6 +52,7 @@ export default function DietDetailPage() {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0])); // Expand first day by default
   const [isFollowing, setIsFollowing] = useState(false);
   const [isDietInfoExpanded, setIsDietInfoExpanded] = useState(false); // Initialize as collapsed
+  const [isReasoningExpanded, setIsReasoningExpanded] = useState(false);
   //const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   // State to track which alt_item index is currently shown for each item (dayIndex-mealIndex-itemIndex -> altIndex)
   const [itemAltIndex, setItemAltIndex] = useState<Map<string, number>>(
@@ -71,13 +73,14 @@ export default function DietDetailPage() {
     wrapper.style.zIndex = "9999";
     document.body.appendChild(wrapper);
 
-    const NUM_SPARKLES = 5;
-    const MAX_DISTANCE_PX = 96;
+    const NUM_SPARKLES = 6; //5
+    const MAX_DISTANCE_PX = 96 * 2; //96
     const animations: Promise<void>[] = [];
     for (let i = 0; i < NUM_SPARKLES; i++) {
       const sparkle = document.createElement("span");
+      //orignal size 36
       sparkle.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="#fbbf24"><path d="M12 2l2.39 5.26L20 9l-5.2 2.26L12 16l-2.8-4.74L4 9l5.61-1.74L12 2z"/></svg>';
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="52" height="52" fill="#fbbf24"><path d="M12 2l2.39 5.26L20 9l-5.2 2.26L12 16l-2.8-4.74L4 9l5.61-1.74L12 2z"/></svg>';
       sparkle.style.position = "absolute";
       sparkle.style.left = "0";
       sparkle.style.top = "0";
@@ -596,7 +599,7 @@ export default function DietDetailPage() {
           >
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Flame className="h-5 w-5" />
+                <Info className="h-5 w-5" />
                 <span>Informações da Dieta</span>
               </div>
               {isDietInfoExpanded ? (
@@ -608,10 +611,12 @@ export default function DietDetailPage() {
           </CardHeader>
           {isDietInfoExpanded && (
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div className="text-center space-y-2">
-                  <div className="md:text-2xl text-xl font-bold text-sky-500">
-                    {diet.calories_total} kcal
+                  <div>
+                    <span className="md:text-2xl text-xl font-bold text-sky-500">
+                      {diet.calories_total} kcal
+                    </span>
                   </div>
                 </div>
                 {diet.macros && (
@@ -650,30 +655,42 @@ export default function DietDetailPage() {
       {/* Why recommended (only if this diet was recommended for the user) */}
       {diet.recommendation_reasoning && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Sparkles className="h-5 w-5 text-yellow-500" />
-              <span>Porque este plano foi recomendado</span>
+          <CardHeader
+            className="cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => setIsReasoningExpanded(!isReasoningExpanded)}
+          >
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="h-5 w-5 text-yellow-500" />
+                <span>Porque este plano?</span>
+              </div>
+              {isReasoningExpanded ? (
+                <ChevronDown className="h-5 w-5" />
+              ) : (
+                <EyeClosed className="h-5 w-5" />
+              )}
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className=" whitespace-pre-line text-lg">
-              {diet.recommendation_reasoning}
-            </p>
-          </CardContent>
+          {isReasoningExpanded && (
+            <CardContent>
+              <p className=" whitespace-pre-line text-lg">
+                {diet.recommendation_reasoning}
+              </p>
+            </CardContent>
+          )}
         </Card>
       )}
 
       {/* Weekly Meal Plan */}
       {diet.week_plan && (
-        <Card>
-          <CardHeader>
+        <Card className="p-0 m-0 border-none">
+          {/* <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Utensils className="h-5 w-5" />
               <span>Plano de Refeições</span>
             </CardTitle>
-          </CardHeader>
-          <CardContent>
+          </CardHeader> */}
+          <CardContent className="p-0 m-0">
             <div className="space-y-4">
               {(
                 diet.week_plan as Json & {
@@ -737,10 +754,7 @@ export default function DietDetailPage() {
                       <CardContent>
                         <div className="space-y-3">
                           {day.meals.map((meal, mealIndex) => (
-                            <div
-                              key={mealIndex}
-                              className="p-4 bg-gray-50 rounded-lg"
-                            >
+                            <div key={mealIndex} className="p-0 rounded-lg">
                               <div className="flex items-center justify-between mb-3">
                                 <div>
                                   <h4 className="font-medium">{meal.name}</h4>

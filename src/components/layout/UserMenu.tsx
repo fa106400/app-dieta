@@ -145,13 +145,13 @@ export function UserMenu() {
     wrapper.style.zIndex = "9999";
     document.body.appendChild(wrapper);
 
-    const NUM_SPARKLES = 5;
-    const MAX_DISTANCE_PX = 96;
+    const NUM_SPARKLES = 6;
+    const MAX_DISTANCE_PX = 96 * 2;
     const animations: Promise<void>[] = [];
     for (let i = 0; i < NUM_SPARKLES; i++) {
       const sparkle = document.createElement("span");
       sparkle.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="#fbbf24"><path d="M12 2l2.39 5.26L20 9l-5.2 2.26L12 16l-2.8-4.74L4 9l5.61-1.74L12 2z"/></svg>';
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="52" height="52" fill="#fbbf24"><path d="M12 2l2.39 5.26L20 9l-5.2 2.26L12 16l-2.8-4.74L4 9l5.61-1.74L12 2z"/></svg>';
       sparkle.style.position = "absolute";
       sparkle.style.left = "0";
       sparkle.style.top = "0";
