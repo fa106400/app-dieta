@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   // Clock,
   // Users,
-  Star,
+  // Star,
   Sparkles,
   // ChevronRight,
   // EyeClosed,
@@ -19,12 +19,14 @@ interface DietCardProps {
   diet: Diet;
   viewMode: "grid" | "list";
   isRecommended?: boolean;
+  isCurrentDiet?: boolean;
 }
 
 export function DietCard({
   diet,
   // viewMode,
   isRecommended = false,
+  isCurrentDiet = false,
 }: DietCardProps) {
   // lista com todos os valores possiveis para cada tag
   const tags = [
@@ -198,6 +200,7 @@ export function DietCard({
                 <Sparkles className="h-4 w-4 text-yellow-500 flex-shrink-0" />
               )}
             </div>
+
             {/* <div className="flex items-center space-x-1 text-md ">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span>{diet.popularity_score || 0}</span>
@@ -205,6 +208,14 @@ export function DietCard({
               <span>Popular</span>
             </div> */}
           </div>
+          {isCurrentDiet && (
+            <Badge
+              variant="default"
+              className="bg-green-500 text-white font-bold text-xs"
+            >
+              Seguindo
+            </Badge>
+          )}
         </div>
       </CardHeader>
 
@@ -253,9 +264,9 @@ export function DietCard({
           )}
 
           {/*showing slug for debugging*/}
-          <div className="flex items-center justify-between text-md bg-yellow-400 p-2 rounded-md">
+          {/* <div className="flex items-center justify-between text-md bg-yellow-400 p-2 rounded-md">
             {diet.slug && <div className="flex items-center">{diet.slug}</div>}
-          </div>
+          </div> */}
         </div>
 
         <div className="pt-2">

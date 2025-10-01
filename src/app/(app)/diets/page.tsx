@@ -60,6 +60,7 @@ export default function DietCatalogPage() {
   const [diets, setDiets] = useState<Diet[]>([]);
   const [recommendedDiets, setRecommendedDiets] = useState<Diet[]>([]);
   const [filteredDiets, setFilteredDiets] = useState<Diet[]>([]);
+  const [currentDietId, setCurrentDietId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -230,6 +231,29 @@ export default function DietCatalogPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]); // Only depend on user.id, not the entire user object
 
+  const fetchCurrentDiet = useCallback(async () => {
+    if (!user || !supabase) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("user_current_diet")
+        .select("diet_id")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching current diet:", error);
+        return;
+      }
+
+      setCurrentDietId(data?.diet_id || null);
+    } catch (err) {
+      console.error("Error fetching current diet:", err);
+      setCurrentDietId(null);
+    }
+  }, [user]);
+
   const applyFiltersAndSearch = useCallback(() => {
     // Merge recommendation metadata into the full diets list
     const recommendationById = new Map<
@@ -347,6 +371,13 @@ export default function DietCatalogPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, fetchRecommendedDiets]);
+
+  // Fetch current diet when user changes
+  useEffect(() => {
+    if (user) {
+      fetchCurrentDiet();
+    }
+  }, [user, fetchCurrentDiet]);
 
   // Apply filters and search
   useEffect(() => {
@@ -512,6 +543,7 @@ export default function DietCatalogPage() {
                 diet={diet}
                 viewMode={"grid"}
                 isRecommended={true}
+                isCurrentDiet={diet.id === currentDietId}
               />
             ))}
           </div>
@@ -564,6 +596,7 @@ export default function DietCatalogPage() {
                 diet={diet}
                 viewMode={"grid"}
                 isRecommended={!!diet.is_recommended}
+                isCurrentDiet={diet.id === currentDietId}
               />
             ))}
           </div>
