@@ -554,7 +554,7 @@ export default function HomePage() {
                 <div className="space-y-4">
                   {/* Current Weight */}
                   {personalSnapshot?.currentWeight && (
-                    <div className="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-sky-100 rounded-lg">
                       <div>
                         <p className="text-md">
                           Peso atual:{" "}
@@ -604,7 +604,7 @@ export default function HomePage() {
 
                   {/* Current Diet */}
                   {personalSnapshot?.currentDiet && (
-                    <div className="p-3 bg-green-50 rounded-lg">
+                    <div className="p-3 bg-green-100 rounded-lg">
                       <p className="text-md">Plano atual:</p>
                       <span className="font-bold">
                         {personalSnapshot.currentDiet.title}
@@ -626,7 +626,7 @@ export default function HomePage() {
                   )}
 
                   {/* AI Recommendations Refresh */}
-                  <div className="flex-col items-center justify-between p-3 bg-purple-50 rounded-lg">
+                  <div className="flex-col items-center justify-between p-3 bg-purple-100 rounded-lg">
                     <p className="text-md">Recomendações da IA</p>
                     <div className="flex items-center justify-between">
                       <span className="font-bold">
