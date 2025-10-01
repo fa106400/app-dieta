@@ -329,6 +329,18 @@ export default function HomePage() {
 
   return (
     <div className="container mx-auto px-4 py-4">
+      {/* TEMPORARY TEST BUTTON - DELETE WHEN DONE */}
+      {/* <div className="mb-4">
+        <Button
+          onClick={() => router.push("/badge-test")}
+          variant="outline"
+          size="sm"
+          className="bg-yellow-100 border-yellow-300 hover:bg-yellow-200"
+        >
+          🧪 Test Badge Modal (TEMPORARY - DELETE ME)
+        </Button>
+      </div> */}
+
       {/* Header 
       <div className="mb-6">
         <h1 className="text-2xl font-bold  mb-2">
@@ -391,7 +403,7 @@ export default function HomePage() {
                 <span>Ranking</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-4">
               {miniRanking ? (
                 <div className="space-y-4">
                   {miniRanking.isCurrentUserTop ? (

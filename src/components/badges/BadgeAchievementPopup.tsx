@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Trophy,
-  Award,
-  Target,
-  TrendingUp,
-  ShoppingCart,
-  Weight,
-  Star,
+  // Trophy,
+  // Award,
+  // Target,
+  // TrendingUp,
+  // ShoppingCart,
+  // Weight,
+  // Star,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
@@ -141,29 +141,29 @@ export function BadgeAchievementPopup({
   //   router.push("/badges");
   // };
 
-  const getBadgeIcon = (badge: BadgeData) => {
-    if (badge.icon_name) {
-      switch (badge.icon_name) {
-        case "trophy":
-          return <Trophy className="h-16 w-16 text-yellow-500" />;
-        case "award":
-          return <Award className="h-16 w-16 text-sky-500" />;
-        case "target":
-          return <Target className="h-16 w-16 text-green-500" />;
-        case "trending-up":
-          return <TrendingUp className="h-16 w-16 text-purple-500" />;
-        case "shopping-cart":
-          return <ShoppingCart className="h-16 w-16 text-orange-500" />;
-        case "weight":
-          return <Weight className="h-16 w-16 text-red-500" />;
-        case "star":
-          return <Star className="h-16 w-16 text-yellow-400" />;
-        default:
-          return <Trophy className="h-16 w-16 text-yellow-500" />;
-      }
-    }
-    return <Trophy className="h-16 w-16 text-yellow-500" />;
-  };
+  // const getBadgeIcon = (badge: BadgeData) => {
+  //   if (badge.icon_name) {
+  //     switch (badge.icon_name) {
+  //       case "trophy":
+  //         return <Trophy className="h-16 w-16 text-yellow-500" />;
+  //       case "award":
+  //         return <Award className="h-16 w-16 text-sky-500" />;
+  //       case "target":
+  //         return <Target className="h-16 w-16 text-green-500" />;
+  //       case "trending-up":
+  //         return <TrendingUp className="h-16 w-16 text-purple-500" />;
+  //       case "shopping-cart":
+  //         return <ShoppingCart className="h-16 w-16 text-orange-500" />;
+  //       case "weight":
+  //         return <Weight className="h-16 w-16 text-red-500" />;
+  //       case "star":
+  //         return <Star className="h-16 w-16 text-yellow-400" />;
+  //       default:
+  //         return <Trophy className="h-16 w-16 text-yellow-500" />;
+  //     }
+  //   }
+  //   return <Trophy className="h-16 w-16 text-yellow-500" />;
+  // };
 
   const getCriteriaDescription = (criteria: BadgeData["criteria"]) => {
     if (!criteria) return "Nenhum critério disponível";
@@ -204,25 +204,26 @@ export function BadgeAchievementPopup({
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         {/* Modal */}
         <Card className="w-full max-w-md mx-auto bg-white shadow-2xl border-0">
-          <CardHeader className="text-center pb-4">
-            <div className="flex justify-center mb-4">
+          <CardHeader className="text-center pb-0">
+            <div className="flex justify-center mb-2">
               <div className="relative">
-                <div className="absolute inset-0 bg-yellow-400 rounded-full blur-lg opacity-30"></div>
-                <div className="relative bg-yellow-100 rounded-full p-4">
+                {/* <div className="absolute inset-0 bg-yellow-400 rounded-full  opacity-30"></div> */}
+                {/* <div className="relative bg-yellow-100 rounded-full p-4">
                   <Trophy className="h-16 w-16 text-yellow-600" />
-                </div>
+                </div> */}
+                <span className="text-5xl">🎉</span>
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold ">🎉 Parabéns!</CardTitle>
-            <CardDescription className="text-lg ">
+            <CardTitle className="text-2xl font-bold">Parabéns!</CardTitle>
+            <CardDescription className="text-lg mb-2">
               {badges.length === 1
                 ? "Você desbloqueou uma nova conquista!"
                 : `Você desbloqueou ${badges.length} novas conquistas!`}
-              {badges.length > 1 && (
-                <div className="mt-2 text-md ">
+              {/* {badges.length > 1 && (
+                <div className="mt-2 text-sm md:text-lg ">
                   Conquista {currentBadgeIndex + 1} de {badges.length}
                 </div>
-              )}
+              )} */}
               {/* {deferredAction && (
                 <div className="mt-2 text-md text-sky-500 font-medium">
                   ⏳ Aguardando sua ação para continuar...
@@ -235,12 +236,12 @@ export function BadgeAchievementPopup({
             {/* Current Badge Display */}
             <div className="relative">
               <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
-                <div className="flex-shrink-0">
+                {/* <div className="flex-shrink-0">
                   {getBadgeIcon(currentBadge)}
-                </div>
+                </div> */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="text-lg font-semibold ">
+                  <div className="flex items-center space-x-2 mb-2 justify-between">
+                    <h3 className="text-base md:text-xl font-semibold ">
                       {currentBadge.title}
                     </h3>
                     <Badge
@@ -251,53 +252,53 @@ export function BadgeAchievementPopup({
                       Nova!
                     </Badge>
                   </div>
-                  <p className="text-md  mb-2">{currentBadge.description}</p>
-                  <p className="text-sm ">
+                  <p className="text-[0.9375rem] md:text-[1.1rem] mb-2">
+                    {currentBadge.description}
+                  </p>
+                  <p className="text-[0.9375rem] md:text-[1.1rem]">
                     <strong>Critério:</strong>{" "}
                     {getCriteriaDescription(currentBadge.criteria)}
                   </p>
                 </div>
               </div>
-
-              {/* Navigation Arrows */}
-              {badges.length > 1 && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={goToPreviousBadge}
-                    disabled={isFirstBadge}
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 rounded-full"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={goToNextBadge}
-                    disabled={isLastBadge}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 rounded-full"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </>
-              )}
             </div>
 
-            {/* Progress Dots */}
+            {/* Progress Dots with Navigation Arrows */}
             {badges.length > 1 && (
-              <div className="flex justify-center space-x-2">
-                {badges.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentBadgeIndex(index)}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentBadgeIndex
-                        ? "bg-yellow-500"
-                        : "bg-gray-300"
-                    }`}
-                  />
-                ))}
+              <div className="flex justify-center items-center space-x-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPreviousBadge}
+                  disabled={isFirstBadge}
+                  className="h-8 w-8 p-0 rounded-full"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                <div className="flex justify-center space-x-2">
+                  {badges.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentBadgeIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentBadgeIndex
+                          ? "bg-yellow-500"
+                          : "bg-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToNextBadge}
+                  disabled={isLastBadge}
+                  className="h-8 w-8 p-0 rounded-full"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
             )}
 
@@ -315,7 +316,7 @@ export function BadgeAchievementPopup({
                   <Button
                     onClick={handleProceed}
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 text-[1.1rem] md:text-[1.2rem]"
                   >
                     Continuar
                   </Button>
