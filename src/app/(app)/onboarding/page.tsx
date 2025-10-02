@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import {
-  ArrowLeft,
-  ArrowRight,
+  // ArrowLeft,
+  // ArrowRight,
   Check,
   Loader2,
   AlertCircle,
@@ -746,12 +746,13 @@ function OnboardingPageContent() {
             {/* Navigation Buttons */}
             <div className="flex justify-between mt-6">
               <Button
-                variant="outline"
+                variant="default"
+                size="default"
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
               >
-                <ArrowLeft className="h-4 w-4" />
+                {/* <ArrowLeft className="h-4 w-4" /> */}
                 Anterior
               </Button>
 
@@ -759,22 +760,26 @@ function OnboardingPageContent() {
                 <Button
                   onClick={nextStep}
                   disabled={!canProceed()}
-                  className="flex items-center space-x-2"
+                  size="default"
+                  variant="default"
+                  className="flex items-center space-x-2 font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
                 >
                   Próximo
-                  <ArrowRight className="h-4 w-4" />
+                  {/* <ArrowRight className="h-4 w-4" /> */}
                 </Button>
               ) : (
                 <Button
                   onClick={handleSubmit}
                   disabled={!canProceed() || isLoading}
-                  className="flex items-center space-x-2"
+                  size="default"
+                  variant="default"
+                  className="flex items-center space-x-2 font-bold bg-green-500 text-white uppercase text-[0.8rem]"
                 >
                   {isLoading ? (
                     "Salvando..."
                   ) : (
                     <>
-                      <Check className="h-4 w-4" />
+                      {/* <Check className="h-4 w-4" /> */}
                       Salvar
                     </>
                   )}
