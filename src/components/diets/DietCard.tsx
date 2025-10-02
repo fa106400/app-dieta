@@ -269,8 +269,25 @@ export function DietCard({
           </div> */}
         </div>
 
+        {/* 
+        
+        className={`h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${
+        isRecommended
+          ? "ring-2 ring-yellow-200 bg-gradient-to-b from-yellow-50 to-white"
+          : ""
+      }`}
+        
+        */}
+
         <div className="pt-2">
-          <Button asChild className="w-full" size="sm">
+          <Button
+            asChild
+            size="sm"
+            variant="default"
+            className={`w-full font-bold text-white uppercase text-[0.8rem] ${
+              isRecommended ? "bg-yellow-500" : "bg-green-500"
+            }`}
+          >
             <Link href={`/diets/${diet.id}`}>
               Ver Detalhes
               {/* <EyeClosed className="h-4 w-4 ml-1" /> */}

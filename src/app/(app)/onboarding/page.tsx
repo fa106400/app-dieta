@@ -719,7 +719,7 @@ function OnboardingPageContent() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-3">
-          <h1 className="text-2xl font-bold  mb-2">Bem vindo!</h1>
+          <h1 className="text-2xl font-bold  text-gray-600 mb-2">Bem vindo!</h1>
           <p className="text-xl ">Conte nos um pouco sobre você.</p>
         </div>
         {/* Progress Bar */}

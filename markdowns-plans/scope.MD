@@ -285,8 +285,11 @@ This plan outlines the development of a complete nutrition and diet management p
 - **Diet catalog grid refactor for better UX** ✅
 - **Diet details refactor for better UX** ✅
 - **Badge modal refactor for better UX** ✅
-- **App colors**
 - **App menu icons** ✅
+- **App colors** ***get UX tips from duolingo, ex.: btns are always capslock, etc***
+***nao esquecer dos botoes do onboarding e paginas publicas***
+***pintei todos os H1 title de cinza... pintar todos os subtitles e textos de todas as paginas***
+- **Diet items icons**
 
 ### 5.5.4 Parking lot items on Kanban
 - **Basics cards**

@@ -8,7 +8,10 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent /*CardHeader, CardTitle*/,
+} from "@/components/ui/card";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -170,9 +173,9 @@ export default function SecurityPage() {
     }
   };
 
-  const handleCancel = () => {
-    router.push("/me");
-  };
+  // const handleCancel = () => {
+  //   router.push("/me");
+  // };
 
   const newPasswordValidation = formData.newPassword
     ? validatePassword(formData.newPassword)
@@ -184,33 +187,35 @@ export default function SecurityPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-0">
         {/* Header */}
-        <div className="flex items-center space-x-4 mb-6">
-          {/* <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/me")}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Voltar</span>
-          </Button> */}
-          <div className="flex items-center space-x-3">
-            <div>
-              <h1 className="text-2xl font-bold">Segurança</h1>
-              <p className=" mt-1 text-lg">
-                Gerencie a segurança da sua conta e senha
-              </p>
+        <div className="mb-2">
+          <div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-600">Segurança</h1>
+              </div>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => router.push("/me")}
+                className="flex items-center space-x-2 font-bold bg-gray-600 text-white uppercase text-[0.8rem]"
+              >
+                {/* <ArrowLeft className="h-4 w-4" /> */}
+                <span>voltar</span>
+              </Button>
             </div>
+            <p className=" mt-2 text-lg">
+              Gerencie a segurança da sua conta e senha.
+            </p>
           </div>
         </div>
 
         {/* Password Change Form */}
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
+        <Card className="max-w-2xl mx-auto mt-4">
+          {/* <CardHeader>
             <CardTitle>Alterar Senha</CardTitle>
-          </CardHeader>
+          </CardHeader> */}
           <CardContent className="space-y-6">
             {/* Current Password 
             <div className="space-y-2">
@@ -336,7 +341,9 @@ export default function SecurityPage() {
               <Button
                 onClick={handleSubmit}
                 disabled={isLoading || !validateForm().isValid}
-                className="flex-1"
+                size="default"
+                variant="default"
+                className="flex-1 font-bold bg-yellow-500 text-white uppercase text-[0.8rem]"
               >
                 {isLoading ? (
                   <>
@@ -347,14 +354,14 @@ export default function SecurityPage() {
                   "Atualizar Senha"
                 )}
               </Button>
-              <Button
+              {/* <Button
                 variant="outline"
                 onClick={handleCancel}
                 disabled={isLoading}
                 className="flex-1"
               >
                 Cancelar
-              </Button>
+              </Button> */}
             </div>
           </CardContent>
         </Card>

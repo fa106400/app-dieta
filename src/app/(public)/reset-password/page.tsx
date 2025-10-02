@@ -13,7 +13,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  // CardTitle,
 } from "@/components/ui/card";
 import { ArrowLeft, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
@@ -119,7 +119,7 @@ function ResetPasswordPageContent() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">Nova Senha</CardTitle>
+            {/* <CardTitle className="text-center">Nova Senha</CardTitle> */}
             <CardDescription className="text-center text-lg">
               Escolha uma senha forte para sua conta.
             </CardDescription>
@@ -190,7 +190,13 @@ function ResetPasswordPageContent() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                variant="default"
+                type="submit"
+                size="default"
+                className="w-full font-bold bg-green-500 text-white uppercase text-[0.8rem]"
+                disabled={isLoading}
+              >
                 {isLoading ? "Atualizando..." : "Atualizar Senha"}
               </Button>
             </form>

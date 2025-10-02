@@ -121,7 +121,13 @@ function LoginPageContent() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                variant="default"
+                type="submit"
+                size="default"
+                className="w-full font-bold bg-green-500 text-white uppercase text-[0.8rem]"
+                disabled={isLoading}
+              >
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>

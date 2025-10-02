@@ -23,11 +23,13 @@ import {
   Calendar,
   Loader2,
   AlertCircle,
-  Sparkles,
+  // Sparkles,
   CheckCircle,
   Lock,
+  Meh,
 } from "lucide-react";
 // import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface BadgeCriteria {
   event: string;
@@ -60,6 +62,7 @@ interface BadgeData {
 
 export default function BadgesPage() {
   const { user } = useAuthContext();
+  const router = useRouter();
   const [badges, setBadges] = useState<BadgeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -215,7 +218,12 @@ export default function BadgesPage() {
                 Falha ao carregar medalhas
               </h2>
               <p className=" mb-4 text-lg">{error}</p>
-              <Button onClick={() => fetchBadges("todas")} variant="outline">
+              <Button
+                onClick={() => fetchBadges("todas")}
+                variant="default"
+                size="sm"
+                className="font-bold bg-orange-500 text-white uppercase text-[0.8rem]"
+              >
                 Tentar novamente
               </Button>
             </CardContent>
@@ -232,10 +240,23 @@ export default function BadgesPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-0">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold  mb-2">Minhas Medalhas</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold  mb-2 text-gray-600">
+              Minhas Medalhas
+            </h1>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => router.push("/me")}
+              className="flex items-center space-x-2 font-bold bg-gray-600 text-white uppercase text-[0.8rem]"
+            >
+              {/* <ArrowLeft className="h-4 w-4" /> */}
+              <span>voltar</span>
+            </Button>
+          </div>
           <p className=" text-lg">
             Acompanhe suas conquistas e desbloqueie novas medalhas à medida que
             avança
@@ -310,27 +331,29 @@ export default function BadgesPage() {
             {earnedBadges.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Sparkles className="h-12 w-12  mx-auto mb-4" />
+                  <Meh className="h-12 w-12  mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">
                     Nenhuma Medalha Ainda
                   </h3>
                   <p className=" mb-4 text-lg">
-                    Comece sua jornada escolhendo uma dieta, acompanhando seu
-                    peso, ou explorando o app!
+                    Comece sua jornada escolhendo o plano mais indicado para
+                    você!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center">
                     <Button
-                      variant="outline"
+                      variant="default"
+                      size="sm"
                       onClick={() => (window.location.href = "/diets")}
+                      className="font-bold bg-yellow-500 text-white uppercase text-[0.8rem]"
                     >
                       Explorar Planos
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="outline"
                       onClick={() => (window.location.href = "/profile")}
                     >
                       Atualizar Perfil
-                    </Button>
+                    </Button> */}
                   </div>
                 </CardContent>
               </Card>

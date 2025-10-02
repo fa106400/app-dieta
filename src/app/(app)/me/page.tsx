@@ -48,10 +48,10 @@ export default function MePage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-0">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold  mb-2">Eu</h1>
+        <h1 className="text-2xl font-bold  text-gray-600 mb-2">Eu</h1>
         <p className=" text-lg">
           Gerencie seu perfil, acompanhe seu progresso e personalize sua
           experiência.

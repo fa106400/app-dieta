@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -107,9 +107,9 @@ function SignupPageContent() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Criar Conta</CardTitle>
-            <CardDescription className="text-center text-lg">
+            {/* <CardDescription className="text-center text-lg">
               Preencha seus detalhes para criar sua conta
-            </CardDescription>
+            </CardDescription> */}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -167,7 +167,7 @@ function SignupPageContent() {
                     )}
                   </button>
                 </div>
-                <p className="text-md ">
+                <p className="text-md text-yellow-500">
                   A senha deve ter pelo menos 6 caracteres
                 </p>
               </div>
@@ -210,7 +210,13 @@ function SignupPageContent() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                variant="default"
+                type="submit"
+                size="default"
+                className="w-full font-bold bg-green-500 text-white uppercase text-[0.8rem]"
+                disabled={isLoading}
+              >
                 {isLoading ? "Criando Conta..." : "Criar Conta"}
               </Button>
             </form>

@@ -459,7 +459,9 @@ export default function DietCatalogPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold ">Catálogo de Planos</h1>
+          <h1 className="text-2xl font-bold  text-gray-600">
+            Catálogo de Planos
+          </h1>
           <p className=" mt-1 text-lg">
             Descubra o plano perfeito para seus objetivos de saúde
           </p>

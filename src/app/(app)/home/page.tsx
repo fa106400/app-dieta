@@ -11,16 +11,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Bell,
   // Trophy,
-  TrendingUp,
+  // TrendingUp,
   Target,
   Award,
-  RefreshCw,
+  // RefreshCw,
   // Calendar,
   // Users,
   Star,
   AlertCircle,
   Loader2,
-  LibraryBig,
+  // LibraryBig,
   Trophy,
 } from "lucide-react";
 // import { toast } from "react-toastify";
@@ -365,19 +365,19 @@ export default function HomePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-1">
                   {announcements.map((announcement) => (
                     <div
                       key={announcement.id}
-                      className={`p-4 rounded-lg border ${
+                      className={`p-2 rounded-lg border ${
                         (announcement.priority || 0) > 0
-                          ? "border-orange-200 bg-orange-50"
-                          : "border-gray-200 bg-gray-50"
+                          ? "border-none bg-gray-50"
+                          : "border-none bg-gray-50"
                       }`}
                     >
-                      <h3 className="font-semibold text-md mb-2">
+                      <p className="font-semibold text-md mb-0">
                         {announcement.title}
-                      </h3>
+                      </p>
                       <p className="text-md ">{announcement.body}</p>
                       {/*
                       <p className="text-sm  mt-2">
@@ -439,9 +439,10 @@ export default function HomePage() {
                         Você está em 1º lugar! Continue assim!
                       </p>
                       <Button
-                        variant="outline"
+                        variant="default"
+                        size="sm"
                         onClick={() => router.push("/ranking")}
-                        className="w-full"
+                        className="w-full font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
                       >
                         Ver Ranking completo
                       </Button>
@@ -451,7 +452,7 @@ export default function HomePage() {
                     <div className="space-y-3">
                       {/* Top User */}
                       {miniRanking.topUser && (
-                        <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg ">
                           <Trophy className="h-6 w-6 text-yellow-500" />
                           <Avatar className="h-8 w-8">
                             <AvatarImage
@@ -481,7 +482,7 @@ export default function HomePage() {
 
                       {/* Current User */}
                       {miniRanking.currentUser && (
-                        <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg ">
                           <span className="text-lg font-semibold text-green-600 w-6 text-center">
                             {miniRanking.currentUser.rank}
                           </span>
@@ -511,9 +512,10 @@ export default function HomePage() {
                       )}
 
                       <Button
-                        variant="outline"
+                        variant="default"
+                        size="sm"
                         onClick={() => router.push("/ranking")}
-                        className="w-full"
+                        className="w-full font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
                       >
                         Ver Ranking completo
                       </Button>
@@ -526,7 +528,12 @@ export default function HomePage() {
                   <h3 className="text-lg font-semibold mb-2">
                     Carregando ranking...
                   </h3>
-                  <Button variant="outline" disabled>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    disabled
+                    className="font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
+                  >
                     Ver Ranking completo
                   </Button>
                 </div>
@@ -551,13 +558,13 @@ export default function HomePage() {
                   <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-red-600">{error}</p>
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
+                    className="font-bold bg-orange-500 text-white uppercase text-[0.8rem] mt-2"
                     onClick={() => {
                       setError(null);
                       fetchPersonalSnapshot();
                     }}
-                    className="mt-2"
                   >
                     Tentar novamente
                   </Button>
@@ -566,9 +573,9 @@ export default function HomePage() {
                 <div className="space-y-4">
                   {/* Current Weight */}
                   {personalSnapshot?.currentWeight && (
-                    <div className="flex items-center justify-between p-3 bg-sky-100 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-sky-400 text-white rounded-lg">
                       <div>
-                        <p className="text-md">
+                        <p className="text-md font-bold">
                           Peso atual:{" "}
                           <span className="font-bold">
                             {personalSnapshot.currentWeight.weight_kg} kg
@@ -580,9 +587,14 @@ export default function HomePage() {
                       </div>
                       {/* <TrendingUp className="h-6 w-6 text-sky-500" /> */}
                       {/** Button to redirect to weight history page */}
-                      <Button size="sm" onClick={() => router.push("/profile")}>
-                        <TrendingUp className="h-6 w-6 text-white" />
-                        Ver gráfico
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => router.push("/profile")}
+                        className="font-bold text-sky-500 uppercase text-[0.8rem]"
+                      >
+                        {/* <TrendingUp className="h-6 w-6 text-white" /> */}
+                        ver gráfico
                       </Button>
                     </div>
                   )}
@@ -626,20 +638,25 @@ export default function HomePage() {
 
                   {/** If no current diet, show a message to choose a diet */}
                   {!personalSnapshot?.currentDiet && (
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-green-400 text-white rounded-lg">
                       {/* <p className="font-medium ">Plano atual</p> */}
-                      <p className="font-medium">Escolha um plano!</p>
+                      <p className="font-bold">Escolha um plano!</p>
                       {/** Button to redirect to diets page */}
-                      <Button size="sm" onClick={() => router.push("/diets")}>
-                        <LibraryBig className="h-6 w-6 text-white" />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="font-bold text-green-500 uppercase text-[0.8rem]"
+                        onClick={() => router.push("/diets")}
+                      >
+                        {/* <LibraryBig className="h-6 w-6 text-white" /> */}
                         Ver catálogo
                       </Button>
                     </div>
                   )}
 
                   {/* AI Recommendations Refresh */}
-                  <div className="flex-col items-center justify-between p-3 bg-purple-100 rounded-lg">
-                    <p className="text-md">Recomendações da IA</p>
+                  <div className="flex-col items-center justify-between p-3 bg-purple-400 text-white rounded-lg">
+                    <p className="text-md font-bold">Recomendações da IA</p>
                     <div className="flex items-center justify-between">
                       <span className="font-bold">
                         {personalSnapshot?.canRefreshRecommendations
@@ -649,10 +666,12 @@ export default function HomePage() {
 
                       <Button
                         size="sm"
+                        variant="outline"
                         onClick={() => (window.location.href = "/profile")}
                         disabled={!personalSnapshot?.canRefreshRecommendations}
+                        className="font-bold text-purple-500 uppercase text-[0.8rem]"
                       >
-                        <RefreshCw className="h-4 w-4 mr-2" />
+                        {/* <RefreshCw className="h-4 w-4 mr-2" /> */}
                         Atualizar
                       </Button>
                     </div>
@@ -696,12 +715,12 @@ export default function HomePage() {
                     </div>
                   ))}
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
                     onClick={() => router.push("/badges")}
-                    className="w-full"
+                    className="w-full font-bold bg-yellow-500 text-white uppercase text-[0.8rem]"
                   >
-                    Ver todas as medalhas
+                    ver todas as medalhas
                   </Button>
                 </div>
               ) : (
@@ -714,9 +733,10 @@ export default function HomePage() {
                     Ganhe sua primeira medalha escolhendo um plano!
                   </p>
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
                     onClick={() => router.push("/diets")}
+                    className="w-full font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
                   >
                     Ver perfil
                   </Button>

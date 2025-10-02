@@ -481,7 +481,9 @@ export default function DietDetailPage() {
                 hasFetchedDiet.current = false;
                 fetchDiet();
               }}
-              variant="outline"
+              variant="default"
+              size="sm"
+              className="font-bold bg-orange-500 text-white uppercase text-[0.8rem]"
             >
               Tentar novamente
             </Button>
@@ -506,7 +508,7 @@ export default function DietDetailPage() {
             <span>Voltar</span>
           </Button> */}
           <div>
-            <h1 className="text-2xl font-bold ">
+            <h1 className="text-2xl font-bold text-gray-600">
               {diet.title || "Untitled Diet"}
             </h1>
             <p className=" mt-1 text-lg">
@@ -806,7 +808,7 @@ export default function DietDetailPage() {
                                       </div>
                                       {hasAlternatives && (
                                         <Button
-                                          variant="outline"
+                                          variant="default"
                                           size="sm"
                                           onClick={() =>
                                             handleSwapClick(
@@ -816,7 +818,7 @@ export default function DietDetailPage() {
                                               allItems.length
                                             )
                                           }
-                                          className="ml-2 min-w-[72px] justify-center"
+                                          className="ml-2 min-w-[72px] justify-center uppercase text-[0.8rem] bg-sky-500 text-white font-bold"
                                         >
                                           {loadingSwapKey ===
                                           `${dayIndex}-${mealIndex}-${itemIndex}` ? (
@@ -851,8 +853,11 @@ export default function DietDetailPage() {
           <Button
             onClick={diet.is_currently_active ? unfollowDiet : followNow}
             disabled={!diet || isFollowing}
-            size="lg"
-            className="px-4"
+            size="default"
+            variant="default"
+            className={`w-full font-bold text-white uppercase text-[0.8rem] ${
+              diet.is_currently_active ? "bg-red-500" : "bg-green-500"
+            }`}
           >
             {isFollowing ? (
               <>
@@ -872,9 +877,9 @@ export default function DietDetailPage() {
         {/* Shopping List Button */}
         <div className="flex justify-center" hidden={!diet.is_currently_active}>
           <Button
-            variant="outline"
-            size="lg"
-            className="px-4"
+            variant="default"
+            size="default"
+            className="w-full font-bold bg-yellow-500 text-white uppercase text-[0.8rem]"
             onClick={() => router.push("/shopping-list")}
           >
             Lista de Compras

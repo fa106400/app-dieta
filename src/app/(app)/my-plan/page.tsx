@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 // import { CurrentDietCard } from "@/components/diets/CurrentDietCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, AlertCircle, Target, Plus } from "lucide-react";
+import { Loader2, AlertCircle, /*Target, Plus, */ Meh } from "lucide-react";
 import type { Json } from "../../../../supabase";
 
 interface DietFromQuery {
@@ -186,7 +186,9 @@ export default function MyWeekPage() {
                 hasFetchedDiet.current = false;
                 fetchCurrentDiet();
               }}
-              variant="outline"
+              variant="default"
+              size="sm"
+              className="font-bold bg-orange-500 text-white uppercase text-[0.8rem] mt-2"
             >
               Tentar Novamente
             </Button>
@@ -202,7 +204,9 @@ export default function MyWeekPage() {
       {!currentDiet && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold ">Meu plano atual</h1>
+            <h1 className="text-2xl font-bold  text-gray-600">
+              Meu plano atual
+            </h1>
             {/*<p className=" mt-1">Acompanhe seu plano atual</p>*/}
           </div>
         </div>
@@ -225,17 +229,19 @@ export default function MyWeekPage() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Target className="h-12 w-12  mx-auto mb-4" />
+            <Meh className="h-12 w-12  mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Nenhum Plano Ativo</h3>
             <p className=" mb-6 text-lg">
-              Você não tem um plano ativo ainda. Escolha um para começar sua
-              jornada!
+              Escolha um para começar sua jornada!
             </p>
             <Button
+              variant="default"
+              size="sm"
+              className="font-bold bg-sky-500 text-white uppercase text-[0.8rem] mx-auto"
               onClick={() => (window.location.href = "/diets")}
-              className="flex items-center space-x-2 mx-auto"
+              // className="flex items-center space-x-2 mx-auto"
             >
-              <Plus className="h-4 w-4" />
+              {/* <Plus className="h-4 w-4" /> */}
               <span>Escolha um plano</span>
             </Button>
           </CardContent>

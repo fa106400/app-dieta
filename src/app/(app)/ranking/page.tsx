@@ -81,7 +81,7 @@ export default function RankingPage() {
       case 1:
         return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-yellow-500" />;
       case 2:
-        return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-gray-500" />;
+        return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-gray-400" />;
       case 3:
         return <Trophy className="h-5 w-5 md:h-10 md:w-10 text-amber-600" />;
       default:
@@ -202,7 +202,12 @@ export default function RankingPage() {
               Falha ao carregar o ranking
             </h3>
             <p className=" mb-4 text-lg">{error || "Ranking não disponível"}</p>
-            <Button onClick={fetchLeaderboard} variant="outline">
+            <Button
+              onClick={fetchLeaderboard}
+              variant="default"
+              size="sm"
+              className="font-bold bg-orange-500 text-white uppercase text-[0.8rem]"
+            >
               Tentar Novamente
             </Button>
           </CardContent>
@@ -215,10 +220,10 @@ export default function RankingPage() {
   const allUsers = [...top5, ...currentUser, ...next4];
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold  mb-4">Ranking</h1>
+        <h1 className="text-2xl font-bold text-gray-600 mb-4">Ranking</h1>
         {/* <p className="">Top usuários por experiência</p> 
         <div className="flex items-center justify-center space-x-4 mt-4">
           <div className="flex items-center space-x-2 text-md ">
@@ -233,7 +238,7 @@ export default function RankingPage() {
 
       {/* Stats */}
       {currentUser.length > 0 && (
-        <Card>
+        <Card className="bg-purple-400 text-white border-purple-400 outline-purple-400">
           {/* <CardHeader>
             <CardTitle className="text-lg">Sua Posição</CardTitle>
           </CardHeader> */}
@@ -241,7 +246,7 @@ export default function RankingPage() {
             {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
-                <div className="md:text-3xl text-xl font-bold text-sky-500">
+                <div className="md:text-3xl text-xl font-bold text-white">
                   #{currentUser[0].rank}
                 </div>
                 <div className="md:text-lg text-sm font-medium ">
@@ -255,7 +260,7 @@ export default function RankingPage() {
                 <div className="text-md ">Pontos de Experiência</div>
               </div> */}
               <div className="text-center">
-                <div className="md:text-3xl text-xl font-bold text-sky-500">
+                <div className="md:text-3xl text-xl font-bold text-white">
                   {totalUsers}
                 </div>
                 <div className="md:text-lg text-sm font-medium">

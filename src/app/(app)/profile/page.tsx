@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useBadgeNotificationTrigger } from "@/hooks/useBadgeNotification";
 import { useExperience } from "@/contexts/ExperienceContext";
@@ -32,7 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import {
-  Save,
+  // Save,
   User,
   Settings,
   Activity,
@@ -151,6 +152,7 @@ export default function ProfileManagePage() {
   const { user } = useAuthContext();
   const { triggerBatchBadgeValidation } = useBadgeNotificationTrigger();
   const { refreshXP } = useExperience();
+  const router = useRouter();
 
   // Profile state
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -710,7 +712,12 @@ export default function ProfileManagePage() {
               Erro ao carregar perfil
             </h2>
             <p className=" mb-4 text-lg">{profileError}</p>
-            <Button onClick={fetchProfile} variant="outline">
+            <Button
+              onClick={fetchProfile}
+              variant="default"
+              size="sm"
+              className="font-bold bg-orange-500 text-white uppercase text-[0.8rem]"
+            >
               Tentar novamente
             </Button>
           </CardContent>
@@ -739,11 +746,22 @@ export default function ProfileManagePage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-0">
         {/* Header */}
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold  mb-2">Perfil</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold  text-gray-600 mb-2">Perfil</h1>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => router.push("/me")}
+              className="flex items-center space-x-2 font-bold bg-gray-600 text-white uppercase text-[0.8rem]"
+            >
+              {/* <ArrowLeft className="h-4 w-4" /> */}
+              <span>voltar</span>
+            </Button>
+          </div>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <p className=" mb-4 lg:mb-0 text-lg">
               Gerencie suas informações pessoais e acompanhe seu progresso
@@ -758,14 +776,16 @@ export default function ProfileManagePage() {
                     isRefreshingAI ||
                     (aiCooldownHours !== null && aiCooldownHours > 0)
                   }
-                  variant="outline"
-                  className="flex items-center space-x-2"
+                  variant="default"
+                  size="sm"
+                  className={`w-full font-bold text-white uppercase text-[0.8rem] ${
+                    isRefreshingAI ||
+                    (aiCooldownHours !== null && aiCooldownHours > 0)
+                      ? "bg-yellow-500"
+                      : "bg-green-500"
+                  }`}
                 >
-                  {isRefreshingAI ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-4 w-4" />
-                  )}
+                  <Sparkles className="h-4 w-4" />
                   <span>
                     Novas recomendações{formatCooldown(aiCooldownHours)}
                   </span>
@@ -922,7 +942,9 @@ export default function ProfileManagePage() {
               <Button
                 onClick={() => saveProfile(profile)}
                 disabled={profileSaving}
-                className="min-w-[120px]"
+                variant="default"
+                size="default"
+                className="min-w-[120px] font-bold bg-green-500 text-white uppercase text-[0.8rem]"
               >
                 {profileSaving ? (
                   <>
@@ -931,7 +953,7 @@ export default function ProfileManagePage() {
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4 mr-2" />
+                    {/* <Save className="h-4 w-4 mr-2" /> */}
                     Salvar
                   </>
                 )}
@@ -1013,7 +1035,9 @@ export default function ProfileManagePage() {
               <Button
                 onClick={() => saveProfile(profile)}
                 disabled={profileSaving}
-                className="w-min-[120px]"
+                variant="default"
+                size="default"
+                className="min-w-[120px] font-bold bg-green-500 text-white uppercase text-[0.8rem]"
               >
                 {profileSaving ? (
                   <>
@@ -1022,7 +1046,7 @@ export default function ProfileManagePage() {
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4 mr-2" />
+                    {/* <Save className="h-4 w-4 mr-2" /> */}
                     Salvar
                   </>
                 )}
@@ -1099,7 +1123,9 @@ export default function ProfileManagePage() {
               <Button
                 onClick={() => saveProfile(profile)}
                 disabled={profileSaving}
-                className="w-min-[120px]"
+                variant="default"
+                size="default"
+                className="min-w-[120px] font-bold bg-green-500 text-white uppercase text-[0.8rem]"
               >
                 {profileSaving ? (
                   <>
@@ -1108,7 +1134,7 @@ export default function ProfileManagePage() {
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4 mr-2" />
+                    {/* <Save className="h-4 w-4 mr-2" /> */}
                     Salvar
                   </>
                 )}
@@ -1157,7 +1183,14 @@ export default function ProfileManagePage() {
                         !selectedDate ||
                         hasEntryForDate(selectedDate)
                       }
-                      className="w-full sm:w-auto"
+                      className={`w-full sm:w-auto font-bold text-white uppercase text-[0.8rem] ${
+                        isAddingWeight ||
+                        !newWeight ||
+                        !selectedDate ||
+                        hasEntryForDate(selectedDate)
+                          ? "bg-gray-800"
+                          : "bg-green-500"
+                      }`}
                     >
                       {isAddingWeight ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -1272,7 +1305,12 @@ export default function ProfileManagePage() {
                   <div className="text-center py-8">
                     <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
                     <p className="text-red-600 mb-4 text-lg">{weightError}</p>
-                    <Button onClick={fetchWeights} variant="outline">
+                    <Button
+                      onClick={fetchWeights}
+                      variant="default"
+                      size="sm"
+                      className="font-bold bg-orange-500 text-white uppercase text-[0.8rem]"
+                    >
                       Tentar Novamente
                     </Button>
                   </div>
@@ -1561,7 +1599,9 @@ function ProfilePrivacyDisplayInline({
         <Button
           onClick={handleSave}
           disabled={!canSave || isSaving}
-          className="min-w-[120px]"
+          variant="default"
+          size="default"
+          className="min-w-[120px] font-bold bg-green-500 text-white uppercase text-[0.8rem]"
         >
           {isSaving ? (
             <>

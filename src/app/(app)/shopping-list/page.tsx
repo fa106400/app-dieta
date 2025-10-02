@@ -13,9 +13,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   // ArrowLeft,
   ShoppingCart,
-  FileText,
+  // FileText,
   AlertCircle,
   Utensils,
+  // ArrowLeft,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { generateShoppingListPDF } from "@/lib/pdf-export";
@@ -231,7 +232,12 @@ export default function ShoppingListPage() {
               Erro ao carregar lista de compras
             </h2>
             <p className=" mb-4 text-lg">{error}</p>
-            <Button onClick={fetchShoppingList} variant="outline">
+            <Button
+              onClick={fetchShoppingList}
+              variant="default"
+              size="sm"
+              className="font-bold bg-orange-500 text-white uppercase text-[0.8rem]"
+            >
               Tentar novamente
             </Button>
           </CardContent>
@@ -251,7 +257,12 @@ export default function ShoppingListPage() {
               Você precisa selecionar um plano primeiro para gerar sua lista de
               compras.
             </p>
-            <Button onClick={() => router.push("/diets")}>
+            <Button
+              onClick={() => router.push("/diets")}
+              variant="default"
+              size="sm"
+              className="font-bold bg-sky-500 text-white uppercase text-[0.8rem]"
+            >
               Selecionar um plano
             </Button>
           </CardContent>
@@ -264,21 +275,21 @@ export default function ShoppingListPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
-          {/* <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/my-plan")}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to My Week</span>
-          </Button> */}
-          <div>
-            <h1 className="text-2xl font-bold">Lista de compras</h1>
-            <p className=" text-lg">{currentDiet.title}</p>
-          </div>
+        {/* <div className="flex items-center space-x-4"> */}
+        <div>
+          <h1 className="text-2xl text-gray-600 font-bold">Lista de compras</h1>
+          <p className=" text-lg">{currentDiet.title}</p>
         </div>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => router.push("/my-plan")}
+          className="flex items-center space-x-2 font-bold bg-gray-400 text-white uppercase text-[0.8rem]"
+        >
+          {/* <ArrowLeft className="h-4 w-4" /> */}
+          <span>voltar</span>
+        </Button>
+        {/* </div> */}
       </div>
 
       {/* Period Selection */}
@@ -311,9 +322,11 @@ export default function ShoppingListPage() {
                   toast.error("Falha ao gerar PDF. Tente novamente.");
                 }
               }}
-              className="flex items-center space-x-2"
+              variant="default"
+              size="sm"
+              className="flex items-center space-x-2 font-bold bg-green-500 text-white uppercase text-[0.8rem]"
             >
-              <FileText className="h-4 w-4" />
+              {/* <FileText className="h-4 w-4" /> */}
               <span className="text-sm">Exportar PDF</span>
             </Button>
           </CardTitle>

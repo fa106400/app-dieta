@@ -307,7 +307,7 @@ export function BadgeAchievementPopup({
               {!isLastBadge ? (
                 <Button
                   onClick={goToNextBadge}
-                  className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                  className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 uppercase text-[0.9rem]"
                 >
                   Próxima Conquista
                 </Button>
@@ -315,7 +315,7 @@ export function BadgeAchievementPopup({
                 <>
                   <Button
                     onClick={handleProceed}
-                    className="flex-1 font-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                    className="flex-1 font-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 uppercase text-[0.9rem]"
                   >
                     Continuar
                   </Button>
